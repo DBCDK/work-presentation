@@ -22,6 +22,7 @@ import dk.dbc.search.work.presentation.database.DatabaseMigrator;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import javax.persistence.EntityManager;
@@ -121,8 +122,35 @@ public class JpaBase {
     public static void setUpEntityManagerAndDataSource() {
         log.info("setUpEntityManagerAndDataSource");
 
+        dataSource = getDataSource(null);
+
+        DatabaseMigrator.migrate(dataSource);
+
+        try (Connection connection = dataSource.getConnection() ;
+             Statement stmt = connection.createStatement()) {
+            stmt.executeUpdate("TRUNCATE records");
+            stmt.executeUpdate("TRUNCATE workContains");
+            stmt.executeUpdate("TRUNCATE cache");
+        } catch (SQLException ex) {
+            log.error("Could not clean database: {}", ex.getMessage());
+            log.debug("Could not clean database: ", ex);
+        }
+
+        entityManagerProperties = new HashMap<String, String>() {
+            {
+                put(JDBC_USER, dataSource.getUser());
+                put(JDBC_PASSWORD, dataSource.getPassword());
+                put(JDBC_URL, dataSource.getUrl());
+                put(JDBC_DRIVER, "org.postgresql.Driver");
+                put("eclipselink.logging.level", "FINE");
+            }
+        };
+        entityManagerFactory = Persistence.createEntityManagerFactory("workPresentationTest_PU", entityManagerProperties);
+    }
+
+    protected static PGSimpleDataSource getDataSource(String databaseName) throws NumberFormatException {
         String testPort = System.getProperty("postgresql.port");
-        dataSource = new PGSimpleDataSource() {
+        PGSimpleDataSource ds = new PGSimpleDataSource() {
             @Override
             public Connection getConnection() throws SQLException {
                 return setLogging(super.getConnection());
@@ -146,32 +174,23 @@ public class JpaBase {
 
         String userName = System.getProperty("user.name");
         if (testPort != null) {
-            dataSource.setServerName("localhost");
-            dataSource.setDatabaseName("workpresentation");
-            dataSource.setUser(userName);
-            dataSource.setPassword(userName);
-            dataSource.setPortNumber(Integer.parseUnsignedInt(testPort));
+            ds.setServerName("localhost");
+            if (databaseName == null)
+                databaseName = "workpresentation";
+            ds.setUser(userName);
+            ds.setPassword(userName);
+            ds.setPortNumber(Integer.parseUnsignedInt(testPort));
         } else {
             Map<String, String> env = System.getenv();
-            dataSource.setUser(env.getOrDefault("PGUSER", userName));
-            dataSource.setPassword(env.getOrDefault("PGPASSWORD", userName));
-            dataSource.setServerName(env.getOrDefault("PGHOST", "localhost"));
-            dataSource.setPortNumber(Integer.parseUnsignedInt(env.getOrDefault("PGPORT", "5432")));
-            dataSource.setDatabaseName(env.getOrDefault("PGDATABASE", userName));
+            ds.setUser(env.getOrDefault("PGUSER", userName));
+            ds.setPassword(env.getOrDefault("PGPASSWORD", userName));
+            ds.setServerName(env.getOrDefault("PGHOST", "localhost"));
+            ds.setPortNumber(Integer.parseUnsignedInt(env.getOrDefault("PGPORT", "5432")));
+            if (databaseName == null)
+                databaseName = env.getOrDefault("PGDATABASE", userName);
         }
-
-        DatabaseMigrator.migrate(dataSource);
-
-        entityManagerProperties = new HashMap<String, String>() {
-            {
-                put(JDBC_USER, dataSource.getUser());
-                put(JDBC_PASSWORD, dataSource.getPassword());
-                put(JDBC_URL, dataSource.getUrl());
-                put(JDBC_DRIVER, "org.postgresql.Driver");
-                put("eclipselink.logging.level", "FINE");
-            }
-        };
-        entityManagerFactory = Persistence.createEntityManagerFactory("workPresentationTest_PU", entityManagerProperties);
+        ds.setDatabaseName(databaseName);
+        return ds;
     }
 
     @BeforeEach

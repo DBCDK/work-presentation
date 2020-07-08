@@ -38,6 +38,7 @@ public class DatabaseMigrator {
         HashSet<String> migrates = new HashSet<>();
         FluentConfiguration flywayConfigure = Flyway.configure()
                 .table("schema_version")
+                .locations("workpresentation/migration")
                 .dataSource(dataSource);
 
         final Flyway flyway = flywayConfigure.load();
