@@ -67,14 +67,14 @@ public class DatabaseMigratorIT {
     private static PGSimpleDataSource getDataSource() {
         PGSimpleDataSource datasource = new PGSimpleDataSource();
 
-        datasource.setServerNames(new String[] {"localhost"});
+        datasource.setServerName("localhost");
         String postgresqlPort = System.getProperty("postgresql.port");
         if (postgresqlPort != null && postgresqlPort.length() > 1) {
             datasource.setDatabaseName("workpresentation");
-            datasource.setPortNumbers(new int[] {Integer.parseInt(System.getProperty("postgresql.port", "5432"))});
+            datasource.setPortNumber(Integer.parseInt(System.getProperty("postgresql.port", "5432")));
         } else {
             datasource.setDatabaseName(System.getProperty("user.name"));
-            datasource.setPortNumbers(new int[] {5432});
+            datasource.setPortNumber(5432);
 
         }
         datasource.setUser(System.getProperty("user.name"));
