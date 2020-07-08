@@ -70,7 +70,7 @@
                         <configuration>
                             <classifier>test</classifier>
                             <classesDirectory>${project.build.directory}/test-classes</classesDirectory>
-                            <includes>dk/dbc/search/work/presentation/api/jpa/JpaBase*.class</includes>
+                            <includes>dk/dbc/search/work/presentation/api/jpa/JpaBase*.class,META-INF/persistence.xml</includes>
                         </configuration>
                     </execution>
                 </executions>
