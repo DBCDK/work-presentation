@@ -26,6 +26,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
+import javax.ws.rs.client.ClientBuilder;
+import org.glassfish.jersey.client.JerseyClientBuilder;
 
 /**
  *
@@ -36,14 +38,11 @@ public class BeanFactory {
     private final EntityManager em;
     private final DataSource dataSource;
     private final Config config;
-    private final Bean<Builder> builder;
-    private final Bean<Status> status;
-    private final Bean<Worker> worker;
+    private final Bean<Builder> builder = new Bean<>(this::makeBuilder);
+    private final Bean<Status> status = new Bean<>(this::makeStatus);
+    private final Bean<Worker> worker = new Bean<>(this::makeWorker);
 
     public BeanFactory(EntityManager em, DataSource dataSource, String... envs) {
-        this.builder = new Bean<>(this::makeBuilder);
-        this.status = new Bean<>(this::makeStatus);
-        this.worker = new Bean<>(this::makeWorker);
         this.em = em;
         this.dataSource = dataSource;
         this.config = makeConfig(envs);
@@ -55,7 +54,14 @@ public class BeanFactory {
                           "THREADS=1",
                           "QUEUES=queue")); // Default settings
         env.putAll(config(envs));
-        return new Config(env);
+        Config config = new Config(env) {
+            @Override
+            protected ClientBuilder clientBuilder() {
+                return JerseyClientBuilder.newBuilder();
+            }
+        };
+        config.init();
+        return config;
     }
 
     private static Map<String, String> config(String... envs) {
@@ -69,8 +75,8 @@ public class BeanFactory {
     }
 
     private Builder makeBuilder() {
-        Builder builder = new Builder();
-        return builder;
+        Builder builderBean = new Builder();
+        return builderBean;
     }
 
     public Status getStatus() {
@@ -78,9 +84,9 @@ public class BeanFactory {
     }
 
     private Status makeStatus() {
-        Status status = new Status();
-        status.dataSource = dataSource;
-        return status;
+        Status statusBean = new Status();
+        statusBean.dataSource = dataSource;
+        return statusBean;
     }
 
     public Worker getWorker() {
@@ -88,13 +94,13 @@ public class BeanFactory {
     }
 
     private Worker makeWorker() {
-        Worker worker = new Worker();
-        worker.config = config;
-        worker.executor = Executors.newCachedThreadPool();
-        worker.dataSource = dataSource;
-        worker.metrics = null;
-        worker.builder = builder.get();
-        return worker;
+        Worker workerBean = new Worker();
+        workerBean.config = config;
+        workerBean.executor = Executors.newCachedThreadPool();
+        workerBean.dataSource = dataSource;
+        workerBean.metrics = null;
+        workerBean.builder = builder.get();
+        return workerBean;
     }
 
     private static class Bean<T> {

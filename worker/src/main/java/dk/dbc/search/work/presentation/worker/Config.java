@@ -27,6 +27,10 @@ import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Startup;
 import javax.enterprise.context.ApplicationScoped;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.ClientRequestContext;
+import javax.ws.rs.client.ClientRequestFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,29 +46,37 @@ public class Config {
     private static final Logger log = LoggerFactory.getLogger(Config.class);
 
     private final Map<String, String> env;
+
+    private Client httpClient;
     private String[] queues;
     private int threads;
 
     public Config() {
-        this.env = System.getenv();
+        this(System.getenv());
     }
 
     public Config(Map<String, String> env) {
         this.env = env;
-        configure();
     }
 
     @PostConstruct
     public void init() {
-        configure();
-    }
-
-    private void configure() {
         log.info("Reading/verifying configuration");
         this.queues = Arrays.stream(getOrFail("QUEUES").split("[\\s,]+"))
                 .filter(s -> !s.isEmpty())
                 .toArray(String[]::new);
         this.threads = Integer.max(1, Integer.parseInt(getOrDefault("THREADS", "5")));
+        String userAgent = getOrDefault("USER_AGENT", "WorkPresentationService/1.0");
+        log.debug("Using: {} as HttpUserAgent", userAgent);
+        this.httpClient = clientBuilder()
+                .register((ClientRequestFilter) (ClientRequestContext context) ->
+                        context.getHeaders().putSingle("User-Agent", userAgent)
+                )
+                .build();
+    }
+
+    public Client getHttpClient() {
+        return httpClient;
     }
 
     @SuppressFBWarnings("EI_EXPOSE_REP")
@@ -85,5 +97,15 @@ public class Config {
 
     private String getOrDefault(String var, String defaultValue) {
         return env.getOrDefault(var, defaultValue);
+    }
+
+    /**
+     * Create a clientBuilder (useful for unittesting with specific
+     * implementation)
+     *
+     * @return Http client builder
+     */
+    protected ClientBuilder clientBuilder() {
+        return ClientBuilder.newBuilder();
     }
 }

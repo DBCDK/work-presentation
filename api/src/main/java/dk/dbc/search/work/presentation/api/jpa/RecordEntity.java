@@ -20,6 +20,7 @@ package dk.dbc.search.work.presentation.api.jpa;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -83,6 +84,7 @@ public class RecordEntity implements Serializable {
         this.persist = true;
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public RecordEntity(String persistentWorkId, String corepoWorkId, Timestamp modified, Map<String, String> content) {
         this.persistentWorkId = persistentWorkId;
         this.corepoWorkId = corepoWorkId;
@@ -129,10 +131,12 @@ public class RecordEntity implements Serializable {
         this.corepoWorkId = corepoWorkId;
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public Timestamp getModified() {
         return modified;
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public void setModified(Timestamp modified) {
         this.modified = modified;
     }

@@ -18,14 +18,16 @@
  */
 package dk.dbc.search.work.presentation.service;
 
-import java.util.Arrays;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Startup;
 import javax.enterprise.context.ApplicationScoped;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.ClientRequestContext;
+import javax.ws.rs.client.ClientRequestFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,34 +43,50 @@ public class Config {
     private static final Logger log = LoggerFactory.getLogger(Config.class);
 
     private final Map<String, String> env;
+    private Client httpClient;
 
     public Config() {
-        this.env = System.getenv();
+        this(System.getenv());
     }
 
     public Config(Map<String, String> env) {
         this.env = env;
-        configure();
     }
 
     @PostConstruct
     public void init() {
-        configure();
-    }
-
-    private void configure() {
         log.info("Reading/verifying configuration");
+        String userAgent = getOrDefault("USER_AGENT", "WorkPresentationService/1.0");
+        log.debug("Using: {} as HttpUserAgent", userAgent);
+        this.httpClient = clientBuilder()
+                .register((ClientRequestFilter) (ClientRequestContext context) ->
+                        context.getHeaders().putSingle("User-Agent", userAgent)
+                )
+                .build();
     }
 
-//    private String get(String var) {
+    public Client getHttpClient() {
+        return httpClient;
+    }
+
+//    private String getOrFail(String var) {
 //        String value = env.get(var);
 //        if (value == null)
 //            throw new EJBException("Missing required configuration: " + var);
 //        return value;
 //    }
-//
-//    private String get(String var, String defaultValue) {
-//        return env.getOrDefault(var, defaultValue);
-//    }
+    private String getOrDefault(String var, String defaultValue) {
+        return env.getOrDefault(var, defaultValue);
+    }
+
+    /**
+     * Create a clientBuilder (useful for unittesting with specific
+     * implementation)
+     *
+     * @return Http client builder
+     */
+    protected ClientBuilder clientBuilder() {
+        return ClientBuilder.newBuilder();
+    }
 
 }

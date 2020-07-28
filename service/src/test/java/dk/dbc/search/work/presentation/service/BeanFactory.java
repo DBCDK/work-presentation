@@ -25,6 +25,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
+import javax.ws.rs.client.ClientBuilder;
+import org.glassfish.jersey.client.JerseyClientBuilder;
 
 /**
  *
@@ -35,10 +37,9 @@ public class BeanFactory {
     private final EntityManager em;
     private final DataSource dataSource;
     private final Config config;
-    private final Bean<Status> status;
+    private final Bean<Status> status = new Bean<>(this::makeStatus);
 
     public BeanFactory(EntityManager em, DataSource dataSource, String... envs) {
-        this.status = new Bean<>(this::makeStatus);
         this.em = em;
         this.dataSource = dataSource;
         this.config = makeConfig(envs);
@@ -48,7 +49,14 @@ public class BeanFactory {
         Map<String, String> env = new HashMap<>();
         env.putAll(config("SYSTEM_NAME=test")); // Default settings
         env.putAll(config(envs));
-        return new Config(env);
+        Config config = new Config(env) {
+            @Override
+            protected ClientBuilder clientBuilder() {
+                return JerseyClientBuilder.newBuilder();
+            }
+        };
+        config.init();
+        return config;
     }
 
     private static Map<String, String> config(String... envs) {
@@ -58,9 +66,9 @@ public class BeanFactory {
     }
 
     private Status makeStatus() {
-        Status status = new Status();
-        status.dataSource = dataSource;
-        return status;
+        Status statusBean = new Status();
+        statusBean.dataSource = dataSource;
+        return statusBean;
     }
 
     public Status getStatus() {

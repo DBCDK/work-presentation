@@ -20,6 +20,7 @@ package dk.dbc.search.work.presentation.api.jpa;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -93,6 +94,18 @@ public class CacheEntity implements Serializable {
     public void setManifestationId(String manifestationId) {
         this.manifestationId = manifestationId;
     }
+
+    @SuppressFBWarnings("EI_EXPOSE_REP")
+    public Timestamp getModified() {
+        return modified;
+    }
+
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
+    public void setModified(Timestamp modified) {
+        this.modified = modified;
+    }
+
+
 
     public Map<String, String> getContent() {
         return content;
