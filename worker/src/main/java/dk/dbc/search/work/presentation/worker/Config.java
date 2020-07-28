@@ -66,7 +66,7 @@ public class Config {
                 .filter(s -> !s.isEmpty())
                 .toArray(String[]::new);
         this.threads = Integer.max(1, Integer.parseInt(getOrDefault("THREADS", "5")));
-        String userAgent = getOrDefault("USER_AGENT", "WorkPresentationService/1.0");
+        String userAgent = getOrDefault("USER_AGENT", "WorkPresentationWorker/1.0");
         log.debug("Using: {} as HttpUserAgent", userAgent);
         this.httpClient = clientBuilder()
                 .register((ClientRequestFilter) (ClientRequestContext context) ->

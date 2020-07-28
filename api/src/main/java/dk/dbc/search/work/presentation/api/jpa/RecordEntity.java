@@ -24,6 +24,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import javax.persistence.AttributeConverter;
@@ -63,7 +64,7 @@ public class RecordEntity implements Serializable {
 
     @Column(nullable = false)
     @Convert(converter = RecordEntity.JsonConverter.class)
-    private Map<String, String> content;
+    private HashMap<String, String> content;
 
     @Transient
     transient boolean persist;
@@ -80,12 +81,12 @@ public class RecordEntity implements Serializable {
         return entity;
     }
 
-    private RecordEntity() {
+    protected RecordEntity() {
         this.persist = true;
     }
 
     @SuppressFBWarnings("EI_EXPOSE_REP2")
-    public RecordEntity(String persistentWorkId, String corepoWorkId, Timestamp modified, Map<String, String> content) {
+    public RecordEntity(String persistentWorkId, String corepoWorkId, Timestamp modified, HashMap<String, String> content) {
         this.persistentWorkId = persistentWorkId;
         this.corepoWorkId = corepoWorkId;
         this.modified = modified;
@@ -141,11 +142,11 @@ public class RecordEntity implements Serializable {
         this.modified = modified;
     }
 
-    public Map<String, String> getContent() {
+    public HashMap<String, String> getContent() {
         return content;
     }
 
-    public void setContent(Map<String, String> content) {
+    public void setContent(HashMap<String, String> content) {
         this.content = content;
     }
 
@@ -179,13 +180,15 @@ public class RecordEntity implements Serializable {
         return "RecordEntity{" + "persistentWorkId=" + persistentWorkId + ", corepoWorkId=" + corepoWorkId + ", modified=" + modified + ", content=" + content + ", version=" + version + '}';
     }
 
+    // CPD-OFF
+    // REMOVE ^ WHEN CORRECT TYPE IS MAPPED
     @Converter
-    public static class JsonConverter implements AttributeConverter<Map<String, String>, PGobject> {
+    public static class JsonConverter implements AttributeConverter<HashMap<String, String>, PGobject> {
 
         private static final ObjectMapper O = new ObjectMapper();
 
         @Override
-        public PGobject convertToDatabaseColumn(Map<String, String> content) throws IllegalStateException {
+        public PGobject convertToDatabaseColumn(HashMap<String, String> content) throws IllegalStateException {
             try {
                 final PGobject pgObject = new PGobject();
                 pgObject.setType("jsonb");
@@ -201,15 +204,16 @@ public class RecordEntity implements Serializable {
         }
 
         @Override
-        public Map<String, String> convertToEntityAttribute(PGobject pgObject) {
+        public HashMap<String, String> convertToEntityAttribute(PGobject pgObject) {
             if (pgObject == null)
                 return null;
             try {
-                return O.readValue(pgObject.getValue(), Map.class);
+                return new HashMap<>(O.readValue(pgObject.getValue(), Map.class));
             } catch (JsonProcessingException ex) {
                 throw new IllegalStateException(ex);
             }
         }
     }
+    // CPD-ON
 
 }

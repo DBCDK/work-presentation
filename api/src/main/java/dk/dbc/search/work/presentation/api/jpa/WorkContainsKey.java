@@ -38,7 +38,7 @@ public class WorkContainsKey implements Serializable {
     @Column(updatable = false, insertable = false, nullable = false)
     private String manifestationId;
 
-    public WorkContainsKey() {
+    protected WorkContainsKey() {
     }
 
     public WorkContainsKey(String corepoWorkId, String manifestationId) {

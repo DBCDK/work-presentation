@@ -69,7 +69,7 @@ public class WorkContainsEntity implements Serializable {
         return entity;
     }
 
-    public WorkContainsEntity() {
+    protected WorkContainsEntity() {
         this.pk = new WorkContainsKey();
         this.persist = false;
     }

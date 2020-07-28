@@ -21,13 +21,8 @@ package dk.dbc.search.work.presentation.api.jpa;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.HashMap;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static java.util.Collections.EMPTY_MAP;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 

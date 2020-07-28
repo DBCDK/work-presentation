@@ -24,6 +24,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.Map;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Column;
@@ -60,7 +61,7 @@ public class CacheEntity implements Serializable {
 
     @Column(nullable = false)
     @Convert(converter = CacheEntity.JsonConverter.class)
-    private Map<String, String> content;
+    private HashMap<String, String> content;
 
     @Transient
     transient boolean persist;
@@ -77,7 +78,7 @@ public class CacheEntity implements Serializable {
         return entity;
     }
 
-    public CacheEntity() {
+    protected CacheEntity() {
         this.persist = false;
     }
 
@@ -105,13 +106,11 @@ public class CacheEntity implements Serializable {
         this.modified = modified;
     }
 
-
-
     public Map<String, String> getContent() {
         return content;
     }
 
-    public void setContent(Map<String, String> content) {
+    public void setContent(HashMap<String, String> content) {
         this.content = content;
     }
 
@@ -132,12 +131,12 @@ public class CacheEntity implements Serializable {
     }
 
     @Converter
-    public static class JsonConverter implements AttributeConverter<Map<String, String>, PGobject> {
+    public static class JsonConverter implements AttributeConverter<HashMap<String, String>, PGobject> {
 
         private static final ObjectMapper O = new ObjectMapper();
 
         @Override
-        public PGobject convertToDatabaseColumn(Map<String, String> content) throws IllegalStateException {
+        public PGobject convertToDatabaseColumn(HashMap<String, String> content) throws IllegalStateException {
             try {
                 final PGobject pgObject = new PGobject();
                 pgObject.setType("jsonb");
@@ -153,11 +152,11 @@ public class CacheEntity implements Serializable {
         }
 
         @Override
-        public Map<String, String> convertToEntityAttribute(PGobject pgObject) {
+        public HashMap<String, String> convertToEntityAttribute(PGobject pgObject) {
             if (pgObject == null)
                 return null;
             try {
-                return O.readValue(pgObject.getValue(), Map.class);
+                return new HashMap<>(O.readValue(pgObject.getValue(), Map.class));
             } catch (JsonProcessingException ex) {
                 throw new IllegalStateException(ex);
             }
