@@ -81,7 +81,7 @@
                         </goals>
                         <configuration>
                             <finalName>${project.artifactId}</finalName>
-                            <appendAssemblyId>false</appendAssemblyId>
+                            <appendAssemblyId>true</appendAssemblyId>
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
@@ -114,7 +114,7 @@
                             <arguments>
                                 <argument>-cex</argument>
                                 <argument>
-                                    java -jar ${project.build.directory}/${project.artifactId}.jar ${user.name}:${user.name}@localhost:${postgresql.port}/workpresentation
+                                    java -jar ${project.build.directory}/${project.artifactId}-jar-with-dependencies.jar ${user.name}:${user.name}@localhost:${postgresql.port}/workpresentation
                                     read pg _ &lt; ${project.build.directory}/postgresql-cluster/postmaster.opts
                                     $${pg%/*}/pg_dump --no-owner postgresql://${user.name}:${user.name}@localhost:${postgresql.port}/workpresentation > ${project.build.directory}/workpresentation-${project.version}.sql
                                 </argument>
