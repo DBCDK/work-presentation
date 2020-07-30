@@ -94,7 +94,7 @@ public class WorkContainsEntity implements Serializable {
         if (!persist) {
             em.remove(this);
         }
-        em.detach(this);
+        persist = true;
     }
 
     public String getCorepoWorkId() {

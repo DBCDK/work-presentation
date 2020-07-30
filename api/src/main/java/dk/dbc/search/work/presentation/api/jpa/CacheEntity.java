@@ -127,7 +127,7 @@ public class CacheEntity implements Serializable {
         if (!persist) {
             em.remove(this);
         }
-        em.detach(this);
+        persist = true;
     }
 
     @Converter

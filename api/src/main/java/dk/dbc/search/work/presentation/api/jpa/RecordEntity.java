@@ -82,7 +82,7 @@ public class RecordEntity implements Serializable {
     }
 
     protected RecordEntity() {
-        this.persist = true;
+        this.persist = false;
     }
 
     @SuppressFBWarnings("EI_EXPOSE_REP2")
@@ -97,7 +97,7 @@ public class RecordEntity implements Serializable {
 
     private RecordEntity(String persistentWorkId) {
         this.persistentWorkId = persistentWorkId;
-        this.persist = false;
+        this.persist = true;
     }
 
     public void save() {
@@ -113,7 +113,7 @@ public class RecordEntity implements Serializable {
         if (!persist) {
             em.remove(this);
         }
-        em.detach(this);
+        persist = true;
     }
 
     public String getPersistentWorkId() {

@@ -57,4 +57,37 @@ public class RecordEntityIT extends JpaBase {
 
         assertThat(newEntity, is(oldEntity));
     }
+
+    @Test
+    public void testSaveAndDelete() throws Exception {
+        System.out.println("testSaveAndDelete");
+
+        flushAndEvict();
+        jpa(em -> {
+            RecordEntity rec = RecordEntity.from(em, "work-of-x");
+            assertThat(rec.persist, is(true)); // NEW
+            rec.setContent(new HashMap<>());
+            rec.setCorepoWorkId("any");
+            rec.setModified(Timestamp.from(Instant.now()));
+            rec.save();
+        });
+        flushAndEvict();
+        jpa(em -> {
+            RecordEntity rec = RecordEntity.from(em, "work-of-x");
+            assertThat(rec.persist, is(false)); // FROM DB
+            rec.save();
+        });
+        flushAndEvict();
+        jpa(em -> {
+            RecordEntity rec = RecordEntity.from(em, "work-of-x");
+            assertThat(rec.persist, is(false)); // FROM DB
+            rec.delete();
+        });
+        flushAndEvict();
+        jpa(em -> {
+            RecordEntity rec = RecordEntity.from(em, "work-of-x");
+            assertThat(rec.persist, is(true)); // NEW
+        });
+    }
+
 }
