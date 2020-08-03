@@ -36,14 +36,16 @@ import org.glassfish.jersey.client.JerseyClientBuilder;
 public class BeanFactory {
 
     private final EntityManager em;
-    private final DataSource dataSource;
+    private final DataSource wpDataSource;
+    private final DataSource coDataSource;
     private final Config config;
     private final Bean<PresentationObjectBuilder> builder = new Bean<>(this::makeBuilder);
     private final Bean<Worker> worker = new Bean<>(this::makeWorker);
 
-    public BeanFactory(EntityManager em, DataSource dataSource, String... envs) {
+    public BeanFactory(EntityManager em, DataSource wpDataSource, DataSource coDataSource, String... envs) {
         this.em = em;
-        this.dataSource = dataSource;
+        this.wpDataSource = wpDataSource;
+        this.coDataSource = coDataSource;
         this.config = makeConfig(envs);
     }
 
@@ -86,7 +88,7 @@ public class BeanFactory {
         Worker workerBean = new Worker();
         workerBean.config = config;
         workerBean.executor = Executors.newCachedThreadPool();
-        workerBean.dataSource = dataSource;
+        workerBean.dataSource = coDataSource;
         workerBean.metrics = null;
         workerBean.builder = builder.get();
         return workerBean;

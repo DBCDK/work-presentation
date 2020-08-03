@@ -18,21 +18,7 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
-import dk.dbc.corepo.queue.QueueJob;
-import dk.dbc.pgqueue.PreparedQueueSupplier;
-import dk.dbc.pgqueue.QueueSupplier;
-import dk.dbc.pgqueue.consumer.JobMetaData;
-import java.sql.Connection;
-import java.util.List;
-import javax.ejb.embeddable.EJBContainer;
-import javax.persistence.EntityManager;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -44,7 +30,7 @@ public class WorkerIT extends JpaBaseWithCorepo {
     public void testWork() throws Exception {
 
         jpa(em -> {
-            BeanFactory beanFactory = new BeanFactory(em, corepoDataSource);
+            BeanFactory beanFactory = new BeanFactory(em, dataSource, corepoDataSource);
             Worker worker = beanFactory.getWorker();
             worker.init();
             queue("work:1", "work:2");
