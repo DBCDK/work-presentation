@@ -38,7 +38,6 @@ import javax.sql.DataSource;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.Liveness;
-import org.eclipse.microprofile.health.Readiness;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +50,6 @@ import org.slf4j.LoggerFactory;
 @Startup
 @Lock(LockType.READ)
 @Liveness
-@Readiness
 public class Worker implements HealthCheck {
 
     private static final Logger log = LoggerFactory.getLogger(Worker.class);

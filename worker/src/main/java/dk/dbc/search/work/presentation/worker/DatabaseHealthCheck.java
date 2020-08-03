@@ -29,7 +29,6 @@ import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.HealthCheckResponseBuilder;
 import org.eclipse.microprofile.health.Liveness;
-import org.eclipse.microprofile.health.Readiness;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +38,6 @@ import org.slf4j.LoggerFactory;
  */
 @Stateless
 @Liveness
-@Readiness
 public class DatabaseHealthCheck implements HealthCheck {
 
     private static final Logger log = LoggerFactory.getLogger(DatabaseHealthCheck.class);
