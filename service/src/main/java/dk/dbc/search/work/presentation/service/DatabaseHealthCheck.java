@@ -1,14 +1,14 @@
 /*
  * Copyright (C) 2020 DBC A/S (http://dbc.dk/)
  *
- * This is part of work-presentation-worker
+ * This is part of work-presentation-service
  *
- * work-presentation-worker is free software: you can redistribute it and/or modify
+ * work-presentation-service is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * work-presentation-worker is distributed in the hope that it will be useful,
+ * work-presentation-service is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
