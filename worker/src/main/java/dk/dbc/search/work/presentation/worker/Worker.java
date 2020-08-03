@@ -56,7 +56,7 @@ public class Worker implements HealthCheck {
 
     private static final Logger log = LoggerFactory.getLogger(Worker.class);
 
-    @Resource(lookup = "jdbc/workpresentation")
+    @Resource(lookup = "jdbc/corepo")
     DataSource dataSource;
 
     @Resource(type = ManagedExecutorService.class)

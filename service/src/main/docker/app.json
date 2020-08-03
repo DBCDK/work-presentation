@@ -8,8 +8,8 @@
         }
     },
     "hazelcast": {
-    "clusterName": "${project.artifactId}-${SYSTEM_NAME}",
-    "cacheConfig": {
+        "clusterName": "${project.artifactId}-${SYSTEM_NAME}",
+        "cacheConfig": {
+        }
     }
-}
 }
