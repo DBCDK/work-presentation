@@ -38,7 +38,7 @@ public class BeanFactory {
     private final EntityManager em;
     private final DataSource dataSource;
     private final Config config;
-    private final Bean<Builder> builder = new Bean<>(this::makeBuilder);
+    private final Bean<PresentationObjectBuilder> builder = new Bean<>(this::makeBuilder);
     private final Bean<Status> status = new Bean<>(this::makeStatus);
     private final Bean<Worker> worker = new Bean<>(this::makeWorker);
 
@@ -70,12 +70,12 @@ public class BeanFactory {
                 .collect(Collectors.toMap(a -> a[0], a -> a[1]));
     }
 
-    public Builder getBuilder() {
+    public PresentationObjectBuilder getBuilder() {
         return builder.get();
     }
 
-    private Builder makeBuilder() {
-        Builder builderBean = new Builder();
+    private PresentationObjectBuilder makeBuilder() {
+        PresentationObjectBuilder builderBean = new PresentationObjectBuilder();
         return builderBean;
     }
 

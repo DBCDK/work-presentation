@@ -60,7 +60,7 @@ public class Worker {
     Config config;
 
     @Inject
-    Builder builder;
+    PresentationObjectBuilder builder;
 
     @Inject
     MetricRegistry metrics;

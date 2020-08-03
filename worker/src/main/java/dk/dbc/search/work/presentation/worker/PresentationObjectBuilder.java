@@ -24,13 +24,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * This produces all the fields a presentation request possibly can result in.
+ *
+ * The presentation request then filters this.
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
 @Stateless
-public class Builder {
+public class PresentationObjectBuilder {
 
-    private static final Logger log = LoggerFactory.getLogger(Builder.class);
+    private static final Logger log = LoggerFactory.getLogger(PresentationObjectBuilder.class);
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     public void process(String pid) {
