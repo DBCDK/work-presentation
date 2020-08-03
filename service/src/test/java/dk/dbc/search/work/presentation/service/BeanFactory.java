@@ -37,7 +37,6 @@ public class BeanFactory {
     private final EntityManager em;
     private final DataSource dataSource;
     private final Config config;
-    private final Bean<Status> status = new Bean<>(this::makeStatus);
 
     public BeanFactory(EntityManager em, DataSource dataSource, String... envs) {
         this.em = em;
@@ -63,16 +62,6 @@ public class BeanFactory {
         return Arrays.stream(envs)
                 .map(s -> s.split("=", 2))
                 .collect(Collectors.toMap(a -> a[0], a -> a[1]));
-    }
-
-    private Status makeStatus() {
-        Status statusBean = new Status();
-        statusBean.dataSource = dataSource;
-        return statusBean;
-    }
-
-    public Status getStatus() {
-        return status.get();
     }
 
     private static class Bean<T> {

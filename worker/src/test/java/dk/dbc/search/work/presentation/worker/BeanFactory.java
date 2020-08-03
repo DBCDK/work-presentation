@@ -39,7 +39,6 @@ public class BeanFactory {
     private final DataSource dataSource;
     private final Config config;
     private final Bean<PresentationObjectBuilder> builder = new Bean<>(this::makeBuilder);
-    private final Bean<Status> status = new Bean<>(this::makeStatus);
     private final Bean<Worker> worker = new Bean<>(this::makeWorker);
 
     public BeanFactory(EntityManager em, DataSource dataSource, String... envs) {
@@ -77,16 +76,6 @@ public class BeanFactory {
     private PresentationObjectBuilder makeBuilder() {
         PresentationObjectBuilder builderBean = new PresentationObjectBuilder();
         return builderBean;
-    }
-
-    public Status getStatus() {
-        return status.get();
-    }
-
-    private Status makeStatus() {
-        Status statusBean = new Status();
-        statusBean.dataSource = dataSource;
-        return statusBean;
     }
 
     public Worker getWorker() {

@@ -16,9 +16,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package dk.dbc.search.work.presentation.worker;
+package dk.dbc.search.work.presentation.service;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,11 +25,11 @@ import java.sql.Statement;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.sql.DataSource;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import org.eclipse.microprofile.health.HealthCheck;
+import org.eclipse.microprofile.health.HealthCheckResponse;
+import org.eclipse.microprofile.health.HealthCheckResponseBuilder;
+import org.eclipse.microprofile.health.Liveness;
+import org.eclipse.microprofile.health.Readiness;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,49 +38,33 @@ import org.slf4j.LoggerFactory;
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
 @Stateless
-@Path("status")
-public class Status {
+@Liveness
+@Readiness
+public class DatabaseHealthCheck implements HealthCheck {
 
-    private static final Logger log = LoggerFactory.getLogger(Status.class);
+    private static final Logger log = LoggerFactory.getLogger(DatabaseHealthCheck.class);
 
     @Resource(lookup = "jdbc/work-presentation")
     DataSource dataSource;
 
-//    @PersistenceContext(unitName = "workPresentation_PU")
-//    EntityManager entityManager;
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response status() {
+    @Override
+    public HealthCheckResponse call() {
+        log.debug("check database connection");
+        HealthCheckResponseBuilder builder = HealthCheckResponse.named("database");
         try (Connection connection = dataSource.getConnection() ;
              Statement stmt = connection.createStatement() ;
              ResultSet resultSet = stmt.executeQuery("SELECT 1")) {
-            if (resultSet.next())
-                return Response.ok().entity(new Resp()).build();
-            throw new SQLException("No rows in `SELECT 1`");
-
+            if (resultSet.next()) {
+                builder.up();
+            } else {
+                throw new SQLException("No rows in `SELECT 1`");
+            }
         } catch (SQLException ex) {
             log.error("Status SQL: {}", ex.getMessage());
             log.debug("Status SQL: ", ex);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(new Resp("database-error")).build();
+            builder.down().withData("exception", ex.getMessage());
         }
+        return builder.build();
     }
 
-    @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public static class Resp {
-
-        public boolean ok;
-        public String text;
-
-        public Resp() {
-            this.ok = true;
-            this.text = "Success";
-        }
-
-        public Resp(String diag) {
-            this.ok = false;
-            this.text = diag;
-        }
-    }
 }

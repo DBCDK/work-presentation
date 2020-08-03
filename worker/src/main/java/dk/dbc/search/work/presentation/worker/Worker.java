@@ -35,6 +35,10 @@ import javax.ejb.Startup;
 import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
 import javax.sql.DataSource;
+import org.eclipse.microprofile.health.HealthCheck;
+import org.eclipse.microprofile.health.HealthCheckResponse;
+import org.eclipse.microprofile.health.Liveness;
+import org.eclipse.microprofile.health.Readiness;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +50,9 @@ import org.slf4j.LoggerFactory;
 @Singleton
 @Startup
 @Lock(LockType.READ)
-public class Worker {
+@Liveness
+@Readiness
+public class Worker implements HealthCheck {
 
     private static final Logger log = LoggerFactory.getLogger(Worker.class);
 
@@ -87,10 +93,6 @@ public class Worker {
         worker.stop();
     }
 
-    public List<String> hungThreads() {
-        return worker.hungThreads();
-    }
-
     public void work(Connection connection, QueueJob job, JobMetaData metaData) {
         try (LogWith logWith = LogWith.track(job.getTrackingId())
                 .pid(job.getPid());) {
@@ -101,6 +103,15 @@ public class Worker {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    @Override
+    public HealthCheckResponse call() {
+        List<String> hungThreads = worker.hungThreads();
+        return HealthCheckResponse.named("queue-worker")
+                .state(hungThreads.isEmpty())
+                .withData("hung-threads", String.join(", ", hungThreads))
+                .build();
     }
 
 }
