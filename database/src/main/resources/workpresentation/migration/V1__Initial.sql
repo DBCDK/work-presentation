@@ -1,4 +1,3 @@
-
 CREATE TABLE records (
   version INTEGER NOT NULL DEFAULT 0,
   persistentWorkId TEXT NOT NULL PRIMARY KEY,
@@ -6,6 +5,7 @@ CREATE TABLE records (
   modified TIMESTAMP NOT NULL DEFAULT timeofday()::timestamp,
   content JSONB NOT NULL
 );
+
 CREATE UNIQUE INDEX records_corepoWorkId ON records(corepoWorkId);
 
 CREATE TABLE workContains (
