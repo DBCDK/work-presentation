@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <repositories>
+        <repository>
+            <id>mavenrepo.dbc.dk</id>
+            <url>http://mavenrepo.dbc.dk/content/groups/public</url>
+        </repository>
+    </repositories>
+
+    <parent>
+        <groupId>dk.dbc</groupId>
+        <artifactId>microservice-pom</artifactId>
+        <version>latest-SNAPSHOT</version>
+        <relativePath/>
+    </parent>
+
+    <properties>
+        <pgqueue.version>1.3-SNAPSHOT</pgqueue.version>
+    </properties>
+
+    <artifactId>work-presentation</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>database</module>
+        <module>api</module>
+        <module>worker</module>
+        <module>service</module>
+        <module>postgresql</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>annotations</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit5.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit5.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit5.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+        </dependency>
+
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>work-presentation-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>work-presentation-database</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>dk.dbc</groupId>
+                <artifactId>dbc-commons-log</artifactId>
+                <version>1.3-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>annotations</artifactId>
+                <version>3.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.solr</groupId>
+                <artifactId>solr-solrj</artifactId>
+                <version>${solr.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.cache</groupId>
+                <artifactId>cache-api</artifactId>
+                <version>1.1.0</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <executions>
+                        <execution>
+                            <id>reserve-network-port</id>
+                            <goals>
+                                <goal>reserve-network-port</goal>
+                            </goals>
+                            <phase>initialize</phase>
+                            <configuration>
+                                <portNames>
+                                    <portName>postgresql.port</portName>
+                                    <portName>wiremock.port</portName>
+                                </portNames>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>dk.dbc</groupId>
+                    <artifactId>postgresql-maven-plugin</artifactId>
+                    <version>1.3-SNAPSHOT</version>
+                    <executions>
+                        <execution>
+                            <id>start-postgresql</id>
+                            <phase>pre-integration-test</phase>
+                            <goals>
+                                <goal>start</goal>
+                            </goals>
+                            <configuration>
+                                <pgPort>${postgresql.port}</pgPort>
+                                <pgDbName>workpresentation</pgDbName>
+                                <pgDbScripts>
+                                </pgDbScripts>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>stop-postgresql</id>
+                            <phase>post-integration-test</phase>
+                            <goals>
+                                <goal>shutdown</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>uk.co.automatictester</groupId>
+                    <artifactId>wiremock-maven-plugin</artifactId>
+                    <version>2.14.0</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>run</goal>
+                            </goals>
+                            <configuration>
+                                <dir>src/test/resources/wiremock</dir>
+                                <params>--port=${wiremock.port} --proxy-all=http://localhost:8000/ --record-mappings</params>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.22.2</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.22.2</version>
+                    <configuration>
+                        <redirectTestOutputToFile>false</redirectTestOutputToFile>
+                        <environmentVariables>
+                            <WORKPRESENTATION_POSTGRES_URL>localhost:${postgresql.port}/workpresentation</WORKPRESENTATION_POSTGRES_URL>
+                            <OPENAGENCY_URL>http://localhost:${wiremock.port}/openagency</OPENAGENCY_URL>
+                            <COREPO_CONTENT_SERVICE_URL>http://localhost:${wiremock.port}/corepo-content-service</COREPO_CONTENT_SERVICE_URL>
+                        </environmentVariables>
+                        <systemPropertyVariables>
+                            <postgresql.port>${postgresql.port}</postgresql.port>
+                        </systemPropertyVariables>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                            <configuration>
+                                <redirectTestOutputToFile>false</redirectTestOutputToFile>
+                                <trimStackTrace>false</trimStackTrace>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <version>1.6.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

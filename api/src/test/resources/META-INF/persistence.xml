@@ -1,0 +1,18 @@
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_1.xsd"
+             version="2.1">
+  <persistence-unit name="workPresentationTest_PU" transaction-type="RESOURCE_LOCAL">
+    <class>dk.dbc.search.work.presentation.api.jpa.CacheEntity</class>
+    <class>dk.dbc.search.work.presentation.api.jpa.CacheEntity$JsonConverter</class>
+    <class>dk.dbc.search.work.presentation.api.jpa.RecordEntity</class>
+    <class>dk.dbc.search.work.presentation.api.jpa.RecordEntity$JsonConverter</class>
+    <class>dk.dbc.search.work.presentation.api.jpa.WorkContainsEntity</class>
+    <shared-cache-mode>NONE</shared-cache-mode> <!-- required by commandline tools that change the database directly -->
+    <properties>
+      <property name="javax.persistence.schema-generation.database.action" value="none"/>
+      <property name="eclipselink.logging.logger" value="org.eclipse.persistence.logging.DefaultSessionLog"/>
+      <property name="eclipselink.logging.level" value="INFO"/>
+    </properties>
+  </persistence-unit>
+</persistence>
