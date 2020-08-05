@@ -71,6 +71,12 @@
             <artifactId>dbc-commons-log</artifactId>
         </dependency>
         <dependency>
+            <groupId>dk.dbc</groupId>
+            <artifactId>corepo-access-ee</artifactId>
+            <version>1.2-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
             <scope>provided</scope>

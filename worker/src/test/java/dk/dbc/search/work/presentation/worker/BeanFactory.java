@@ -41,6 +41,7 @@ public class BeanFactory {
     private final Config config;
     private final Bean<PresentationObjectBuilder> builder = new Bean<>(this::makeBuilder);
     private final Bean<Worker> worker = new Bean<>(this::makeWorker);
+    private final Bean<WorkTreeBuilder> workTreeBuilder = new Bean<>(this::makeWorkTreeBuilder);
 
     public BeanFactory(EntityManager em, DataSource wpDataSource, DataSource coDataSource, String... envs) {
         this.em = em;
@@ -109,5 +110,16 @@ public class BeanFactory {
                 that = supplier.get();
             return that;
         }
+    }
+
+    public WorkTreeBuilder getWorkTreeBuilder() {
+        return workTreeBuilder.get();
+    }
+
+    private WorkTreeBuilder makeWorkTreeBuilder() {
+        @SuppressWarnings("UseInjectionInsteadOfInstantion")
+        WorkTreeBuilder treeBean = new WorkTreeBuilder();
+        treeBean.dataSource = coDataSource;
+        return treeBean;
     }
 }
