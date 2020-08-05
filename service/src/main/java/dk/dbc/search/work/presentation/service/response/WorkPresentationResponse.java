@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 public class WorkPresentationResponse implements Serializable {
+    private static final long serialVersionUID = -3982891260125356457L;
+
     public String trackingId;
     public String workId;
     public String title;
