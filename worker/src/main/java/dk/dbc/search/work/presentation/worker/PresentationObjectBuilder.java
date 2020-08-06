@@ -20,6 +20,7 @@ package dk.dbc.search.work.presentation.worker;
 
 import javax.ejb.Stateless;
 import javax.transaction.Transactional;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,7 @@ public class PresentationObjectBuilder {
     private static final Logger log = LoggerFactory.getLogger(PresentationObjectBuilder.class);
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
+    @Timed
     public void process(String pid) {
         if (!pid.startsWith("work:")) {
             log.info("Skipping job: {}", pid);
