@@ -27,7 +27,6 @@ public class WorkInformation implements Serializable {
     public List<ManifestationInformation> manifestationInformationList;
 
     public WorkInformation() {
-
     }
 
     // used for integration test
@@ -70,7 +69,7 @@ public class WorkInformation implements Serializable {
     /**
      * We do not want to expose the unit information in the service, so this method should
      * be called before sending WorkInformation objects as responses in a service.
-     * @param workInformation
+     * @param workInformation the work information we wish to return
      * @return the input object, but with the unit information set to null.
      */
     public static WorkInformation prepareResponse(WorkInformation workInformation) {
