@@ -143,6 +143,11 @@ public class WorkTreeBuilderIT extends JpaBaseWithCorepo {
 
         recordRelation.addIsMemberOfUnit(unit);
         recordRelation.addIsPrimaryBibObject(unit);
+
+        dao.addOrUpdateSysRelationsStreams(workRelation);
+        dao.addOrUpdateSysRelationsStreams(unitRelation);
+        dao.addOrUpdateSysRelationsStreams(recordRelation);
+
         dao.commit();
 
         log.info("Work {}", work);
