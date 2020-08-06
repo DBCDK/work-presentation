@@ -1,10 +1,12 @@
 package dk.dbc.search.work.presentation.api.jpa.pojo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.Serializable;
 import java.util.Objects;
 
+@SuppressFBWarnings("UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD")
 public class ManifestationInformation implements Serializable {
     private static final long serialVersionUID = 8070506196810189178L;
 
