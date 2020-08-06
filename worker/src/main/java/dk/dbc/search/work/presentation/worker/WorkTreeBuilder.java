@@ -24,18 +24,14 @@ import dk.dbc.opensearch.commons.repository.IRepositoryIdentifier;
 import dk.dbc.opensearch.commons.repository.ISysRelationsStream;
 import dk.dbc.opensearch.commons.repository.RepositoryException;
 import dk.dbc.opensearch.commons.repository.RepositoryStream;
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This produces all the fields a presentation request possibly can result in.
- *
- * The presentation request then filters this.
+ * Extract the structure of the work/units/records for a CORepo work
  *
  * @author Thomas Pii (thp@dbc.dk)
  */
@@ -49,6 +45,12 @@ public class WorkTreeBuilder {
 
     private CORepoProviderEE daoProvider = new CORepoProviderEE("corepo");
 
+    /**
+     * Process a work object and extract structure for units and records
+     * @param corpeoSource CORepo database
+     * @param pidStr The identifier for the work object to process
+     * @throws RepositoryException In case database layer thrown an error or if called for an object that is not a work object
+     */
     public void process(DataSource corpeoSource, String pidStr) throws RepositoryException {
         log.trace("Entering WorkTreeBuilder.process");
         try(IRepositoryDAO dao = daoProvider.getRepository(dataSource)) {
@@ -64,11 +66,14 @@ public class WorkTreeBuilder {
             ISysRelationsStream workRelations = dao.getSysRelationsStream(workPid);
             IRepositoryIdentifier primaryUnit = workRelations.getPrimaryUnitForWork();
             IRepositoryIdentifier[] units = workRelations.getMembersOfWork();
+            log.debug("{} Found primaryUnit {} and members {}", workPid, primaryUnit, units);
+
             for (IRepositoryIdentifier unit : units) {
                 // Process members of unit
                 ISysRelationsStream unitRelations = dao.getSysRelationsStream(unit);
                 IRepositoryIdentifier primaryRecord = unitRelations.getPrimaryMemberOfUnit();
                 IRepositoryIdentifier[] records = unitRelations.getMembersOfUnit();
+                log.debug("{} - {} Found primaryUnit {} and members {}", workPid, unit, primaryRecord, records);
                 for (IRepositoryIdentifier record : records) {
                     // TODO getDatastreams includeds stream content. Add a metadata method that only has metadata?
                     RepositoryStream[] datastreams = dao.getDatastreams(record);
