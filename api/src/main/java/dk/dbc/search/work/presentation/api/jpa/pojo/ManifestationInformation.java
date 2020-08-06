@@ -10,8 +10,9 @@ public class ManifestationInformation implements Serializable {
 
     @JsonProperty("pid")
     public String manifestationId;
-    @JsonProperty("title")
+
     public String title;
+
     @JsonProperty("type")
     public String materialType;
 

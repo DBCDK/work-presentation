@@ -201,12 +201,12 @@ public class RecordEntity implements Serializable {
         }
 
         @Override
-        public WorkInformation convertToEntityAttribute(PGobject pGobject) {
-            if (pGobject == null) {
+        public WorkInformation convertToEntityAttribute(PGobject pgObject) {
+            if (pgObject == null) {
                 return null;
             }
             try {
-                return O.readValue(pGobject.getValue(), WorkInformation.class);
+                return O.readValue(pgObject.getValue(), WorkInformation.class);
             } catch (JsonProcessingException ex) {
                 throw new IllegalStateException(ex);
             }

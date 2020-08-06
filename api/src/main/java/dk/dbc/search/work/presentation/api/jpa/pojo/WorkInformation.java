@@ -11,18 +11,19 @@ public class WorkInformation implements Serializable {
 
     private static final long serialVersionUID = -5483372029181835470L;
 
-    @JsonProperty("workId")
     public String workId;
-    @JsonProperty("title")
+
     public String title;
-    @JsonProperty("creator")
+
     public String creator;
-    @JsonProperty("description")
+
     public String description;
-    @JsonProperty("subject")
+
     public String subject;
+
     @JsonProperty("dbUnits")
     public Map<String, List<ManifestationInformation>> dbUnitInformation;
+
     @JsonProperty("records")
     public List<ManifestationInformation> manifestationInformationList;
 
