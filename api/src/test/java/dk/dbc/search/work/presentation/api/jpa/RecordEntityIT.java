@@ -18,10 +18,11 @@
  */
 package dk.dbc.search.work.presentation.api.jpa;
 
+import dk.dbc.search.work.presentation.api.jpa.pojo.WorkInformation;
+import org.junit.jupiter.api.Test;
+
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.HashMap;
-import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -39,11 +40,7 @@ public class RecordEntityIT extends JpaBase {
     public void testSaveLoad() throws Exception {
         System.out.println("testSaveLoad");
 
-        RecordEntity oldEntity = new RecordEntity("a", "b", Timestamp.from(Instant.now()), new HashMap<String, String>() {
-                                              {
-                                                  put("a", "123");
-                                              }
-                                          });
+        RecordEntity oldEntity = new RecordEntity("a", "b", Timestamp.from(Instant.now()), new WorkInformation("a") );
 
         jpa(em -> {
             em.persist(oldEntity);
@@ -54,6 +51,7 @@ public class RecordEntityIT extends JpaBase {
         });
 
         System.out.println("newEntity = " + newEntity);
+        System.out.println("oldEntity = " + oldEntity);
 
         assertThat(newEntity, is(oldEntity));
     }
@@ -66,7 +64,7 @@ public class RecordEntityIT extends JpaBase {
         jpa(em -> {
             RecordEntity rec = RecordEntity.from(em, "work-of-x");
             assertThat(rec.persist, is(true)); // NEW
-            rec.setContent(new HashMap<>());
+            rec.setContent(new WorkInformation());
             rec.setCorepoWorkId("any");
             rec.setModified(Timestamp.from(Instant.now()));
             rec.save();
