@@ -66,4 +66,15 @@ public class WorkInformation implements Serializable {
                 ", manifestationInformationList=" + manifestationInformationList +
                 '}';
     }
+
+    /**
+     * We do not want to expose the unit information in the service, so this method should
+     * be called before sending WorkInformation objects as responses in a service.
+     * @param workInformation
+     * @return the input object, but with the unit information set to null.
+     */
+    public static WorkInformation prepareResponse(WorkInformation workInformation) {
+        workInformation.dbUnitInformation = null;
+        return workInformation;
+    }
 }
