@@ -20,13 +20,10 @@ package dk.dbc.search.work.presentation.api.jpa;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dk.dbc.search.work.presentation.api.jpa.pojo.WorkInformation;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.io.Serializable;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import org.postgresql.util.PGobject;
+
 import javax.persistence.AttributeConverter;
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -37,7 +34,10 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
-import org.postgresql.util.PGobject;
+import java.io.Serializable;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Objects;
 
 /**
  *
@@ -64,7 +64,7 @@ public class RecordEntity implements Serializable {
 
     @Column(nullable = false)
     @Convert(converter = RecordEntity.JsonConverter.class)
-    private HashMap<String, String> content;
+    private WorkInformation content;
 
     @Transient
     transient boolean persist;
@@ -86,7 +86,7 @@ public class RecordEntity implements Serializable {
     }
 
     @SuppressFBWarnings("EI_EXPOSE_REP2")
-    public RecordEntity(String persistentWorkId, String corepoWorkId, Timestamp modified, HashMap<String, String> content) {
+    public RecordEntity(String persistentWorkId, String corepoWorkId, Timestamp modified, WorkInformation content) {
         this.persistentWorkId = persistentWorkId;
         this.corepoWorkId = corepoWorkId;
         this.modified = modified;
@@ -142,11 +142,11 @@ public class RecordEntity implements Serializable {
         this.modified = modified;
     }
 
-    public HashMap<String, String> getContent() {
+    public WorkInformation getContent() {
         return content;
     }
 
-    public void setContent(HashMap<String, String> content) {
+    public void setContent(WorkInformation content) {
         this.content = content;
     }
 
@@ -180,40 +180,37 @@ public class RecordEntity implements Serializable {
         return "RecordEntity{" + "persistentWorkId=" + persistentWorkId + ", corepoWorkId=" + corepoWorkId + ", modified=" + modified + ", content=" + content + ", version=" + version + '}';
     }
 
-    // CPD-OFF
-    // REMOVE ^ WHEN CORRECT TYPE IS MAPPED
     @Converter
-    public static class JsonConverter implements AttributeConverter<HashMap<String, String>, PGobject> {
-
+    public static class JsonConverter implements AttributeConverter<WorkInformation, PGobject> {
         private static final ObjectMapper O = new ObjectMapper();
 
         @Override
-        public PGobject convertToDatabaseColumn(HashMap<String, String> content) throws IllegalStateException {
+        public PGobject convertToDatabaseColumn(WorkInformation workInformation)  throws IllegalStateException {
             try {
-                final PGobject pgObject = new PGobject();
-                pgObject.setType("jsonb");
-                if (content == null) {
-                    pgObject.setValue(null);
+                final PGobject res = new PGobject();
+                res.setType("jsonb");
+                if (workInformation == null) {
+                    res.setValue(null);
                 } else {
-                    pgObject.setValue(O.writeValueAsString(content));
+                    res.setValue(O.writeValueAsString(workInformation));
                 }
-                return pgObject;
-            } catch (SQLException | JsonProcessingException ex) {
-                throw new IllegalStateException(ex);
+                return res;
+            } catch (SQLException | JsonProcessingException e) {
+                throw new IllegalStateException(e);
             }
         }
 
         @Override
-        public HashMap<String, String> convertToEntityAttribute(PGobject pgObject) {
-            if (pgObject == null)
+        public WorkInformation convertToEntityAttribute(PGobject pgObject) {
+            if (pgObject == null) {
                 return null;
+            }
             try {
-                return new HashMap<>(O.readValue(pgObject.getValue(), Map.class));
+                return O.readValue(pgObject.getValue(), WorkInformation.class);
             } catch (JsonProcessingException ex) {
                 throw new IllegalStateException(ex);
             }
         }
     }
-    // CPD-ON
 
 }
