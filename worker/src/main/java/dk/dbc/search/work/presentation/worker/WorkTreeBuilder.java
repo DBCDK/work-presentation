@@ -77,7 +77,9 @@ public class WorkTreeBuilder {
                 for (IRepositoryIdentifier record : records) {
                     // TODO getDatastreams includeds stream content. Add a metadata method that only has metadata?
                     RepositoryStream[] datastreams = dao.getDatastreams(record);
+                    log.debug("{} - {} - {} Found streams {}", workPid, unit, record, datastreams);
                     for (RepositoryStream datastream : datastreams) {
+                        log.trace("{} - {} - {} - {}, ", workPid, unit, record, datastream );
                         // Process meta data
                     }
                 }
