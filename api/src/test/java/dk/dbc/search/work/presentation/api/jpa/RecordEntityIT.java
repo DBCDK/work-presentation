@@ -18,11 +18,16 @@
  */
 package dk.dbc.search.work.presentation.api.jpa;
 
+import dk.dbc.search.work.presentation.api.jpa.pojo.ManifestationInformation;
 import dk.dbc.search.work.presentation.api.jpa.pojo.WorkInformation;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,7 +45,24 @@ public class RecordEntityIT extends JpaBase {
     public void testSaveLoad() throws Exception {
         System.out.println("testSaveLoad");
 
-        RecordEntity oldEntity = new RecordEntity("a", "b", Timestamp.from(Instant.now()), new WorkInformation("a") );
+        ManifestationInformation mi = new ManifestationInformation();
+        mi.manifestationId = "c";
+        mi.title = "mTitle";
+        mi.materialType = "book";
+        List<ManifestationInformation> ml = Arrays.asList(mi);
+
+        WorkInformation wi = new WorkInformation();
+        wi.workId = "a";
+        wi.title = "title";
+        wi.creator = "hans andersen";
+        wi.subject = "emne";
+        wi.description = "beskrivelse";
+        wi.manifestationInformationList = ml;
+        Map<String, List<ManifestationInformation>> unitInfo = new HashMap<String, List<ManifestationInformation>>();
+        unitInfo.put("unitId", ml);
+        wi.dbUnitInformation = unitInfo;
+
+        RecordEntity oldEntity = new RecordEntity("a", "b", Timestamp.from(Instant.now()), wi );
 
         jpa(em -> {
             em.persist(oldEntity);
