@@ -24,6 +24,8 @@ import dk.dbc.opensearch.commons.repository.IRepositoryIdentifier;
 import dk.dbc.opensearch.commons.repository.ISysRelationsStream;
 import dk.dbc.opensearch.commons.repository.RepositoryException;
 import dk.dbc.opensearch.commons.repository.RepositoryStream;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.sql.DataSource;
@@ -43,7 +45,18 @@ public class WorkTreeBuilder {
     @Resource(lookup = "jdbc/corepo")
     DataSource dataSource;
 
-    private CORepoProviderEE daoProvider = new CORepoProviderEE("corepo");
+    private CORepoProviderEE daoProvider;
+
+    @PostConstruct
+    public void init() {
+        daoProvider = new CORepoProviderEE("corepo");
+    }
+
+    @PreDestroy
+    public void destroy() {
+        daoProvider.shutdown();
+    }
+
 
     /**
      * Process a work object and extract structure for units and records
@@ -75,7 +88,6 @@ public class WorkTreeBuilder {
                 IRepositoryIdentifier[] records = unitRelations.getMembersOfUnit();
                 log.debug("{} - {} Found primaryUnit {} and members {}", workPid, unit, primaryRecord, records);
                 for (IRepositoryIdentifier record : records) {
-                    // TODO getDatastreams includeds stream content. Add a metadata method that only has metadata?
                     RepositoryStream[] datastreams = dao.getDatastreams(record);
                     log.debug("{} - {} - {} Found streams {}", workPid, unit, record, datastreams);
                     for (RepositoryStream datastream : datastreams) {

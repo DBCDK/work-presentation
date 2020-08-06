@@ -62,29 +62,32 @@ public class WorkTreeBuilderIT extends JpaBaseWithCorepo {
     }
 
 
-//    @Test
-//    public void notAWork() throws Exception {
-//        BeanFactory beanFactory = new BeanFactory(null, dataSource, corepoDataSource);
-//        WorkTreeBuilder builder = beanFactory.getWorkTreeBuilder();
-//
-//        Assertions.assertThrows(RepositoryException.class, () -> {
-//            builder.process(dataSource, "unit:1");
-//        });
-//        log.info("Done");
-//    }
+    @Test
+    public void notAWork() throws Exception {
+        BeanFactory beanFactory = new BeanFactory(null, dataSource, corepoDataSource);
+        WorkTreeBuilder builder = beanFactory.getWorkTreeBuilder();
+        builder.init();
+
+        Assertions.assertThrows(RepositoryException.class, () -> {
+            builder.process(dataSource, "unit:1");
+        });
+        builder.destroy();
+        log.info("Done");
+    }
 
     @Test
     public void isWork() throws Exception {
         BeanFactory beanFactory = new BeanFactory(null, dataSource, corepoDataSource);
         WorkTreeBuilder builder = beanFactory.getWorkTreeBuilder();
+        builder.init();
 
         IRepositoryIdentifier work = dao.createWorkIdentifier();
         dao.createObjectWithData(work, IRepositoryDAO.State.ACTIVE, "", new RepositoryStream[]{});
-//        log.info("Work {}", work);
-//        Assertions.assertThrows(RepositoryException.class, () -> {
-//            builder.process(dataSource, "work:1");
-//        });
-
+        log.info("Work {}", work);
+        Assertions.assertThrows(RepositoryException.class, () -> {
+            builder.process(dataSource, "work:1");
+        });
+        builder.destroy();
         log.info("Done");
     }
 }
