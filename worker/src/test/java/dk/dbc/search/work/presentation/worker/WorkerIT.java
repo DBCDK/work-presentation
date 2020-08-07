@@ -18,7 +18,11 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  *
@@ -28,16 +32,53 @@ public class WorkerIT extends JpaBaseWithCorepo {
 
     @Test
     public void testWork() throws Exception {
+        AtomicInteger counter = new AtomicInteger();
 
         jpa(em -> {
-            BeanFactory beanFactory = new BeanFactory(em, dataSource, corepoDataSource);
+            BeanFactory beanFactory = new BeanFactory(em, dataSource, corepoDataSource, "QUEUE_DEDUPLICATE=true");
+            beanFactory.setPresentationObjectBuilder(new PresentationObjectBuilder() {
+                @Override
+                public void process(String pid) {
+                    counter.incrementAndGet();
+                }
+            });
             Worker worker = beanFactory.getWorker();
+            queue("work:1", "work:2",
+                  "work:1", "work:2",
+                  "work:1", "work:2",
+                  "work:1", "work:2",
+                  "work:1", "work:2");
             worker.init();
-            queue("work:1", "work:2");
             waitForQueue(10);
             worker.destroy();
         });
 
+        assertThat(counter.get(), is(2));
+
+    }
+
+    @Test
+    public void testWorkNoDedup() throws Exception {
+        AtomicInteger counter = new AtomicInteger();
+        jpa(em -> {
+            BeanFactory beanFactory = new BeanFactory(em, dataSource, corepoDataSource, "QUEUE_DEDUPLICATE=false");
+            beanFactory.setPresentationObjectBuilder(new PresentationObjectBuilder() {
+                @Override
+                public void process(String pid) {
+                    counter.incrementAndGet();
+                }
+            });
+            Worker worker = beanFactory.getWorker();
+            queue("work:1", "work:2",
+                  "work:1", "work:2",
+                  "work:1", "work:2",
+                  "work:1", "work:2",
+                  "work:1", "work:2");
+            worker.init();
+            waitForQueue(10);
+            worker.destroy();
+        });
+        assertThat(counter.get(), is(10));
     }
 
 }

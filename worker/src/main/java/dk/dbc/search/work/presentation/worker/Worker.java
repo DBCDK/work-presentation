@@ -64,7 +64,7 @@ public class Worker implements HealthCheck {
     Config config;
 
     @Inject
-    PresentationObjectBuilder builder;
+    PresentationObjectBuilder presentationObjectBuilder;
 
     @Inject
     MetricRegistry metrics;
@@ -76,7 +76,7 @@ public class Worker implements HealthCheck {
         log.info("Staring worker");
 
         worker = QueueWorker.builder(QueueJob.STORAGE_ABSTRACTION)
-                .skipDuplicateJobs(QueueJob.DEDUPLICATE_ABSTRACTION)
+                .skipDuplicateJobs(config.hasQueueDeduplicate() ? QueueJob.DEDUPLICATE_ABSTRACTION : null)
                 .consume(config.getQueues())
                 .dataSource(dataSource)
                 .fromEnvWithDefaults()
@@ -95,7 +95,7 @@ public class Worker implements HealthCheck {
         try (LogWith logWith = LogWith.track(job.getTrackingId())
                 .pid(job.getPid());) {
 
-            builder.process(job.getPid());
+            presentationObjectBuilder.process(job.getPid());
         } catch (RuntimeException ex) {
             throw ex;
         } catch (Exception ex) {

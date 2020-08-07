@@ -49,6 +49,7 @@ public class Config {
 
     private Client httpClient;
     private String[] queues;
+    private boolean queueDeduplicate;
     private int threads;
 
     public Config() {
@@ -65,6 +66,7 @@ public class Config {
         this.queues = Arrays.stream(getOrFail("QUEUES").split("[\\s,]+"))
                 .filter(s -> !s.isEmpty())
                 .toArray(String[]::new);
+        this.queueDeduplicate = Boolean.parseBoolean(getOrDefault("QUEUE_DEDUPLICATE", "true"));
         this.threads = Integer.max(1, Integer.parseInt(getOrDefault("THREADS", "5")));
         String userAgent = getOrDefault("USER_AGENT", "WorkPresentationWorker/1.0");
         log.debug("Using: {} as HttpUserAgent", userAgent);
@@ -82,6 +84,10 @@ public class Config {
     @SuppressFBWarnings("EI_EXPOSE_REP")
     public String[] getQueues() {
         return queues;
+    }
+
+    public boolean hasQueueDeduplicate() {
+        return queueDeduplicate;
     }
 
     public int getThreads() {

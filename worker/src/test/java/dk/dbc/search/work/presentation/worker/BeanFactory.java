@@ -39,7 +39,7 @@ public class BeanFactory {
     private final DataSource wpDataSource;
     private final DataSource coDataSource;
     private final Config config;
-    private final Bean<PresentationObjectBuilder> builder = new Bean<>(this::makeBuilder);
+    private final Bean<PresentationObjectBuilder> presentationObjectBuilder = new Bean<>(this::makePresentationObjectBuilder);
     private final Bean<Worker> worker = new Bean<>(this::makeWorker);
 
     public BeanFactory(EntityManager em, DataSource wpDataSource, DataSource coDataSource, String... envs) {
@@ -53,7 +53,8 @@ public class BeanFactory {
         Map<String, String> env = new HashMap<>();
         env.putAll(config("SYSTEM_NAME=test",
                           "THREADS=1",
-                          "QUEUES=queue")); // Default settings
+                          "QUEUES=queue",
+                          "QUEUE_DEDUPLICATION=true")); // Default settings
         env.putAll(config(envs));
         Config config = new Config(env) {
             @Override
@@ -71,13 +72,20 @@ public class BeanFactory {
                 .collect(Collectors.toMap(a -> a[0], a -> a[1]));
     }
 
-    public PresentationObjectBuilder getBuilder() {
-        return builder.get();
+    public PresentationObjectBuilder getPresentationObjectBuilder() {
+        return presentationObjectBuilder.get();
     }
 
-    private PresentationObjectBuilder makeBuilder() {
-        PresentationObjectBuilder builderBean = new PresentationObjectBuilder();
-        return builderBean;
+    public void setPresentationObjectBuilder(PresentationObjectBuilder pob) {
+        presentationObjectBuilder.set(preparePresentationObjectBuilder(pob));
+    }
+
+    private PresentationObjectBuilder makePresentationObjectBuilder() {
+        return preparePresentationObjectBuilder(new PresentationObjectBuilder());
+    }
+
+    private PresentationObjectBuilder preparePresentationObjectBuilder(PresentationObjectBuilder pob) {
+        return pob;
     }
 
     public Worker getWorker() {
@@ -90,7 +98,7 @@ public class BeanFactory {
         workerBean.executor = Executors.newCachedThreadPool();
         workerBean.dataSource = coDataSource;
         workerBean.metrics = null;
-        workerBean.builder = builder.get();
+        workerBean.presentationObjectBuilder = presentationObjectBuilder.get();
         return workerBean;
     }
 
@@ -108,6 +116,10 @@ public class BeanFactory {
             if (that == null)
                 that = supplier.get();
             return that;
+        }
+
+        private void set(T t) {
+            that = t;
         }
     }
 }
