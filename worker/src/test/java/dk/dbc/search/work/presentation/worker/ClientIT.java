@@ -20,10 +20,12 @@ package dk.dbc.search.work.presentation.worker;
 
 import java.io.InputStream;
 import java.net.URI;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import org.junit.jupiter.api.Test;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -31,7 +33,9 @@ import org.junit.jupiter.api.Test;
  */
 public class ClientIT {
 
-// PROF OF CONCEPT - when deleting remember to delete testdata
+    private static final Logger log = LoggerFactory.getLogger(ClientIT.class);
+
+    // PROF OF CONCEPT - when deleting remember to delete testdata
     @Test
     public void testClient() throws Exception {
 
@@ -39,14 +43,20 @@ public class ClientIT {
         Config config = bf.getConfig();
 
         Client client = config.getHttpClient();
+        String pid = "870970-basis:25912233";
+        String stream = "RELS-SYS";
 
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{pid}/datastreams/{stream}/content")
-                .build("870970-basis:25912233", "RELS-SYS");
+                .build(pid, stream);
 
         try (InputStream is = client.target(uri)
                 .request(MediaType.APPLICATION_XML_TYPE)
                 .get(InputStream.class)) {
+            // Do something with "is" - like parse it or whatever
+        } catch (WebApplicationException ex) {
+            log.error("Error getting datastream {}/{}: {}", pid, stream, ex.getMessage());
+            log.debug("Error getting datastream {}/{}: ", pid, stream, ex);
         }
     }
 }
