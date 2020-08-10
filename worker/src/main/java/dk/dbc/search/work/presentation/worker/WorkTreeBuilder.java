@@ -24,13 +24,20 @@ import dk.dbc.opensearch.commons.repository.IRepositoryIdentifier;
 import dk.dbc.opensearch.commons.repository.ISysRelationsStream;
 import dk.dbc.opensearch.commons.repository.RepositoryException;
 import dk.dbc.opensearch.commons.repository.RepositoryStream;
+import dk.dbc.opensearch.commons.repository.Repositorydentifier;
+import dk.dbc.opensearch.commons.repository.SysRelationStreamApi;
+import java.io.IOException;
+import java.util.logging.Level;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.sql.DataSource;
+import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 /**
  * Extract the structure of the work/units/records for a CORepo work
@@ -42,21 +49,10 @@ public class WorkTreeBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(WorkTreeBuilder.class);
 
-    @Resource(lookup = "jdbc/corepo")
-    DataSource dataSource;
+    public static final String RELS_SYS_STREAM = "RELS-SYS";
 
-    private CORepoProviderEE daoProvider;
-
-    @PostConstruct
-    public void init() {
-        daoProvider = new CORepoProviderEE("corepo");
-    }
-
-    @PreDestroy
-    public void destroy() {
-        daoProvider.shutdown();
-    }
-
+    @Inject
+    ContentService contentService;
 
     /**
      * Process a work object and extract structure for units and records
@@ -66,29 +62,30 @@ public class WorkTreeBuilder {
      */
     public void process(DataSource corpeoSource, String pidStr) throws RepositoryException {
         log.trace("Entering WorkTreeBuilder.process");
-        try(IRepositoryDAO dao = daoProvider.getRepository(dataSource)) {
-
-            IRepositoryIdentifier workPid = dao.createIdentifier(pidStr);
-
+        try {
+            log.info("Processing work: {}", pidStr);
+            
+            // Process members of work
+            IRepositoryIdentifier workPid = new Repositorydentifier(pidStr);
             if (workPid.getObjectType() != IRepositoryIdentifier.ObjectType.WORK) {
                 throw new RepositoryException("Not a work: " + workPid);
             }
-            IRepositoryDAO.State state = dao.getObjectState(workPid);
-            log.info("Processing work: {}, state {}", workPid, state);
-            // Process members of work
-            ISysRelationsStream workRelations = dao.getSysRelationsStream(workPid);
+
+            IRepositoryDAO.State state = contentService.getObjectState(workPid);
+
+            ISysRelationsStream workRelations = contentService.getRelations(workPid);
             IRepositoryIdentifier primaryUnit = workRelations.getPrimaryUnitForWork();
             IRepositoryIdentifier[] units = workRelations.getMembersOfWork();
             log.debug("{} Found primaryUnit {} and members {}", workPid, primaryUnit, units);
 
             for (IRepositoryIdentifier unit : units) {
                 // Process members of unit
-                ISysRelationsStream unitRelations = dao.getSysRelationsStream(unit);
+                ISysRelationsStream unitRelations = contentService.getRelations(unit);
                 IRepositoryIdentifier primaryRecord = unitRelations.getPrimaryMemberOfUnit();
                 IRepositoryIdentifier[] records = unitRelations.getMembersOfUnit();
                 log.debug("{} - {} Found primaryUnit {} and members {}", workPid, unit, primaryRecord, records);
                 for (IRepositoryIdentifier record : records) {
-                    RepositoryStream[] datastreams = dao.getDatastreams(record);
+                    RepositoryStream[] datastreams = contentService.getDatastreamList(record);
                     log.debug("{} - {} - {} Found streams {}", workPid, unit, record, datastreams);
                     for (RepositoryStream datastream : datastreams) {
                         log.trace("{} - {} - {} - {}, ", workPid, unit, record, datastream );
@@ -96,6 +93,8 @@ public class WorkTreeBuilder {
                     }
                 }
             }
+        } catch (SAXException|ParserConfigurationException|IOException ex) {
+            log.error("Error extracting tree from repository", ex);
         } finally {
             log.trace("Leaving WorkTreeBuilder.process");
         }

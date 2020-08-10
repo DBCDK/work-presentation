@@ -131,18 +131,6 @@ public class BeanFactory {
     private WorkTreeBuilder makeWorkTreeBuilder() {
         @SuppressWarnings("UseInjectionInsteadOfInstantion")
         WorkTreeBuilder treeBean = new WorkTreeBuilder();
-        treeBean.dataSource = coDataSource;
-        return treeBean;
-    }
-
-    public WorkTreeBuilder getWorkTreeBuilder() {
-        return workTreeBuilder.get();
-    }
-
-    private WorkTreeBuilder makeWorkTreeBuilder() {
-        @SuppressWarnings("UseInjectionInsteadOfInstantion")
-        WorkTreeBuilder treeBean = new WorkTreeBuilder();
-        treeBean.dataSource = coDataSource;
         return treeBean;
     }
 }
