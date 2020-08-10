@@ -46,7 +46,9 @@ public class BeanFactory {
 
     private static Config makeConfig(String... envs) {
         Map<String, String> env = new HashMap<>();
-        env.putAll(config("SYSTEM_NAME=test")); // Default settings
+        env.putAll(config("COREPO_SOLR_URL=" + System.getenv("COREPO_SOLR_URL"),
+                          "VIP_CORE_URL=" + System.getenv("VIP_CORE_URL"),
+                          "SYSTEM_NAME=test")); // Default settings
         env.putAll(config(envs));
         Config config = new Config(env) {
             @Override
@@ -55,6 +57,10 @@ public class BeanFactory {
             }
         };
         config.init();
+        return config;
+    }
+
+    public Config getConfig() {
         return config;
     }
 
