@@ -11,6 +11,7 @@ import dk.dbc.opensearch.commons.repository.RepositoryStream;
 import dk.dbc.opensearch.commons.repository.SysRelationStreamApi;
 import static dk.dbc.search.work.presentation.worker.WorkTreeBuilder.RELS_SYS_STREAM;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,7 @@ public class ContentService {
     public SysRelationStreamApi getRelations(IRepositoryIdentifier pid) throws SAXException, ParserConfigurationException, IOException {
         log.trace("Entering ContentService.getRelations");
         String stream = getDatastreamContent(pid, RELS_SYS_STREAM);
-        SysRelationStreamApi api = new SysRelationStreamApi(pid, stream.getBytes());
+        SysRelationStreamApi api = new SysRelationStreamApi(pid, stream.getBytes(StandardCharsets.UTF_8));
         return api;
     }
 

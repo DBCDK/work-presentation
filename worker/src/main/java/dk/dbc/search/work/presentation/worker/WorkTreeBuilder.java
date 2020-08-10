@@ -18,19 +18,13 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
-import dk.dbc.corepo.access.ee.CORepoProviderEE;
 import dk.dbc.opensearch.commons.repository.IRepositoryDAO;
 import dk.dbc.opensearch.commons.repository.IRepositoryIdentifier;
 import dk.dbc.opensearch.commons.repository.ISysRelationsStream;
 import dk.dbc.opensearch.commons.repository.RepositoryException;
 import dk.dbc.opensearch.commons.repository.RepositoryStream;
 import dk.dbc.opensearch.commons.repository.Repositorydentifier;
-import dk.dbc.opensearch.commons.repository.SysRelationStreamApi;
 import java.io.IOException;
-import java.util.logging.Level;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.sql.DataSource;
@@ -72,6 +66,7 @@ public class WorkTreeBuilder {
             }
 
             IRepositoryDAO.State state = contentService.getObjectState(workPid);
+            log.debug("Work: {}, state {}", pidStr, state);
 
             ISysRelationsStream workRelations = contentService.getRelations(workPid);
             IRepositoryIdentifier primaryUnit = workRelations.getPrimaryUnitForWork();
