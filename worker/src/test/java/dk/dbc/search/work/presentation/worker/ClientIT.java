@@ -35,7 +35,7 @@ public class ClientIT {
 
     private static final Logger log = LoggerFactory.getLogger(ClientIT.class);
 
-    // PROF OF CONCEPT - when deleting remember to delete testdata
+    // PROOF OF CONCEPT - when deleting remember to delete testdata
     @Test
     public void testClient() throws Exception {
 
