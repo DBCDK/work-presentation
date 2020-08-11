@@ -31,6 +31,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
+import javax.ws.rs.core.UriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +48,7 @@ public class Config {
 
     private final Map<String, String> env;
 
+    private UriBuilder corepoContentService;
     private Client httpClient;
     private String[] queues;
     private boolean queueDeduplicate;
@@ -63,6 +65,7 @@ public class Config {
     @PostConstruct
     public void init() {
         log.info("Reading/verifying configuration");
+        this.corepoContentService = UriBuilder.fromPath(getOrFail("COREPO_CONTENT_SERVICE_URL"));
         this.queues = Arrays.stream(getOrFail("QUEUES").split("[\\s,]+"))
                 .filter(s -> !s.isEmpty())
                 .toArray(String[]::new);
@@ -75,6 +78,10 @@ public class Config {
                         context.getHeaders().putSingle("User-Agent", userAgent)
                 )
                 .build();
+    }
+
+    public UriBuilder getCorepoContentService() {
+        return corepoContentService.clone();
     }
 
     public Client getHttpClient() {

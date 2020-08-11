@@ -20,6 +20,7 @@ package dk.dbc.search.work.presentation.service;
 
 import java.util.Map;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJBException;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Startup;
@@ -28,6 +29,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
+import javax.ws.rs.core.UriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +46,7 @@ public class Config {
 
     private final Map<String, String> env;
     private Client httpClient;
+    private UriBuilder vipCore;
 
     public Config() {
         this(System.getenv());
@@ -63,18 +66,24 @@ public class Config {
                         context.getHeaders().putSingle("User-Agent", userAgent)
                 )
                 .build();
+        this.vipCore = UriBuilder.fromPath(getOrFail("VIP_CORE_URL"));
     }
 
     public Client getHttpClient() {
         return httpClient;
     }
 
-//    private String getOrFail(String var) {
-//        String value = env.get(var);
-//        if (value == null)
-//            throw new EJBException("Missing required configuration: " + var);
-//        return value;
-//    }
+    public UriBuilder getVipCore() {
+        return vipCore.clone();
+    }
+
+    private String getOrFail(String var) {
+        String value = env.get(var);
+        if (value == null)
+            throw new EJBException("Missing required configuration: " + var);
+        return value;
+    }
+
     private String getOrDefault(String var, String defaultValue) {
         return env.getOrDefault(var, defaultValue);
     }
