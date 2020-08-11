@@ -52,7 +52,8 @@ public class BeanFactory {
 
     private static Config makeConfig(String... envs) {
         Map<String, String> env = new HashMap<>();
-        env.putAll(config("SYSTEM_NAME=test",
+        env.putAll(config("COREPO_CONTENT_SERVICE_URL=" + System.getenv("COREPO_CONTENT_SERVICE_URL"),
+                          "SYSTEM_NAME=test",
                           "THREADS=1",
                           "QUEUES=queue",
                           "QUEUE_DEDUPLICATION=true")); // Default settings
@@ -71,6 +72,10 @@ public class BeanFactory {
         return Arrays.stream(envs)
                 .map(s -> s.split("=", 2))
                 .collect(Collectors.toMap(a -> a[0], a -> a[1]));
+    }
+
+    Config getConfig() {
+        return config;
     }
 
     public PresentationObjectBuilder getPresentationObjectBuilder() {

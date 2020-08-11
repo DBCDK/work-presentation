@@ -49,7 +49,7 @@ public class WorkTreeBuilderIT extends JpaBaseWithCorepo {
 
     @Test
     public void notAWork() throws Exception {
-        BeanFactory beanFactory = new BeanFactory(null, dataSource, corepoDataSource);
+        BeanFactory beanFactory = new BeanFactory(null, dataSource, null);
         WorkTreeBuilder builder = beanFactory.getWorkTreeBuilder();
 
         builder.contentService = new ContentService();
@@ -62,7 +62,7 @@ public class WorkTreeBuilderIT extends JpaBaseWithCorepo {
 
     @Test
     public void isWorkDeleted() throws Exception {
-        BeanFactory beanFactory = new BeanFactory(null, dataSource, corepoDataSource);
+        BeanFactory beanFactory = new BeanFactory(null, dataSource, null);
         WorkTreeBuilder builder = beanFactory.getWorkTreeBuilder();
 
         // Mock a deleted work
@@ -80,7 +80,7 @@ public class WorkTreeBuilderIT extends JpaBaseWithCorepo {
     @Test
     @Disabled
     public void isWorkWithOneRecord() throws Exception {
-        BeanFactory beanFactory = new BeanFactory(null, dataSource, corepoDataSource);
+        BeanFactory beanFactory = new BeanFactory(null, dataSource, null);
         WorkTreeBuilder builder = beanFactory.getWorkTreeBuilder();
         String work = "work:1";
         IRepositoryIdentifier workPid = new Repositorydentifier(work);
