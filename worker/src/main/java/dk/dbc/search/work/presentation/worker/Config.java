@@ -65,6 +65,7 @@ public class Config {
     @PostConstruct
     public void init() {
         log.info("Reading/verifying configuration");
+        this.corepoContentService = UriBuilder.fromPath(getOrFail("COREPO_CONTENT_SERVICE_URL"));
         this.queues = Arrays.stream(getOrFail("QUEUES").split("[\\s,]+"))
                 .filter(s -> !s.isEmpty())
                 .toArray(String[]::new);
@@ -78,6 +79,10 @@ public class Config {
                 )
                 .build();
         this.corepoContentService = UriBuilder.fromPath(getOrFail("COREPO_CONTENT_SERVICE_URL"));
+    }
+
+    public UriBuilder getCorepoContentService() {
+        return corepoContentService.clone();
     }
 
     public UriBuilder getCorepoContentService() {
