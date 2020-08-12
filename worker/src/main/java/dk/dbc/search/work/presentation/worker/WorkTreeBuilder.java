@@ -43,8 +43,6 @@ public class WorkTreeBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(WorkTreeBuilder.class);
 
-    public static final String RELS_SYS_STREAM = "RELS-SYS";
-
     @Inject
     ContentService contentService;
 

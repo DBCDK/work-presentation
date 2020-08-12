@@ -85,10 +85,6 @@ public class Config {
         return corepoContentService.clone();
     }
 
-    public UriBuilder getCorepoContentService() {
-        return corepoContentService.clone();
-    }
-
     public Client getHttpClient() {
         return httpClient;
     }

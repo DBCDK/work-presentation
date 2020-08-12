@@ -25,6 +25,7 @@ import dk.dbc.opensearch.commons.repository.RepositoryException;
 import dk.dbc.opensearch.commons.repository.RepositoryProvider;
 import dk.dbc.opensearch.commons.repository.Repositorydentifier;
 import java.sql.SQLException;
+import javax.ws.rs.WebApplicationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -52,10 +53,19 @@ public class WorkTreeBuilderIT extends JpaBaseWithCorepo {
         BeanFactory beanFactory = new BeanFactory(null, dataSource, null);
         WorkTreeBuilder builder = beanFactory.getWorkTreeBuilder();
 
-        builder.contentService = new ContentService();
-
         Assertions.assertThrows(RepositoryException.class, () -> {
             builder.process(dataSource, "unit:1");
+        });
+        log.info("Done");
+    }
+
+    @Test
+    public void notExistsWork() throws Exception {
+        BeanFactory beanFactory = new BeanFactory(null, dataSource, null);
+        WorkTreeBuilder builder = beanFactory.getWorkTreeBuilder();
+
+        Assertions.assertThrows(WebApplicationException.class, () -> {
+            builder.process(dataSource, "work:3");
         });
         log.info("Done");
     }
@@ -65,30 +75,48 @@ public class WorkTreeBuilderIT extends JpaBaseWithCorepo {
         BeanFactory beanFactory = new BeanFactory(null, dataSource, null);
         WorkTreeBuilder builder = beanFactory.getWorkTreeBuilder();
 
-        // Mock a deleted work
-        builder.contentService = new ContentService() {
-            @Override
-            public IRepositoryDAO.State getObjectState(IRepositoryIdentifier workPid) {
-                return IRepositoryDAO.State.DELETED;
-            }
-        };
+        builder.process(dataSource, "work:1571079");
+        // TODO: find a work with state = DELETED. Output expected empty work with no units
 
-        builder.process(dataSource, "work:1");
         log.info("Done");
     }
 
     @Test
-    @Disabled
-    public void isWorkWithOneRecord() throws Exception {
+    public void isWorkWithSmallTree() throws Exception {
+        // http://corepo-introspect-service.cisterne.svc.cloud.dbc.dk/?tab=Tree%20Views&tree=work:19
         BeanFactory beanFactory = new BeanFactory(null, dataSource, null);
         WorkTreeBuilder builder = beanFactory.getWorkTreeBuilder();
-        String work = "work:1";
-        IRepositoryIdentifier workPid = new Repositorydentifier(work);
-
-        // Mock a work with units, records and streams
+        String work = "work:19";
 
         builder.process(dataSource, work);
 
         log.info("Done");
+
     }
+//    @Test
+//    public void isWorkWithMediumTree() throws Exception {
+//        // http://corepo-introspect-service.cisterne.svc.cloud.dbc.dk/?tab=Tree%20Views&tree=work:62
+//        BeanFactory beanFactory = new BeanFactory(null, dataSource, null);
+//        WorkTreeBuilder builder = beanFactory.getWorkTreeBuilder();
+//        String work = "work:62";
+//
+//        builder.process(dataSource, work);
+//
+//        log.info("Done");
+//
+//    }
+//    @Test
+//    public void isWorkWithLargeTree() throws Exception {
+//        // "lykke-per" http://corepo-introspect-service.cisterne.svc.cloud.dbc.dk/?tab=Tree%20Views&tree=work:15
+//        BeanFactory beanFactory = new BeanFactory(null, dataSource, null);
+//        WorkTreeBuilder builder = beanFactory.getWorkTreeBuilder();
+//        String work = "work:15";
+//
+//        builder.process(dataSource, work);
+//
+//        log.info("Done");
+//
+//    }
+
+
 }
