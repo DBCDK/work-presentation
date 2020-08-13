@@ -20,7 +20,7 @@ package dk.dbc.search.work.presentation.api.jpa;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dk.dbc.search.work.presentation.api.jpa.pojo.WorkInformation;
+import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.postgresql.util.PGobject;
 

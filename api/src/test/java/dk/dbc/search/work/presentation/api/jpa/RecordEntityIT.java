@@ -18,8 +18,8 @@
  */
 package dk.dbc.search.work.presentation.api.jpa;
 
-import dk.dbc.search.work.presentation.api.jpa.pojo.ManifestationInformation;
-import dk.dbc.search.work.presentation.api.jpa.pojo.WorkInformation;
+import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
+import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Timestamp;

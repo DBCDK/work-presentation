@@ -19,11 +19,15 @@
 package dk.dbc.search.work.presentation.api.jpa;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
@@ -34,6 +38,10 @@ import javax.persistence.Version;
  */
 @Entity
 @Table(name = "workContains")
+@NamedQuery(
+        name = "allWithCorepoWorkId",
+        query = "SELECT w FROM WorkContainsEntity w WHERE w.corepoWorkId = :corepoWorkId"
+)
 public class WorkContainsEntity implements Serializable {
 
     private static final long serialVersionUID = 0x1d74b2313c990594L;
@@ -61,12 +69,52 @@ public class WorkContainsEntity implements Serializable {
     transient EntityManager em;
 
     public static WorkContainsEntity from(EntityManager em, String corepoWorkId, String manifestationId) {
-        WorkContainsEntity entity = em.find(WorkContainsEntity.class, em, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+        WorkContainsEntity entity = em.find(WorkContainsEntity.class,
+                                            new WorkContainsKey(corepoWorkId, manifestationId),
+                                            LockModeType.OPTIMISTIC_FORCE_INCREMENT);
         if (entity == null) {
             entity = new WorkContainsEntity(corepoWorkId, manifestationId);
         }
         entity.em = em;
         return entity;
+    }
+
+    /**
+     * Produce all WorkContainsEntities that have a given corepoWorkId
+     *
+     * @param em           EntityManager that fetches WorkContainsEntities
+     * @param corepoWorkId The common work id for all the records
+     * @return a list of WorkContainsEntity
+     */
+    public static List<WorkContainsEntity> listFrom(EntityManager em, String corepoWorkId) {
+        List<WorkContainsEntity> works = em.createNamedQuery("allWithCorepoWorkId", WorkContainsEntity.class)
+                .setParameter("corepoWorkId", corepoWorkId)
+                .getResultList();
+        works.forEach(w -> {
+            w.em = em;
+            w.persist = false;
+        });
+        return works;
+    }
+
+    /**
+     * Ensure that the database only contains the entries from the is after
+     * commit
+     *
+     * @param em           EntityManager that stores WorkContainsEntities
+     * @param corepoWorkId The common work id for all the records, required if
+     *                     works is an empty list
+     * @param works        The elements that comprises this work
+     */
+    public static void updateToList(EntityManager em, String corepoWorkId, Collection<WorkContainsEntity> works) {
+        HashSet<WorkContainsEntity> existing = new HashSet<>(listFrom(em, corepoWorkId));
+        works.forEach(w -> {
+            existing.remove(w);
+            w.save();
+        });
+        existing.forEach(w -> {
+            w.delete();
+        });
     }
 
     protected WorkContainsEntity() {
