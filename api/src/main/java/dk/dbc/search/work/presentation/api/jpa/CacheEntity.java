@@ -130,6 +130,10 @@ public class CacheEntity implements Serializable {
         persist = true;
     }
 
+    public void detach() {
+        em.detach(this);
+    }
+    
     @Converter
     public static class JsonConverter implements AttributeConverter<HashMap<String, String>, PGobject> {
 
