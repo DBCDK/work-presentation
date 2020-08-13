@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
-import java.util.function.Supplier;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
@@ -39,10 +39,8 @@ public class BeanFactory {
     private final DataSource wpDataSource;
     private final DataSource coDataSource;
     private final Config config;
-    private final Bean<PresentationObjectBuilder> presentationObjectBuilder = new Bean<>(this::makePresentationObjectBuilder);
-    private final Bean<Worker> worker = new Bean<>(this::makeWorker);
-    private final Bean<WorkTreeBuilder> workTreeBuilder = new Bean<>(this::makeWorkTreeBuilder);
-    private final Bean<ContentService> contentService = new Bean<>(this::makeContentService);
+    private final Bean<PresentationObjectBuilder> presentationObjectBuilder = new Bean<>(new PresentationObjectBuilder(), this::setupPresentationObjectBuilder);
+    private final Bean<Worker> worker = new Bean<>(new Worker(), this::setupWorker);
 
     public BeanFactory(EntityManager em, DataSource wpDataSource, DataSource coDataSource, String... envs) {
         this.em = em;
@@ -79,54 +77,56 @@ public class BeanFactory {
         return config;
     }
 
+    public BeanFactory withPresentationObjectBuilder(PresentationObjectBuilder pob) {
+        presentationObjectBuilder.set(pob);
+        return this;
+    }
+
     public PresentationObjectBuilder getPresentationObjectBuilder() {
         return presentationObjectBuilder.get();
     }
 
-    public void setPresentationObjectBuilder(PresentationObjectBuilder pob) {
-        presentationObjectBuilder.set(preparePresentationObjectBuilder(pob));
-    }
-
-    private PresentationObjectBuilder makePresentationObjectBuilder() {
-        return preparePresentationObjectBuilder(new PresentationObjectBuilder());
-    }
-
-    private PresentationObjectBuilder preparePresentationObjectBuilder(PresentationObjectBuilder pob) {
-        return pob;
+    private void setupPresentationObjectBuilder(PresentationObjectBuilder pob) {
     }
 
     public Worker getWorker() {
         return worker.get();
     }
 
-    private Worker makeWorker() {
-        Worker workerBean = new Worker();
+    private void setupWorker(Worker workerBean) {
         workerBean.config = config;
         workerBean.executor = Executors.newCachedThreadPool();
         workerBean.dataSource = coDataSource;
         workerBean.metrics = null;
         workerBean.presentationObjectBuilder = presentationObjectBuilder.get();
-        return workerBean;
     }
 
     private static class Bean<T> {
 
-        private final Supplier<T> supplier;
+        private final Consumer<T> setup;
         private T that;
+        private boolean callSetup;
 
-        public Bean(Supplier<T> supplier) {
-            this.supplier = supplier;
-            this.that = null;
+        public Bean(T that, Consumer<T> setup) {
+            this.setup = setup;
+            this.that = that;
+            this.callSetup = true;
         }
 
         private T get() {
-            if (that == null)
-                that = supplier.get();
+            if (callSetup) {
+                // This needs to be set before .accept()
+                // If two classes has mutual injection, you'll end up with
+                // infinite loop and stack overflow
+                callSetup = false;
+                setup.accept(that);
+            }
             return that;
         }
 
         private void set(T t) {
             that = t;
+            callSetup = true;
         }
     }
 
