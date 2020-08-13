@@ -21,7 +21,7 @@ package dk.dbc.search.work.presentation.service;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
@@ -72,18 +72,30 @@ public class BeanFactory {
 
     private static class Bean<T> {
 
-        private final Supplier<T> supplier;
+        private final Consumer<T> setup;
         private T that;
+        private boolean callSetup;
 
-        public Bean(Supplier<T> supplier) {
-            this.supplier = supplier;
-            this.that = null;
+        public Bean(T that, Consumer<T> setup) {
+            this.setup = setup;
+            this.that = that;
+            this.callSetup = true;
         }
 
         private T get() {
-            if (that == null)
-                that = supplier.get();
+            if (callSetup) {
+                // This needs to be set before .accept()
+                // If two classes has mutual injection, you'll end up with
+                // infinite loop and stack overflow
+                callSetup = false;
+                setup.accept(that);
+            }
             return that;
+        }
+
+        private void set(T t) {
+            that = t;
+            callSetup = true;
         }
     }
 }
