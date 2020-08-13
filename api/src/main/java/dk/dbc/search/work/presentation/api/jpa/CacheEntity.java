@@ -77,15 +77,6 @@ public class CacheEntity implements Serializable {
         return entity;
     }
 
-    public static CacheEntity detachedFrom(EntityManager em, String manifestationId) {
-        CacheEntity entity = em.find(CacheEntity.class, em, LockModeType.NONE);
-        if (entity != null) {
-            em.detach(entity);
-            entity.em = null;
-        }
-        return entity;
-    }
-
     protected CacheEntity() {
         this.persist = false;
     }
@@ -140,6 +131,10 @@ public class CacheEntity implements Serializable {
         persist = true;
     }
 
+    public void detach() {
+        em.detach(this);
+    }
+    
     @Converter
     public static class JsonConverter implements AttributeConverter<ManifestationInformation, PGobject> {
 
