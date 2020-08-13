@@ -1,9 +1,10 @@
-package dk.dbc.search.work.presentation.api.jpa.pojo;
+package dk.dbc.search.work.presentation.api.pojo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 @SuppressFBWarnings("UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD")
@@ -15,6 +16,14 @@ public class ManifestationInformation implements Serializable {
 
     public String title;
 
+    public String fullTitle;
+
+    public String creator;
+
+    public String description;
+
+    public List<String> subject;
+
     @JsonProperty("type")
     public String materialType;
 
@@ -25,16 +34,28 @@ public class ManifestationInformation implements Serializable {
         ManifestationInformation that = (ManifestationInformation) o;
         return Objects.equals(manifestationId, that.manifestationId) &&
                 Objects.equals(title, that.title) &&
+                Objects.equals(fullTitle, that.fullTitle) &&
+                Objects.equals(creator, that.creator) &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(subject, that.subject) &&
                 Objects.equals(materialType, that.materialType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(manifestationId, title, materialType);
+        return Objects.hash(manifestationId, title, fullTitle, creator, description, subject, materialType);
     }
 
     @Override
     public String toString() {
-        return "ManifestationInformation{" + "manifestationId: " + manifestationId + ", title: " + title + ", materialType: " + materialType + "}";
+        return "ManifestationInformation{" +
+               "manifestationId='" + manifestationId + '\'' +
+               ", title='" + title + '\'' +
+               ", fullTitle='" + fullTitle + '\'' +
+               ", creator='" + creator + '\'' +
+               ", description='" + description + '\'' +
+               ", subject='" + subject + '\'' +
+               ", materialType='" + materialType + '\'' +
+               '}';
     }
 }
