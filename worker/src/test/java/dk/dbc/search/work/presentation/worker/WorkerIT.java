@@ -35,13 +35,14 @@ public class WorkerIT extends JpaBaseWithCorepo {
         AtomicInteger counter = new AtomicInteger();
 
         jpa(em -> {
-            BeanFactory beanFactory = new BeanFactory(em, dataSource, corepoDataSource, "QUEUE_DEDUPLICATE=true");
-            beanFactory.setPresentationObjectBuilder(new PresentationObjectBuilder() {
-                @Override
-                public void process(String pid) {
-                    counter.incrementAndGet();
-                }
-            });
+            BeanFactory beanFactory = new BeanFactory(em, dataSource, corepoDataSource,
+                                                      "QUEUE_DEDUPLICATE=true")
+                    .withPresentationObjectBuilder(new PresentationObjectBuilder() {
+                        @Override
+                        public void process(String pid) {
+                            counter.incrementAndGet();
+                        }
+                    });
             Worker worker = beanFactory.getWorker();
             queue("work:1", "work:2",
                   "work:1", "work:2",
@@ -61,13 +62,14 @@ public class WorkerIT extends JpaBaseWithCorepo {
     public void testWorkNoDedup() throws Exception {
         AtomicInteger counter = new AtomicInteger();
         jpa(em -> {
-            BeanFactory beanFactory = new BeanFactory(em, dataSource, corepoDataSource, "QUEUE_DEDUPLICATE=false");
-            beanFactory.setPresentationObjectBuilder(new PresentationObjectBuilder() {
-                @Override
-                public void process(String pid) {
-                    counter.incrementAndGet();
-                }
-            });
+            BeanFactory beanFactory = new BeanFactory(em, dataSource, corepoDataSource,
+                                                      "QUEUE_DEDUPLICATE=false")
+                    .withPresentationObjectBuilder(new PresentationObjectBuilder() {
+                        @Override
+                        public void process(String pid) {
+                            counter.incrementAndGet();
+                        }
+                    });
             Worker worker = beanFactory.getWorker();
             queue("work:1", "work:2",
                   "work:1", "work:2",
