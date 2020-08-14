@@ -1,0 +1,17 @@
+{
+  "id" : "87cd2cd5-a001-3fbe-8be0-e997cc4c445c",
+  "request" : {
+    "url" : "/corepo-content-service/rest/objects/870970-basis:22476319/datastreams/localData.739000-katalog",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-datastreams-localData.739000-katalog-yy1VU.xml",
+    "headers" : {
+      "Server" : "Payara Micro #badassfish",
+      "Content-Type" : "application/xml",
+      "X-Frame-Options" : "SAMEORIGIN"
+    }
+  },
+  "uuid" : "87cd2cd5-a001-3fbe-8be0-e997cc4c445c"
+}

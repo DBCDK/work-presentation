@@ -19,16 +19,12 @@
 package dk.dbc.search.work.presentation.worker;
 
 import dk.dbc.corepo.access.CORepoProvider;
-import dk.dbc.opensearch.commons.repository.IRepositoryDAO;
-import dk.dbc.opensearch.commons.repository.IRepositoryIdentifier;
 import dk.dbc.opensearch.commons.repository.RepositoryException;
 import dk.dbc.opensearch.commons.repository.RepositoryProvider;
-import dk.dbc.opensearch.commons.repository.Repositorydentifier;
 import java.sql.SQLException;
 import javax.ws.rs.WebApplicationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,9 +101,10 @@ public class WorkTreeBuilderIT extends JpaBaseWithCorepo {
 //        log.info("Done");
 //
 //    }
+//    // Skipped. Too large to mock (to many files)
 //    @Test
 //    public void isWorkWithLargeTree() throws Exception {
-//        // "lykke-per" http://corepo-introspect-service.cisterne.svc.cloud.dbc.dk/?tab=Tree%20Views&tree=work:15
+//        // "lykke-per": http://corepo-introspect-service.cisterne.svc.cloud.dbc.dk/?tab=Tree%20Views&tree=work:15
 //        BeanFactory beanFactory = new BeanFactory(null, dataSource, null);
 //        WorkTreeBuilder builder = beanFactory.getWorkTreeBuilder();
 //        String work = "work:15";

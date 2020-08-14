@@ -1,0 +1,18 @@
+{
+  "id" : "c3ae61df-f4e7-3bce-b5e8-9c16d3559ff2",
+  "request" : {
+    "url" : "/corepo-content-service/rest/objects/870970-basis:22476319/datastreams/localData.763000-katalog/content",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-localData.763000-katalog-content-UwbYC.xml",
+    "headers" : {
+      "Server" : "Payara Micro #badassfish",
+      "Content-Type" : "application/xml",
+      "Transfer-Encoding" : "chunked",
+      "X-Frame-Options" : "SAMEORIGIN"
+    }
+  },
+  "uuid" : "c3ae61df-f4e7-3bce-b5e8-9c16d3559ff2"
+}

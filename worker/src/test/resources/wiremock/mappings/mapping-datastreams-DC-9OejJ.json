@@ -1,0 +1,17 @@
+{
+  "id" : "a24932b8-0d1f-3221-b202-17fc1b4fa1b6",
+  "request" : {
+    "url" : "/corepo-content-service/rest/objects/870970-basis:22476319/datastreams/DC",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-datastreams-DC-9OejJ.xml",
+    "headers" : {
+      "Server" : "Payara Micro #badassfish",
+      "Content-Type" : "application/xml",
+      "X-Frame-Options" : "SAMEORIGIN"
+    }
+  },
+  "uuid" : "a24932b8-0d1f-3221-b202-17fc1b4fa1b6"
+}

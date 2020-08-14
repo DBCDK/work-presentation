@@ -18,7 +18,6 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
-import dk.dbc.opensearch.commons.repository.IRepositoryDAO;
 import dk.dbc.opensearch.commons.repository.IRepositoryIdentifier;
 import dk.dbc.opensearch.commons.repository.ISysRelationsStream;
 import dk.dbc.opensearch.commons.repository.RepositoryException;
@@ -50,7 +49,7 @@ public class WorkTreeBuilder {
      * Process a work object and extract structure for units and records
      * @param corpeoSource CORepo database
      * @param pidStr The identifier for the work object to process
-     * @throws RepositoryException In case database layer thrown an error or if called for an object that is not a work object
+     * @throws RepositoryException In case database layer thrown an error or if called for an object that is not a work object TODO: Use RepositoryException or a different exception
      */
     public void process(DataSource corpeoSource, String pidStr) throws RepositoryException {
         log.trace("Entering WorkTreeBuilder.process");
@@ -62,9 +61,8 @@ public class WorkTreeBuilder {
             if (workPid.getObjectType() != IRepositoryIdentifier.ObjectType.WORK) {
                 throw new RepositoryException("Not a work: " + workPid);
             }
-
-            IRepositoryDAO.State state = contentService.getObjectState(workPid);
-            log.debug("Work: {}, state {}", pidStr, state);
+            ContentService.MetaData workData = contentService.getObjectMetaData(workPid);
+            log.debug("Work: {}, state {}, modified {}", pidStr, workData.state, workData.modified);
 
             ISysRelationsStream workRelations = contentService.getRelations(workPid);
             IRepositoryIdentifier primaryUnit = workRelations.getPrimaryUnitForWork();
@@ -78,8 +76,9 @@ public class WorkTreeBuilder {
                 IRepositoryIdentifier[] records = unitRelations.getMembersOfUnit();
                 log.debug("{} - {} Found primaryUnit {} and members {}", workPid, unit, primaryRecord, records);
                 for (IRepositoryIdentifier record : records) {
-                    RepositoryStream[] datastreams = contentService.getDatastreamList(record);
-                    log.debug("{} - {} - {} Found streams {}", workPid, unit, record, datastreams);
+                    RepositoryStream[] datastreams = contentService.getDatastreams(record);
+                    log.debug("{} - {} - {} Found {} streams", workPid, unit, record, datastreams.length);
+                    log.trace("{} - {} - {} Found streams {}", workPid, unit, record, datastreams);
                     for (RepositoryStream datastream : datastreams) {
                         log.trace("{} - {} - {} - {}, ", workPid, unit, record, datastream );
                         // Process meta data
@@ -89,7 +88,7 @@ public class WorkTreeBuilder {
         } catch (SAXException|ParserConfigurationException|IOException ex) {
             log.error("Error extracting tree from repository", ex);
         } finally {
-            log.trace("Leaving WorkTreeBuilder.process");
+            log.trace("Leaving WorkTreeBuilder.process {}", pidStr);
         }
     }
 }

@@ -13,6 +13,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
@@ -40,56 +46,183 @@ public class ContentService {
 
     private static final String RELS_SYS_STREAM = "RELS-SYS";
 
+    // Date time is in "2018-11-24T23:58:36.175+01:00" format not in DateTimeFormatter.ISO_INSTANT
+    private final static DateTimeFormatter dataFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+
+    public static class MetaData {
+        public final String modified;
+        public final IRepositoryDAO.State state;
+
+        public MetaData(String modified, IRepositoryDAO.State state) {
+            this.modified = modified;
+            this.state = state;
+        }
+    }
+
     @Inject
     Config config;
 
     private final SAXParserFactory factory = SAXParserFactory.newInstance();
 
-    private static class ObjectStateHandler extends DefaultHandler {
+    private static class ObjectHandler extends DefaultHandler {
 
         private final static String STATE = "objState";
+        private final static String MODIFIED = "objLastModDate";
+
+        private final IRepositoryIdentifier pid;
 
         private IRepositoryDAO.State state;
+        private String modified;
 
-        private StringBuffer stateValue = new StringBuffer();
+        private final StringBuffer buffer = new StringBuffer();
 
         private boolean inState = false;
+        private boolean inModified = false;
+
+        private ObjectHandler(IRepositoryIdentifier pid) {
+            this.pid = pid;
+        }
 
         @Override
         public void startElement(String nsUri, String localName, String tagName, Attributes attribs) throws SAXException {
-            log.trace("startElement, tag {}", tagName);
+            log.trace("{} - startElement, tag {}", pid, tagName);
             if (tagName.equals(STATE)) {
-                log.trace("in state");
+                log.trace("{} - in state", pid);
                 inState = true;
+            }
+            if (tagName.equals(MODIFIED)) {
+                log.trace("{} - in modified", pid);
+                inModified = true;
             }
         }
 
         @Override
         public void endElement(String nsUri, String localName, String tagName) throws SAXException {
-            log.trace("endElement, tag {}", tagName);
+            log.trace("{} - endElement, tag {}", pid, tagName);
             if (tagName.equals(STATE)) {
-                log.trace("out os state");
+                log.trace("{} - out of state", pid);
                 inState = false;
-                if (stateValue.toString().equals("A")) {
+                if (buffer.toString().equals("A")) {
                     state = IRepositoryDAO.State.ACTIVE;
                 } else {
                     state = IRepositoryDAO.State.DELETED;
                 }
             }
+            if (tagName.equals(MODIFIED)) {
+                log.trace("{} - out of modified", pid);
+                inModified = false;
+                modified = buffer.toString();
+            }
         }
 
         @Override
         public void characters(char[] ch, int start, int length) throws SAXException {
-            if (inState) {
-                stateValue.append(ch, start, length);
-                log.trace("characters {}", stateValue);
+            if (inState || inModified) {
+                buffer.append(ch, start, length);
+                log.trace("{} - characters {}", pid, buffer);
             }
         }
     }
 
 
-    public IRepositoryDAO.State getObjectState(IRepositoryIdentifier pid) throws WebApplicationException, IOException {
-        log.trace("Entering ContentService.getObjectState({})", pid);
+    private static class StreamMetaHandler extends DefaultHandler {
+
+        private final static String STATE = "dsState";
+        private final static String MODIFIED = "dsCreateDate";
+
+        private final IRepositoryIdentifier pid;
+        private final String streamName;
+
+        private IRepositoryDAO.State state;
+        private String modified;
+
+        private final StringBuffer buffer = new StringBuffer();
+
+        private boolean inState = false;
+        private boolean inModified = false;
+
+        private StreamMetaHandler(IRepositoryIdentifier pid, String streamName) {
+            this.pid = pid;
+            this.streamName = streamName;
+        }
+
+        @Override
+        public void startElement(String nsUri, String localName, String tagName, Attributes attribs) throws SAXException {
+            log.trace("{} - startElement, tag {}", pid, tagName);
+            if (tagName.equals(STATE)) {
+                log.trace("{} - {} - in state", pid, streamName);
+                inState = true;
+            }
+            if (tagName.equals(MODIFIED)) {
+                log.trace("{} - {} - in modified", pid, streamName);
+                inModified = true;
+            }
+        }
+
+        @Override
+        public void endElement(String nsUri, String localName, String tagName) throws SAXException {
+            log.trace("{} - {} - endElement, tag {}", pid, streamName, tagName);
+            if (tagName.equals(STATE)) {
+                log.trace("{} - {} - out of state", pid, streamName);
+                inState = false;
+                if (buffer.toString().equals("A")) {
+                    state = IRepositoryDAO.State.ACTIVE;
+                } else {
+                    state = IRepositoryDAO.State.DELETED;
+                }
+            }
+            if (tagName.equals(MODIFIED)) {
+                log.trace("{} - {} - out of modified", pid, streamName);
+                inModified = false;
+                modified = buffer.toString();
+            }
+        }
+
+        @Override
+        public void characters(char[] ch, int start, int length) throws SAXException {
+            if (inState || inModified) {
+                buffer.append(ch, start, length);
+                log.trace("{} - {} - characters {}", pid, streamName, buffer);
+            }
+        }
+    }
+
+
+    private static class DatastreamsListHandler extends DefaultHandler {
+
+        private final static String DATASTREAM = "datastream";
+        private final static String DATASTREAM_ID = "dsid";
+
+        private final IRepositoryIdentifier pid;
+
+        private final List<String> streams = new ArrayList<>();
+        
+        private DatastreamsListHandler(IRepositoryIdentifier pid) {
+            this.pid = pid;
+        }
+
+        @Override
+        public void startElement(String nsUri, String localName, String tagName, Attributes attribs) throws SAXException {
+            log.trace("{} - startElement, tag {}, attributes {}", pid, tagName, attribs);
+            if (tagName.equals(DATASTREAM)) {
+                String id = attribs.getValue(DATASTREAM_ID);
+                log.debug("{} - list datastreams: {}", pid, id);
+                streams.add(id);
+            }
+        }
+        public String[] getStreamNames() {
+            return streams.toArray(new String[streams.size()]);
+        }
+    }
+
+    /**
+     * TODO: Three states: active, deleted and not-exists?
+     * @param pid
+     * @return State
+     * @throws WebApplicationException
+     */
+    public MetaData getObjectMetaData(IRepositoryIdentifier pid) throws WebApplicationException {
+        log.trace("Entering getObjectMetaData({})", pid);
 
         Client client = config.getHttpClient();
 
@@ -99,28 +232,72 @@ public class ContentService {
         
         Response response = client.target(uri).request(MediaType.APPLICATION_XML_TYPE).get();
 
+
+
         final Response.StatusType statusInfo = response.getStatusInfo();
-        log.debug("{} objectProfile status: {}", pid, statusInfo);
+        log.trace("{} - objectProfile status: {}", pid, statusInfo);
 
         if (statusInfo.equals(Response.Status.OK)) {
             try (InputStream is =  response.readEntity(InputStream.class)) {
                 SAXParser parser = factory.newSAXParser();
                 XMLReader xmlReader = parser.getXMLReader();
-                ObjectStateHandler handler = new ObjectStateHandler();
+                ObjectHandler handler = new ObjectHandler(pid);
                 xmlReader.setContentHandler(handler);
                 xmlReader.parse( new InputSource( is ) );
-                return handler.state;
-            } catch (SAXException|ParserConfigurationException ex) {
+                return new MetaData(handler.modified, handler.state);
+            } catch (SAXException|ParserConfigurationException|IOException ex) {
                 throw new WebApplicationException("Error parsing ObjectProfile data from " + pid, ex);
             }
         } else {
-            throw new WebApplicationException("Object does not exists: " + pid);
+            // TODO: If object has been deleted, the work must be deleted from database
+            String message = String.format("objectProfile does not exists: %s", pid);
+            log.info(message);
+            throw new WebApplicationException(message);
         }
     }
     
+    /**
+     * TODO: Three states: active, deleted and not-exists?
+     * @param pid
+     * @return State
+     * @throws WebApplicationException
+     */
+    public MetaData getDatastreamMetaData(IRepositoryIdentifier pid, String streamName) throws WebApplicationException {
+        log.trace("Entering getDatastreamMetaData({}, {})", pid, streamName);
+
+        Client client = config.getHttpClient();
+
+        URI uri = config.getCorepoContentService()
+                .path("/rest/objects/{pid}/datastreams/{streamName}")
+                .build(pid, streamName);
+
+        Response response = client.target(uri).request(MediaType.APPLICATION_XML_TYPE).get();
+
+        final Response.StatusType statusInfo = response.getStatusInfo();
+        log.trace("{} - streeamProfile status: {}", pid, statusInfo);
+
+        if (statusInfo.equals(Response.Status.OK)) {
+            try (InputStream is =  response.readEntity(InputStream.class)) {
+                SAXParser parser = factory.newSAXParser();
+                XMLReader xmlReader = parser.getXMLReader();
+                StreamMetaHandler handler = new StreamMetaHandler(pid, streamName);
+                xmlReader.setContentHandler(handler);
+                xmlReader.parse( new InputSource( is ) );
+                return new MetaData(handler.modified, handler.state);
+            } catch (SAXException|ParserConfigurationException|IOException ex) {
+                String message = String.format("Error parsing datastream meta from %s - %s", pid, streamName);
+                throw new WebApplicationException(message, ex);
+            }
+        } else {
+            // TODO: If object has been deleted, the work must be deleted from database
+            String message = String.format("Stream does not exists:  %s - %s", pid, streamName);
+            log.info(message);
+            throw new WebApplicationException(message);
+        }
+    }
+
     public String getDatastreamContent(IRepositoryIdentifier pid, String steamName) throws WebApplicationException {
-        log.trace("Entering ContentService.getDatastreamContent({}, {})", pid, steamName);
-        // TODO: ContentRest: getDatastreamContent
+        log.trace("Entering getDatastreamContent({}, {})", pid, steamName);
         Client client = config.getHttpClient();
 
         URI uri = config.getCorepoContentService()
@@ -130,14 +307,57 @@ public class ContentService {
         return response.readEntity(String.class);
     }
 
-    public RepositoryStream[] getDatastreamList(IRepositoryIdentifier pid) {
-        log.trace("Entering ContentService.getDatastreamList");
-        // TODO: ContentRest: listDatastreams, getDatastreamProfile and getDatastreamContent
-        return new RepositoryStream[] {};
+    public RepositoryStream getDataStream(IRepositoryIdentifier pid, String streamName) {
+        String datastreamContent = getDatastreamContent(pid, streamName);
+        // TODO Stream State
+        MetaData datastreamMetaData = getDatastreamMetaData(pid, streamName);
+
+        TemporalAccessor time = dataFormat.parse(datastreamMetaData.modified);
+        Instant instant = Instant.from( time );
+        Date modified = Date.from(instant);
+        return new RepositoryStream(streamName, datastreamContent.getBytes(StandardCharsets.UTF_8), datastreamMetaData.state, pid, modified);
+    }
+
+    public RepositoryStream[] getDatastreams(IRepositoryIdentifier pid) {
+        log.trace("Entering getDatastreams {}", pid);
+        Client client = config.getHttpClient();
+
+        URI uri = config.getCorepoContentService()
+                .path("/rest/objects/{pid}/datastreams")
+                .build(pid);
+
+        Response response = client.target(uri).request(MediaType.APPLICATION_XML_TYPE).get();
+
+        final Response.StatusType statusInfo = response.getStatusInfo();
+        log.trace("{} listDatastreams status: {}", pid, statusInfo);
+
+        if (statusInfo.equals(Response.Status.OK)) {
+            try (InputStream is =  response.readEntity(InputStream.class)) {
+                SAXParser parser = factory.newSAXParser();
+                XMLReader xmlReader = parser.getXMLReader();
+                DatastreamsListHandler handler = new DatastreamsListHandler(pid);
+                xmlReader.setContentHandler(handler);
+                xmlReader.parse( new InputSource( is ) );
+                String[] streamNames = handler.getStreamNames();
+                log.debug("getDatastreams({}) found streams {}", pid, streamNames);
+
+                List<RepositoryStream> streams = new ArrayList<>(streamNames.length);
+                for (String streamName : streamNames) {
+                    streams.add(getDataStream(pid, streamName));
+                }
+                return streams.toArray(new RepositoryStream[streamNames.length]);
+            } catch (SAXException|ParserConfigurationException|IOException ex) {
+                throw new WebApplicationException("Error parsing ObjectProfile data from " + pid, ex);
+            }
+        } else {
+            // TODO: If object has been deleted, the work must be deleted from database
+            log.info("Object does not exists:  {}", pid);
+            throw new WebApplicationException("Object does not exists: " + pid);
+        }
     }
 
     public SysRelationStreamApi getRelations(IRepositoryIdentifier pid) throws SAXException, ParserConfigurationException, IOException {
-        log.trace("Entering ContentService.getRelations");
+        log.trace("Entering getRelations");
         String stream = getDatastreamContent(pid, RELS_SYS_STREAM);
         SysRelationStreamApi api = new SysRelationStreamApi(pid, stream.getBytes(StandardCharsets.UTF_8));
         return api;
