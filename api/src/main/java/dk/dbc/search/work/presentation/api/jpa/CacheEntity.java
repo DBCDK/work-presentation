@@ -20,12 +20,11 @@ package dk.dbc.search.work.presentation.api.jpa;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.Map;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -61,7 +60,7 @@ public class CacheEntity implements Serializable {
 
     @Column(nullable = false)
     @Convert(converter = CacheEntity.JsonConverter.class)
-    private HashMap<String, String> content;
+    private ManifestationInformation content;
 
     @Transient
     transient boolean persist;
@@ -69,7 +68,7 @@ public class CacheEntity implements Serializable {
     @Transient
     transient EntityManager em;
 
-    public static CacheEntity from(EntityManager em, String corepoWorkId, String manifestationId) {
+    public static CacheEntity from(EntityManager em, String manifestationId) {
         CacheEntity entity = em.find(CacheEntity.class, em, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
         if (entity == null) {
             entity = new CacheEntity(manifestationId);
@@ -106,11 +105,13 @@ public class CacheEntity implements Serializable {
         this.modified = modified;
     }
 
-    public Map<String, String> getContent() {
+    @SuppressFBWarnings("EI_EXPOSE_REP")
+    public ManifestationInformation getContent() {
         return content;
     }
 
-    public void setContent(HashMap<String, String> content) {
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
+    public void setContent(ManifestationInformation content) {
         this.content = content;
     }
 
@@ -130,13 +131,17 @@ public class CacheEntity implements Serializable {
         persist = true;
     }
 
+    public void detach() {
+        em.detach(this);
+    }
+    
     @Converter
-    public static class JsonConverter implements AttributeConverter<HashMap<String, String>, PGobject> {
+    public static class JsonConverter implements AttributeConverter<ManifestationInformation, PGobject> {
 
         private static final ObjectMapper O = new ObjectMapper();
 
         @Override
-        public PGobject convertToDatabaseColumn(HashMap<String, String> content) throws IllegalStateException {
+        public PGobject convertToDatabaseColumn(ManifestationInformation content) throws IllegalStateException {
             try {
                 final PGobject pgObject = new PGobject();
                 pgObject.setType("jsonb");
@@ -152,11 +157,11 @@ public class CacheEntity implements Serializable {
         }
 
         @Override
-        public HashMap<String, String> convertToEntityAttribute(PGobject pgObject) {
+        public ManifestationInformation convertToEntityAttribute(PGobject pgObject) {
             if (pgObject == null)
                 return null;
             try {
-                return new HashMap<>(O.readValue(pgObject.getValue(), Map.class));
+                return O.readValue(pgObject.getValue(), ManifestationInformation.class);
             } catch (JsonProcessingException ex) {
                 throw new IllegalStateException(ex);
             }
