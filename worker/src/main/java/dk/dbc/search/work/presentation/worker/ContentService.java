@@ -217,9 +217,9 @@ public class ContentService {
 
     /**
      * TODO: Three states: active, deleted and not-exists?
-     * @param pid
+     * @param pid the identifier
      * @return State
-     * @throws WebApplicationException
+     * @throws WebApplicationException on error from content service or parsing result
      */
     public MetaData getObjectMetaData(IRepositoryIdentifier pid) throws WebApplicationException {
         log.trace("Entering getObjectMetaData({})", pid);
@@ -258,9 +258,10 @@ public class ContentService {
     
     /**
      * TODO: Three states: active, deleted and not-exists?
-     * @param pid
+     * @param pid the identifier
+     * @param streamName Stream name
      * @return State
-     * @throws WebApplicationException
+     * @throws WebApplicationException on error from content service or parsing result
      */
     public MetaData getDatastreamMetaData(IRepositoryIdentifier pid, String streamName) throws WebApplicationException {
         log.trace("Entering getDatastreamMetaData({}, {})", pid, streamName);
