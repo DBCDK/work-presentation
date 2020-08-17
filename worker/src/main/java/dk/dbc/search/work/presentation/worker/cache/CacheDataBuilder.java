@@ -19,6 +19,7 @@
 package dk.dbc.search.work.presentation.worker.cache;
 
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.sql.Timestamp;
 import java.time.Instant;
 
@@ -29,8 +30,8 @@ import java.time.Instant;
  */
 public class CacheDataBuilder {
 
-    private final String corepoId;
-    private final String localStream;
+//    private final String corepoId;
+//    private final String localStream;
     private final boolean deleted;
     private final String manifestationId;
     private final Timestamp modified;
@@ -39,9 +40,10 @@ public class CacheDataBuilder {
         this(corepoId, localStream, Timestamp.from(modified), deleted);
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public CacheDataBuilder(String corepoId, String localStream, Timestamp modified, boolean deleted) {
-        this.corepoId = corepoId;
-        this.localStream = localStream;
+//        this.corepoId = corepoId;
+//        this.localStream = localStream;
         this.modified = modified;
         this.deleted = deleted;
         this.manifestationId = localStream.substring(localStream.indexOf('.') + 1) +
@@ -53,6 +55,7 @@ public class CacheDataBuilder {
         return manifestationId;
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public Timestamp getModified() {
         return modified;
     }

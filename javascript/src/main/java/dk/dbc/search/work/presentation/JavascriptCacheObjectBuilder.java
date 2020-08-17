@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +61,7 @@ public class JavascriptCacheObjectBuilder {
 
     public static final String DEFAULT_SCRIPT_FILE = "BuildCacheObject.js";
     public static final String DEFAULT_METHOD = "buildManifestationInformation";
-    public static final List<String> DEFAULT_SEARCH_PATH = Arrays.asList("classpath:javascript".split("\\s+"));
+    public static final List<String> DEFAULT_SEARCH_PATH = Collections.unmodifiableList(Arrays.asList("classpath:javascript".split("\\s+")));
 
     public static Builder builder() {
         return new Builder();

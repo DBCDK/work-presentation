@@ -90,13 +90,14 @@ public class QuickPool<T> extends GenericObjectPool<T> {
      * Use one of:
      * {@link #voidCall(java.util.function.Consumer)},
      * {@link #valueCall(java.util.function.Function)},
-     * {@link #voidExec(dk.dbc.search.work.presentation.worker.pool.SimplePool.ScopeWithException)}
+     * {@link #voidExec(dk.dbc.search.work.presentation.worker.pool.QuickPool.ScopeWithException)}
      * or
-     * {@link #valueExec(dk.dbc.search.work.presentation.worker.pool.SimplePool.ScopeWithExceptionAndValue)};
+     * {@link #valueExec(dk.dbc.search.work.presentation.worker.pool.QuickPool.ScopeWithExceptionAndValue)};
      *
      * @return N/A
      * @throws Exception N/A
      */
+    @Deprecated
     @Override
     public T borrowObject() throws Exception {
         return super.borrowObject();
@@ -108,14 +109,15 @@ public class QuickPool<T> extends GenericObjectPool<T> {
      * Use one of:
      * {@link #voidCall(java.util.function.Consumer)},
      * {@link #valueCall(java.util.function.Function)},
-     * {@link #voidExec(dk.dbc.search.work.presentation.worker.pool.SimplePool.ScopeWithException)}
+     * {@link #voidExec(dk.dbc.search.work.presentation.worker.pool.QuickPool.ScopeWithException)}
      * or
-     * {@link #valueExec(dk.dbc.search.work.presentation.worker.pool.SimplePool.ScopeWithExceptionAndValue)};
+     * {@link #valueExec(dk.dbc.search.work.presentation.worker.pool.QuickPool.ScopeWithExceptionAndValue)};
      *
      * @param ms N/A
      * @return N/A
      * @throws Exception N/A
      */
+    @Deprecated
     @Override
     public T borrowObject(long ms) throws Exception {
         return super.borrowObject(ms);
