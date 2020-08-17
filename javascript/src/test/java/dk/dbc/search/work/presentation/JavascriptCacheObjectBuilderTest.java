@@ -60,7 +60,7 @@ public class JavascriptCacheObjectBuilderTest {
         System.out.println("testExtractManifestationInformation");
         String manifestationId = dir.getFileName().toString();
         System.out.println(" `-- " + manifestationId);
-        assertTimeout(Duration.ofMillis(1_500L), () -> {
+        assertTimeout(Duration.ofMillis(2_500L), () -> {
                   HashMap<String, String> xmlObjects = new HashMap<>();
                   ManifestationInformation expected = null;
                   for (File file : dir.toFile().listFiles()) {
