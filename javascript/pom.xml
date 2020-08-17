@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>dk.dbc</groupId>
+        <artifactId>work-presentation</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>work-presentation-javascript</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>work-presentation-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dk.dbc</groupId>
+            <artifactId>dbc-jslib</artifactId>
+            <version>${jslib.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>dk.dbc</groupId>
+            <artifactId>jscommon</artifactId>
+            <version>${jscommon.version}</version>
+            <classifier>javascript</classifier>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit5.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>dk.dbc.testutils</groupId>
+            <artifactId>maven-javascript-unit-test-runner</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <type>tar.gz</type>
+            <classifier>bin</classifier>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <!-- Javascript test runner -->
+                    <execution>
+                        <id>unpack-js-unittest-runner</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeTypes>tar.gz</includeTypes>
+                            <excludeTransitive>true</excludeTransitive>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <useSubDirectoryPerArtifact>false</useSubDirectoryPerArtifact>
+                            <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
+
+                    <!-- Javascript -->
+                    <execution>
+                        <id>unpack-javascript</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeTypes>zip</includeTypes>
+                            <excludeTransitive>true</excludeTransitive>
+                            <outputDirectory>${project.build.directory}/test-classes</outputDirectory>
+                            <useSubDirectoryPerArtifact>false</useSubDirectoryPerArtifact>
+                            <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>Javascript unit tests</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${skipTests}</skip>
+                            <executable>${project.build.directory}/maven-javascript-unit-test-runner/bin/test-runner.sh</executable>
+                            <workingDirectory>${project.build.directory}/maven-javascript-unit-test-runner</workingDirectory>
+                            <environmentVariables>
+                                <USE_JAVA_XML_DOM>true</USE_JAVA_XML_DOM>
+                                <MODULE_PATHS>
+                                    classpath:javascript/ classpath:javascript/javacore/ classpath:javascript/jscommon/system/ classpath:javascript/jscommon/convert/ classpath:javascript/jscommon/devel/ classpath:javascript/jscommon/util/ classpath:javascript/jscommon/external/ classpath:javascript/jscommon/marc/ classpath:javascript/jscommon/io/ classpath:javascript/jscommon/xml/ classpath:javascript/jscommon/tables/
+                                </MODULE_PATHS>
+                            </environmentVariables>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
