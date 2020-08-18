@@ -1,0 +1,8 @@
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <rdf:Description rdf:about="info:fedora/work:1">
+        <hasMemberOfWork xmlns="info:fedora/">unit:2</hasMemberOfWork>
+        <hasPrimaryUnitObject xmlns="info:fedora/">unit:2</hasPrimaryUnitObject>
+        <hasMemberOfWork xmlns="info:fedora/">unit:331669</hasMemberOfWork>
+        <hasMemberOfWork xmlns="info:fedora/">unit:9991306</hasMemberOfWork>
+    </rdf:Description>
+</rdf:RDF>
