@@ -18,16 +18,12 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
-import dk.dbc.corepo.access.CORepoProvider;
-import dk.dbc.opensearch.commons.repository.RepositoryException;
-import dk.dbc.opensearch.commons.repository.RepositoryProvider;
-import java.sql.SQLException;
-import javax.ws.rs.WebApplicationException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 /**
  *
@@ -37,83 +33,15 @@ public class WorkTreeBuilderIT extends JpaBaseWithCorepo {
 
     private static final Logger log = LoggerFactory.getLogger(WorkTreeBuilderIT.class);
 
-    public static String contentServiceUrl = System.getenv("COREPO_CONTENT_SERVICE_URL");
-
-    @BeforeAll
-    public static void setUpCorepoDao() throws SQLException, RepositoryException {
-        RepositoryProvider provider = new CORepoProvider("IntegrationTest", corepoDataSource);
-    }
-
     @Test
-    public void notAWork() throws Exception {
-        BeanFactory beanFactory = new BeanFactory(null, dataSource, null);
-        WorkTreeBuilder builder = beanFactory.getWorkTreeBuilder();
-
-        Assertions.assertThrows(RepositoryException.class, () -> {
-            builder.process(dataSource, "unit:1");
-        });
-        log.info("Done");
+    public void testAWork() throws Exception {
+        System.out.println("testAWork");
+        withConfigEnv()
+                .jpaWithBeans(bf -> {
+                    WorkTreeBuilder workTreeBuilder = bf.getWorkTreeBuilder();
+                    WorkTree tree = workTreeBuilder.buildTree("work:62");
+                    tree.prettyPrint(System.out::println);
+                    assertThat(tree.getPersistentWorkId(), is("work-of-870970-basis:00010529"));
+                });
     }
-
-    @Test
-    public void notExistsWork() throws Exception {
-        BeanFactory beanFactory = new BeanFactory(null, dataSource, null);
-        WorkTreeBuilder builder = beanFactory.getWorkTreeBuilder();
-
-        Assertions.assertThrows(WebApplicationException.class, () -> {
-            builder.process(dataSource, "work:3");
-        });
-        log.info("Done");
-    }
-
-    @Test
-    public void isWorkDeleted() throws Exception {
-        BeanFactory beanFactory = new BeanFactory(null, dataSource, null);
-        WorkTreeBuilder builder = beanFactory.getWorkTreeBuilder();
-
-        builder.process(dataSource, "work:1571079");
-        // TODO: find a work with state = DELETED. Output expected empty work with no units
-
-        log.info("Done");
-    }
-
-    @Test
-    public void isWorkWithSmallTree() throws Exception {
-        // http://corepo-introspect-service.cisterne.svc.cloud.dbc.dk/?tab=Tree%20Views&tree=work:19
-        BeanFactory beanFactory = new BeanFactory(null, dataSource, null);
-        WorkTreeBuilder builder = beanFactory.getWorkTreeBuilder();
-        String work = "work:19";
-
-        builder.process(dataSource, work);
-
-        log.info("Done");
-
-    }
-//    @Test
-//    public void isWorkWithMediumTree() throws Exception {
-//        // http://corepo-introspect-service.cisterne.svc.cloud.dbc.dk/?tab=Tree%20Views&tree=work:62
-//        BeanFactory beanFactory = new BeanFactory(null, dataSource, null);
-//        WorkTreeBuilder builder = beanFactory.getWorkTreeBuilder();
-//        String work = "work:62";
-//
-//        builder.process(dataSource, work);
-//
-//        log.info("Done");
-//
-//    }
-//    // Skipped. Too large to mock (to many files)
-//    @Test
-//    public void isWorkWithLargeTree() throws Exception {
-//        // "lykke-per": http://corepo-introspect-service.cisterne.svc.cloud.dbc.dk/?tab=Tree%20Views&tree=work:15
-//        BeanFactory beanFactory = new BeanFactory(null, dataSource, null);
-//        WorkTreeBuilder builder = beanFactory.getWorkTreeBuilder();
-//        String work = "work:15";
-//
-//        builder.process(dataSource, work);
-//
-//        log.info("Done");
-//
-//    }
-
-
 }

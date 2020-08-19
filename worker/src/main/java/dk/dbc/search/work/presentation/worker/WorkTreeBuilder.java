@@ -18,19 +18,17 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
-import dk.dbc.opensearch.commons.repository.IRepositoryIdentifier;
-import dk.dbc.opensearch.commons.repository.ISysRelationsStream;
-import dk.dbc.opensearch.commons.repository.RepositoryException;
-import dk.dbc.opensearch.commons.repository.RepositoryStream;
-import dk.dbc.opensearch.commons.repository.Repositorydentifier;
-import java.io.IOException;
+import dk.dbc.search.work.presentation.worker.cache.CacheDataBuilder;
+import dk.dbc.search.work.presentation.worker.corepo.DataStreamMetaData;
+import dk.dbc.search.work.presentation.worker.corepo.ObjectMetaData;
+import dk.dbc.search.work.presentation.worker.corepo.RelsSys;
+import java.time.Instant;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.sql.DataSource;
-import javax.xml.parsers.ParserConfigurationException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 /**
  * Extract the structure of the work/units/records for a CORepo work
@@ -43,52 +41,64 @@ public class WorkTreeBuilder {
     private static final Logger log = LoggerFactory.getLogger(WorkTreeBuilder.class);
 
     @Inject
-    ContentService contentService;
+    CorepoContentService contentService;
+
+    @PersistenceContext(unitName = "workPresentation_PU")
+    EntityManager em;
 
     /**
-     * Process a work object and extract structure for units and records
-     * @param corpeoSource CORepo database
-     * @param pidStr The identifier for the work object to process
-     * @throws RepositoryException In case database layer thrown an error or if called for an object that is not a work object TODO: Use RepositoryException or a different exception
+     * This builds a work structure
+     *
+     * @param work "work:*" id (not validated)
+     * @return
      */
-    public void process(DataSource corpeoSource, String pidStr) throws RepositoryException {
-        log.trace("Entering WorkTreeBuilder.process");
-        try {
-            log.info("Processing work: {}", pidStr);
-            
-            // Process members of work
-            IRepositoryIdentifier workPid = new Repositorydentifier(pidStr);
-            if (workPid.getObjectType() != IRepositoryIdentifier.ObjectType.WORK) {
-                throw new RepositoryException("Not a work: " + workPid);
-            }
-            ContentService.MetaData workData = contentService.getObjectMetaData(workPid);
-            log.debug("Work: {}, state {}, modified {}", pidStr, workData.state, workData.modified);
-
-            ISysRelationsStream workRelations = contentService.getRelations(workPid);
-            IRepositoryIdentifier primaryUnit = workRelations.getPrimaryUnitForWork();
-            IRepositoryIdentifier[] units = workRelations.getMembersOfWork();
-            log.debug("{} Found primaryUnit {} and members {}", workPid, primaryUnit, units);
-
-            for (IRepositoryIdentifier unit : units) {
-                // Process members of unit
-                ISysRelationsStream unitRelations = contentService.getRelations(unit);
-                IRepositoryIdentifier primaryRecord = unitRelations.getPrimaryMemberOfUnit();
-                IRepositoryIdentifier[] records = unitRelations.getMembersOfUnit();
-                log.debug("{} - {} Found primaryUnit {} and members {}", workPid, unit, primaryRecord, records);
-                for (IRepositoryIdentifier record : records) {
-                    RepositoryStream[] datastreams = contentService.getDatastreams(record);
-                    log.debug("{} - {} - {} Found {} streams", workPid, unit, record, datastreams.length);
-                    log.trace("{} - {} - {} Found streams {}", workPid, unit, record, datastreams);
-                    for (RepositoryStream datastream : datastreams) {
-                        log.trace("{} - {} - {} - {}, ", workPid, unit, record, datastream );
-                        // Process meta data
-                    }
-                }
-            }
-        } catch (SAXException|ParserConfigurationException|IOException ex) {
-            log.error("Error extracting tree from repository", ex);
-        } finally {
-            log.trace("Leaving WorkTreeBuilder.process {}", pidStr);
+    public WorkTree buildTree(String work) {
+        ObjectMetaData workMetaData = contentService.objectMetaData(work);
+        log.trace("work = {}", workMetaData);
+        WorkTree tree = new WorkTree(work, workMetaData.getModified());
+        if (workMetaData.isActive()) {
+            buildWorkTree(tree, work);
         }
+        return tree;
     }
+
+    private void buildWorkTree(WorkTree workTree, String work) throws IllegalStateException {
+        RelsSys workRelsSys = contentService.relsSys(work);
+        log.trace("workRelsSys = {}", workRelsSys);
+        workRelsSys.getChildren()
+                .forEach(unit -> workTree.put(unit, buildUnitTree(unit)));
+    }
+
+    private UnitTree buildUnitTree(String unit) throws IllegalStateException {
+        ObjectMetaData unitMetaData = contentService.objectMetaData(unit);
+        if (!unitMetaData.isActive()) {
+            throw new IllegalStateException("Unit: " + unit + " is deleted but part of rels-sys");
+        }
+        RelsSys unitRelsSys = contentService.relsSys(unit);
+        Instant unitTs = unitMetaData.getModified();
+        UnitTree unitTree = new UnitTree(unitRelsSys.isPrimary(), unitTs);
+
+        unitRelsSys.getChildren()
+                .forEach(object -> unitTree.put(object, buildObjectTree(object)));
+        return unitTree;
+    }
+
+    private ObjectTree buildObjectTree(String object) throws IllegalStateException {
+        ObjectMetaData objectMetaData = contentService.objectMetaData(object);
+        if (!objectMetaData.isActive()) {
+            throw new IllegalStateException("Object: " + object + " is deleted but part of rels-sys");
+        }
+        RelsSys objectRelsSys = contentService.relsSys(object);
+        ObjectTree objectTree = new ObjectTree(objectRelsSys.isPrimary(), objectMetaData.getModified());
+        Instant modified = objectMetaData.getModified();
+
+        contentService.datastreams(object).getStreams().forEach(stream -> {
+            if (stream.startsWith(CacheDataBuilder.LOCAL_DATA)) {
+                DataStreamMetaData streamMetaData = contentService.datastreamMetaData(object, stream);
+                objectTree.put(stream, new CacheDataBuilder(object, stream, modified, !streamMetaData.isActive()));
+            }
+        });
+        return objectTree;
+    }
+
 }

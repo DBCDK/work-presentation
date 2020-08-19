@@ -39,8 +39,10 @@ public class BeanFactory {
     private final DataSource wpDataSource;
     private final DataSource coDataSource;
     private final Config config;
+    private final Bean<CorepoContentService> corepoContentService = new Bean<>(new CorepoContentService(), this::setupCorepoContentService);
     private final Bean<PresentationObjectBuilder> presentationObjectBuilder = new Bean<>(new PresentationObjectBuilder(), this::setupPresentationObjectBuilder);
     private final Bean<Worker> worker = new Bean<>(new Worker(), this::setupWorker);
+    private final Bean<WorkTreeBuilder> workTreeBuilder = new Bean<>(new WorkTreeBuilder(), this::setupWorkTreeBuilder);
 
     public BeanFactory(EntityManager em, DataSource wpDataSource, DataSource coDataSource, String... envs) {
         this.em = em;
@@ -82,6 +84,14 @@ public class BeanFactory {
         return this;
     }
 
+    public CorepoContentService getCorepoContentService() {
+        return corepoContentService.get();
+    }
+
+    private void setupCorepoContentService(CorepoContentService contentService) {
+        contentService.config = config;
+    }
+
     public PresentationObjectBuilder getPresentationObjectBuilder() {
         return presentationObjectBuilder.get();
     }
@@ -99,6 +109,15 @@ public class BeanFactory {
         workerBean.dataSource = coDataSource;
         workerBean.metrics = null;
         workerBean.presentationObjectBuilder = presentationObjectBuilder.get();
+    }
+
+    public WorkTreeBuilder getWorkTreeBuilder() {
+        return workTreeBuilder.get();
+    }
+
+    private void setupWorkTreeBuilder(WorkTreeBuilder treeBean) {
+        treeBean.contentService = corepoContentService.get();
+        treeBean.em = em;
     }
 
     private static class Bean<T> {
@@ -130,24 +149,4 @@ public class BeanFactory {
         }
     }
 
-    public WorkTreeBuilder getWorkTreeBuilder() {
-        return workTreeBuilder.get();
-    }
-
-    private WorkTreeBuilder makeWorkTreeBuilder() {
-        @SuppressWarnings("UseInjectionInsteadOfInstantion")
-        WorkTreeBuilder treeBean = new WorkTreeBuilder();
-        treeBean.contentService = contentService.get();
-        return treeBean;
-    }
-    public ContentService getContentService() {
-        return contentService.get();
-    }
-
-    private ContentService makeContentService() {
-        @SuppressWarnings("UseInjectionInsteadOfInstantion")
-        ContentService contentService = new ContentService();
-        contentService.config = config;
-        return contentService;
-    }
 }
