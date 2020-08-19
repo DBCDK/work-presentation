@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package dk.dbc.search.work.presentation.worker;
+package dk.dbc.search.work.presentation.worker.tree;
 
 import dk.dbc.search.work.presentation.worker.cache.CacheDataBuilder;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;

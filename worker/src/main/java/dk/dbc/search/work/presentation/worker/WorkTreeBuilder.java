@@ -18,6 +18,9 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
+import dk.dbc.search.work.presentation.worker.tree.UnitTree;
+import dk.dbc.search.work.presentation.worker.tree.ObjectTree;
+import dk.dbc.search.work.presentation.worker.tree.WorkTree;
 import dk.dbc.search.work.presentation.worker.cache.CacheDataBuilder;
 import dk.dbc.search.work.presentation.worker.corepo.DataStreamMetaData;
 import dk.dbc.search.work.presentation.worker.corepo.ObjectMetaData;
@@ -50,7 +53,7 @@ public class WorkTreeBuilder {
      * This builds a work structure
      *
      * @param work "work:*" id (not validated)
-     * @return
+     * @return a tree representation of the work
      */
     public WorkTree buildTree(String work) {
         ObjectMetaData workMetaData = contentService.objectMetaData(work);

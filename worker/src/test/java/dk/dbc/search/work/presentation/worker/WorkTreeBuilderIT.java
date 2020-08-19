@@ -18,6 +18,7 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
+import dk.dbc.search.work.presentation.worker.tree.WorkTree;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

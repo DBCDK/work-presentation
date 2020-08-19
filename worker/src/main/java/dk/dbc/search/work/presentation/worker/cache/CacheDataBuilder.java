@@ -19,6 +19,7 @@
 package dk.dbc.search.work.presentation.worker.cache;
 
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.sql.Timestamp;
 import java.time.Instant;
 
@@ -27,13 +28,14 @@ import java.time.Instant;
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class CacheDataBuilder {
 
     public static final String LOCAL_DATA = "localData.";
     private static final int LOCAL_DATA_LEN = LOCAL_DATA.length();
 
-    private final String corepoId;
-    private final String localStream;
+//    private final String corepoId;
+//    private final String localStream;
     private final boolean deleted;
     private final String manifestationId;
     private final Timestamp modified;
@@ -46,8 +48,8 @@ public class CacheDataBuilder {
         if (!localStream.startsWith(LOCAL_DATA)) {
             throw new IllegalStateException("Trying to build a CacheDataBuilder for stream: " + localStream);
         }
-        this.corepoId = corepoId;
-        this.localStream = localStream;
+//        this.corepoId = corepoId;
+//        this.localStream = localStream;
         this.modified = modified;
         this.deleted = deleted;
         this.manifestationId = localStream.substring(LOCAL_DATA_LEN) +
