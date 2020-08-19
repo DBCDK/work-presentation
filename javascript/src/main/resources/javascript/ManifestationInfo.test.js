@@ -335,3 +335,96 @@ UnitTest.addFixture( "ManifestationInfo.getFullTitle", function() {
     }, Packages.dk.dbc.javascript.recordprocessing.FailRecord );
 
 } );
+
+
+UnitTest.addFixture( "ManifestationInfo.getTypes", function() {
+
+    var dcStreamString =
+        '<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dc:title>værkstedstekniske beregninger</dc:title>' +
+        '<dc:language>Dansk</dc:language>' +
+        '<dc:type>Bog</dc:type>' +
+        '<dc:publisher>jernindustriensforlag</dc:publisher>' +
+        '<dc:date>1972</dc:date>' +
+        '<dc:identifier>870970-basis:08021473</dc:identifier>' +
+        '<dc:identifier>NUMBER:1020</dc:identifier>' +
+        '<dc:identifier>NUMBER:1022</dc:identifier>' +
+        '<dc:identifier>NUMBER:1020</dc:identifier>' +
+        '<dc:identifier>NUMBER:1022</dc:identifier>' +
+        '<dc:relation>50378705</dc:relation>' +
+        '</oai_dc:dc>';
+
+    var dcStream = XmlUtil.fromString( dcStreamString );
+
+    var expected = [ "Bog" ] ;
+
+    Assert.equalValue( "get one type from dc stream ", ManifestationInfo.getTypes( dcStream ), expected );
+
+    dcStreamString =
+        '<oai_dc:dc ' +
+        'xmlns:dc="http://purl.org/dc/elements/1.1/" ' +
+        'xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" ' +
+        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dc:title>askepot</dc:title>' +
+        '<dc:title>MATCHSTRING:askepotaskepot</dc:title>' +
+        '<dc:title>MATCH:askepo</dc:title>' +
+        '<dc:language>Dansk</dc:language>' +
+        '<dc:subject>eventyr</dc:subject>' +
+        '<dc:type>Lyd (cd)</dc:type>' +
+        '<dc:type>Bog</dc:type>' +
+        '<dc:type>Sammensat materiale</dc:type>' +
+        '<dc:type>WORK:literature</dc:type>' +
+        '<dc:publisher>sesam</dc:publisher>' +
+        '<dc:publisher>MATCHSTRING:sesam</dc:publisher>' +
+        '<dc:contributor>walt disney firma</dc:contributor>' +
+        '<dc:contributor>MATCHSTRING:walt disney</dc:contributor>' +
+        '<dc:source>cinderella</dc:source>' +
+        '<dc:date>2004</dc:date>' +
+        '<dc:identifier>870970-basis:25503244</dc:identifier>' +
+        '<dc:identifier>ISBN:8711213175</dc:identifier>' +
+        '<dc:identifier>MATCH:ISBN:8711213175</dc:identifier>' +
+        '<dc:identifier>NUMBER:1043-150</dc:identifier>' +
+        '</oai_dc:dc>';
+
+
+    dcStream = XmlUtil.fromString( dcStreamString );
+
+    expected =  [ "Lyd (cd)",  "Bog" ] ;
+
+    Assert.equalValue( "get multiple types  but no sammensat ", ManifestationInfo.getTypes( dcStream ), expected );
+
+
+    dcStreamString =
+        '<oai_dc:dc ' +
+        'xmlns:dc="http://purl.org/dc/elements/1.1/" ' +
+        'xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" ' +
+        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dc:title>askepot</dc:title>' +
+        '<dc:type>Sammensat materiale</dc:type>' +
+        '<dc:type>WORK:literature</dc:type>' +
+        '<dc:publisher>sesam</dc:publisher>' +
+        '<dc:publisher>MATCHSTRING:sesam</dc:publisher>' +
+        '<dc:contributor>walt disney firma</dc:contributor>' +
+        '</oai_dc:dc>';
+
+
+    dcStream = XmlUtil.fromString( dcStreamString );
+
+    expected =  [ "Sammensat materiale" ] ;
+
+    Assert.equalValue( "get type sammensat if its the only one (constructed) ", ManifestationInfo.getTypes( dcStream ), expected );
+
+    dcStreamString =
+        '<oai_dc:dc ' +
+        'xmlns:dc="http://purl.org/dc/elements/1.1/" ' +
+        'xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" ' +
+        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '</oai_dc:dc>';
+
+    dcStream = XmlUtil.fromString( dcStreamString );
+
+    Assert.exception( "Stop processing if dc has no type", function() {
+        ManifestationInfo.getTypes( dcStream );
+    }, Packages.dk.dbc.javascript.recordprocessing.FailRecord );
+
+} );

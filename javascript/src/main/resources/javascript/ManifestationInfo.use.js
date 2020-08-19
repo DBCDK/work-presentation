@@ -39,6 +39,7 @@ var ManifestationInfo = (function() {
         var localDataXml = XmlUtil.fromString( dataStreamObject.localData );
         manifestationObject.title = getTitle( dcStreamXml );
         manifestationObject.fullTitle = getFullTitle( commonDataXml, localDataXml );
+        manifestationObject.types = getTypes( dcStreamXml );
 
         Log.trace( "Leaving: ManifestationInfo.getManifestationInfoFromXmlObjects function" );
 
@@ -47,7 +48,7 @@ var ManifestationInfo = (function() {
 
 
     /**
-     * Function that extracts title from the provided DC stram
+     * Function that extracts title from the provided DC stream
      *
      * @type {function}
      * @syntax ManifestationInfo.getTitle( dcStreamXml )
@@ -75,7 +76,8 @@ var ManifestationInfo = (function() {
     }
 
     /**
-     * Function that extracts title from the provided DC stram
+     * Function that extracts the full title from the either the local data stream
+     * or if not present there the common data stream
      *
      * @type {function}
      * @syntax ManifestationInfo.getFullTitle( commonData, localData )
@@ -108,11 +110,55 @@ var ManifestationInfo = (function() {
         return titleFull;
     }
 
+    /**
+     * Function that extracts type from the provided DC stream
+     *
+     * @type {function}
+     * @syntax ManifestationInfo.getTypes( dcStreamXml )
+     * @param {Document} dcStreamXml the dc stream as xml
+     * @return {String} the extracted full type
+     * @function
+     * @name ManifestationInfo.getTypes
+     */
+
+    function getTypes( dcStreamXml ) {
+
+        Log.trace( "Entering: ManifestationInfo.getTypes function" );
+
+        var types = [];
+        var allTypes = XPath.selectMultipleText( "/oai_dc:dc/dc:type", dcStreamXml );
+        var foundSammensat = false;
+        for ( var i = 0; i < allTypes.length; i++ ){
+            var type = allTypes[ i ];
+            //set sammensat boolean for now, we might have to add it if its the only one
+            if ( "Sammensat materiale" === type  ){
+                foundSammensat = true;
+            } //dont add sammensat materiale and work type
+            if ( "Sammensat materiale" !== type && !type.match(/WORK:/ ) ){
+                types.push( type );
+            }
+        } //end for loop
+        if ( 0 === types.length && foundSammensat ){
+            types.push( "Sammensat materiale" )
+        }
+
+        if ( 0 === types.length ) {
+            RecordProcessing.terminateProcessingAndFailRecord(
+                "ManifestationInfo.getTypes no type was found in dc stream\n" + dcStreamXml );
+        }
+
+
+        Log.trace( "Leaving: ManifestationInfo.getTypes function" );
+
+        return types;
+    }
+
 
     return {
         getManifestationInfoFromXmlObjects: getManifestationInfoFromXmlObjects,
         getTitle: getTitle,
-        getFullTitle: getFullTitle
+        getFullTitle: getFullTitle,
+        getTypes: getTypes
 
     };
 })();
