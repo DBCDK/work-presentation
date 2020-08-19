@@ -34,25 +34,24 @@ public class WorkerIT extends JpaBaseWithCorepo {
     public void testWork() throws Exception {
         AtomicInteger counter = new AtomicInteger();
 
-        jpa(em -> {
-            BeanFactory beanFactory = new BeanFactory(em, dataSource, corepoDataSource,
-                                                      "QUEUE_DEDUPLICATE=true")
-                    .withPresentationObjectBuilder(new PresentationObjectBuilder() {
+        withConfigEnv("QUEUE_DEDUPLICATE=true")
+                .jpaWithBeans(beanFactory -> {
+                    beanFactory.withPresentationObjectBuilder(new PresentationObjectBuilder() {
                         @Override
                         public void process(String pid) {
                             counter.incrementAndGet();
                         }
                     });
-            Worker worker = beanFactory.getWorker();
-            queue("work:1", "work:2",
-                  "work:1", "work:2",
-                  "work:1", "work:2",
-                  "work:1", "work:2",
-                  "work:1", "work:2");
-            worker.init();
-            waitForQueue(10);
-            worker.destroy();
-        });
+                    Worker worker = beanFactory.getWorker();
+                    queue("work:1", "work:2",
+                          "work:1", "work:2",
+                          "work:1", "work:2",
+                          "work:1", "work:2",
+                          "work:1", "work:2");
+                    worker.init();
+                    waitForQueue(10);
+                    worker.destroy();
+                });
 
         assertThat(counter.get(), is(2));
 
@@ -61,25 +60,24 @@ public class WorkerIT extends JpaBaseWithCorepo {
     @Test
     public void testWorkNoDedup() throws Exception {
         AtomicInteger counter = new AtomicInteger();
-        jpa(em -> {
-            BeanFactory beanFactory = new BeanFactory(em, dataSource, corepoDataSource,
-                                                      "QUEUE_DEDUPLICATE=false")
-                    .withPresentationObjectBuilder(new PresentationObjectBuilder() {
+        withConfigEnv("QUEUE_DEDUPLICATE=false")
+                .jpaWithBeans(beanFactory -> {
+                    beanFactory.withPresentationObjectBuilder(new PresentationObjectBuilder() {
                         @Override
                         public void process(String pid) {
                             counter.incrementAndGet();
                         }
                     });
-            Worker worker = beanFactory.getWorker();
-            queue("work:1", "work:2",
-                  "work:1", "work:2",
-                  "work:1", "work:2",
-                  "work:1", "work:2",
-                  "work:1", "work:2");
-            worker.init();
-            waitForQueue(10);
-            worker.destroy();
-        });
+                    Worker worker = beanFactory.getWorker();
+                    queue("work:1", "work:2",
+                          "work:1", "work:2",
+                          "work:1", "work:2",
+                          "work:1", "work:2",
+                          "work:1", "work:2");
+                    worker.init();
+                    waitForQueue(10);
+                    worker.destroy();
+                });
         assertThat(counter.get(), is(10));
     }
 
