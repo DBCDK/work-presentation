@@ -29,6 +29,9 @@ import java.time.Instant;
  */
 public class CacheDataBuilder {
 
+    public static final String LOCAL_DATA = "localData.";
+    private static final int LOCAL_DATA_LEN = LOCAL_DATA.length();
+
     private final String corepoId;
     private final String localStream;
     private final boolean deleted;
@@ -40,11 +43,14 @@ public class CacheDataBuilder {
     }
 
     public CacheDataBuilder(String corepoId, String localStream, Timestamp modified, boolean deleted) {
+        if (!localStream.startsWith(LOCAL_DATA)) {
+            throw new IllegalStateException("Trying to build a CacheDataBuilder for stream: " + localStream);
+        }
         this.corepoId = corepoId;
         this.localStream = localStream;
         this.modified = modified;
         this.deleted = deleted;
-        this.manifestationId = localStream.substring(localStream.indexOf('.') + 1) +
+        this.manifestationId = localStream.substring(LOCAL_DATA_LEN) +
                                ":" +
                                corepoId.substring(corepoId.indexOf(':') + 1);
     }
@@ -70,5 +76,10 @@ public class CacheDataBuilder {
         ManifestationInformation result = new ManifestationInformation();
         result.manifestationId = manifestationId;
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "CacheDataBuilder{" + "manifestationId=" + manifestationId + ", deleted=" + deleted + ", modified=" + modified + '}';
     }
 }
