@@ -24,7 +24,7 @@ package dk.dbc.search.work.presentation.worker.pool;
  */
 public class BadObjectException extends RuntimeException {
 
-    static final long serialVersionUID = 0x152ADF7ACFE23BF4L;
+    public static final long serialVersionUID = 0x152ADF7ACFE23BF4L;
 
     public BadObjectException() {
     }

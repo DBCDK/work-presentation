@@ -201,7 +201,7 @@ public class JavascriptCacheObjectBuilder {
     private final String methodName;
     private final Environment environment;
 
-    private JavascriptCacheObjectBuilder(String scriptFile, String methodName, List<String> searchPaths, ClassLoader classLoader) throws IOException, Exception {
+    private JavascriptCacheObjectBuilder(String scriptFile, String methodName, List<String> searchPaths, ClassLoader classLoader) throws Exception {
         this.methodName = methodName;
         ModuleHandler moduleHandler = new ModuleHandler();
         moduleHandler.registerHandler("file", new FileSchemeHandler("/"));
@@ -347,7 +347,7 @@ public class JavascriptCacheObjectBuilder {
                 }
             }
         }
-        log.error("Cannot locate %s in searchpath %s", fileName, searchPaths);
+        log.error("Cannot locate {} in searchpath {}", fileName, searchPaths);
         throw new FileNotFoundException("Cannot locate '" + fileName + "'");
     }
 }
