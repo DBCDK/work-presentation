@@ -18,14 +18,15 @@ public class ManifestationInformation implements Serializable {
 
     public String fullTitle;
 
-    public String creator;
+    @JsonProperty("creators")
+    public List<String> creators;
 
     public String description;
 
     public List<String> subject;
 
-    @JsonProperty("type")
-    public String materialType;
+    @JsonProperty("types")
+    public List<String> materialType;
 
     @Override
     public boolean equals(Object o) {
@@ -35,7 +36,7 @@ public class ManifestationInformation implements Serializable {
         return Objects.equals(manifestationId, that.manifestationId) &&
                 Objects.equals(title, that.title) &&
                 Objects.equals(fullTitle, that.fullTitle) &&
-                Objects.equals(creator, that.creator) &&
+                Objects.equals(creators, that.creators) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(subject, that.subject) &&
                 Objects.equals(materialType, that.materialType);
@@ -43,7 +44,7 @@ public class ManifestationInformation implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(manifestationId, title, fullTitle, creator, description, subject, materialType);
+        return Objects.hash(manifestationId, title, fullTitle, creators, description, subject, materialType);
     }
 
     @Override
@@ -52,7 +53,7 @@ public class ManifestationInformation implements Serializable {
                "manifestationId='" + manifestationId + '\'' +
                ", title='" + title + '\'' +
                ", fullTitle='" + fullTitle + '\'' +
-               ", creator='" + creator + '\'' +
+               ", creators='" + creators + '\'' +
                ", description='" + description + '\'' +
                ", subject='" + subject + '\'' +
                ", materialType='" + materialType + '\'' +

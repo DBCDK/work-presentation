@@ -19,8 +19,10 @@
 package dk.dbc.search.work.presentation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.HashMap;
@@ -45,7 +47,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JavascriptCacheObjectBuilderTest {
 
     private static Supplier<JavascriptCacheObjectBuilder> jsSupplier;
-    private static final ObjectMapper O = new ObjectMapper();
+    private static final ObjectMapper O = new ObjectMapper()
+            .configure(SerializationFeature.INDENT_OUTPUT, true);
 
     @BeforeAll
     public static void setUpClass() {
@@ -65,7 +68,8 @@ public class JavascriptCacheObjectBuilderTest {
                   ManifestationInformation expected = null;
                   for (File file : dir.toFile().listFiles()) {
                       String name = file.getName();
-                      if (name.equals("expected.json")) {
+                      if (name.equals("actual.json")) {
+                      } else if (name.equals("expected.json")) {
                           expected = O.readValue(file, ManifestationInformation.class);
                       } else if (name.toLowerCase(Locale.ROOT).endsWith(".xml")) {
                           name = name.substring(0, name.length() - 4);
@@ -78,6 +82,9 @@ public class JavascriptCacheObjectBuilderTest {
                   JavascriptCacheObjectBuilder js = jsSupplier.get();
                   ManifestationInformation information = js.extractManifestationInformation(manifestationId, null);
                   System.out.println("information = " + information);
+                  try (FileOutputStream os = new FileOutputStream(dir.resolve("actual.json").toFile())) {
+                      O.writeValue(os, information);
+                  }
                   assertThat(information, is(expected));
               });
     }

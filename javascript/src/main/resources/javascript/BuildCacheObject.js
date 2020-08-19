@@ -6,9 +6,9 @@ function buildManifestationInformation(manifestationId, xmlObjects) {
         pid: manifestationId,
         title: 'Nothing',
         fullTitle: 'The incredible long and tedious story about nothing',
-        creator: 'That developer character',
+        creators: [ 'That developer character' ],
         description: 'It is not really about anything',
         subject: ['borring', 'another'],
-        type: 'book'
+        types: [ 'book' ]
     };
 }
