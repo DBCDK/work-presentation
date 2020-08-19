@@ -1,0 +1,17 @@
+{
+  "id": "911c2197-0a96-3676-a039-ad46734015b9",
+  "request": {
+    "url": "/corepo-content-service/rest/objects/870970-basis:00010529/datastreams/localData.763000-katalog",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "body-870970-basis-00010529_763000.xml",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/xml",
+      "X-Frame-Options": "SAMEORIGIN"
+    }
+  },
+  "uuid": "911c2197-0a96-3676-a039-ad46734015b9"
+}

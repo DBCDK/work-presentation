@@ -1,0 +1,17 @@
+{
+  "id": "98a2b06e-149b-3dcf-b9a2-17f805d42aa9",
+  "request": {
+    "url": "/corepo-content-service/rest/objects/unit:64",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "body-unit-64.xml",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/xml",
+      "X-Frame-Options": "SAMEORIGIN"
+    }
+  },
+  "uuid": "98a2b06e-149b-3dcf-b9a2-17f805d42aa9"
+}
