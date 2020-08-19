@@ -28,6 +28,7 @@ import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -37,7 +38,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- *
+ * Access to Corepo Content Service
  * @author thp
  */
 @Stateless
@@ -64,6 +65,10 @@ public class ContentService {
 
     private final SAXParserFactory factory = SAXParserFactory.newInstance();
 
+    /**
+     * Parser for Corepo Content Service "get" operation for "object"
+     * Parses state and modification date of a Corepo object
+     */
     private static class ObjectHandler extends DefaultHandler {
 
         private final static String STATE = "objState";
@@ -124,7 +129,10 @@ public class ContentService {
         }
     }
 
-
+    /**
+     * Parser for a Corepo Content Service "get" operation for a "stream"
+     * Parses state and modification date
+     */
     private static class StreamMetaHandler extends DefaultHandler {
 
         private final static String STATE = "dsState";
@@ -188,6 +196,10 @@ public class ContentService {
     }
 
 
+    /**
+     * Parser for a Corepo Content Service "get" operation for "streams" list of an object
+     * Parses names of the all streams of the object
+     */
     private static class DatastreamsListHandler extends DefaultHandler {
 
         private final static String DATASTREAM = "datastream";
@@ -216,11 +228,12 @@ public class ContentService {
     }
 
     /**
-     * TODO: Three states: active, deleted and not-exists?
-     * @param pid the identifier
-     * @return State
+     * Get the MetaData of a Corepo object through the Corepo Content Service
+     * @param pid the identifier of the object
+     * @return The meta data for the object
      * @throws WebApplicationException on error from content service or parsing result
      */
+    @Timed
     public MetaData getObjectMetaData(IRepositoryIdentifier pid) throws WebApplicationException {
         log.trace("Entering getObjectMetaData({})", pid);
 
@@ -231,8 +244,6 @@ public class ContentService {
                 .build(pid);
         
         Response response = client.target(uri).request(MediaType.APPLICATION_XML_TYPE).get();
-
-
 
         final Response.StatusType statusInfo = response.getStatusInfo();
         log.trace("{} - objectProfile status: {}", pid, statusInfo);
@@ -257,12 +268,13 @@ public class ContentService {
     }
     
     /**
-     * TODO: Three states: active, deleted and not-exists?
-     * @param pid the identifier
-     * @param streamName Stream name
-     * @return State
+     * Get the MetaData of a Corepo datastream through the Corepo Content Service
+     * @param pid the identifier of the object
+     * @param streamName Name of stream of the get
+     * @return The meta data for the stream
      * @throws WebApplicationException on error from content service or parsing result
      */
+    @Timed
     public MetaData getDatastreamMetaData(IRepositoryIdentifier pid, String streamName) throws WebApplicationException {
         log.trace("Entering getDatastreamMetaData({}, {})", pid, streamName);
 
@@ -290,27 +302,39 @@ public class ContentService {
                 throw new WebApplicationException(message, ex);
             }
         } else {
-            // TODO: If object has been deleted, the work must be deleted from database
             String message = String.format("Stream does not exists:  %s - %s", pid, streamName);
             log.info(message);
             throw new WebApplicationException(message);
         }
     }
 
-    public String getDatastreamContent(IRepositoryIdentifier pid, String steamName) throws WebApplicationException {
-        log.trace("Entering getDatastreamContent({}, {})", pid, steamName);
+    /**
+     * Get the content of a Corepo datastream through the Corepo Content Service
+     * @param pid the identifier of the object
+     * @param streamName Name of stream of the get
+     * @return The content of the stream
+     */
+    @Timed
+    public String getDatastreamContent(IRepositoryIdentifier pid, String streamName) {
+        log.trace("Entering getDatastreamContent({}, {})", pid, streamName);
         Client client = config.getHttpClient();
 
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{pid}/datastreams/{stream}/content")
-                .build(pid, steamName);
+                .build(pid, streamName);
         Response response = client.target(uri).request(MediaType.APPLICATION_XML_TYPE).get();
         return response.readEntity(String.class);
     }
 
+    /**
+     * Get content and metadata of a datastream through the Corepo Content Service
+     * @param pid the identifier of the object
+     * @param streamName Name of stream of the get
+     * @return An object containing content and metadata of the stream
+     */
+    @Timed
     public RepositoryStream getDataStream(IRepositoryIdentifier pid, String streamName) {
         String datastreamContent = getDatastreamContent(pid, streamName);
-        // TODO Stream State
         MetaData datastreamMetaData = getDatastreamMetaData(pid, streamName);
 
         TemporalAccessor time = dataFormat.parse(datastreamMetaData.modified);
@@ -319,6 +343,12 @@ public class ContentService {
         return new RepositoryStream(streamName, datastreamContent.getBytes(StandardCharsets.UTF_8), datastreamMetaData.state, pid, modified);
     }
 
+    /**
+     * Get content and metadata of all of the datastream of an object through the Corepo Content Service
+     * @param pid the identifier of the object
+     * @return A list of object containing content and metadata of the streams
+     */
+    @Timed
     public RepositoryStream[] getDatastreams(IRepositoryIdentifier pid) {
         log.trace("Entering getDatastreams {}", pid);
         Client client = config.getHttpClient();
@@ -357,12 +387,20 @@ public class ContentService {
         }
     }
 
+    /**
+     * Get system relations of an object through the Corepo Content Service
+     * @param pid the identifier of the object
+     * @return
+     * @throws SAXException If parsing stream fails
+     * @throws ParserConfigurationException If parser creation fails
+     * @throws IOException if reading data fails
+     */
+    @Timed
     public SysRelationStreamApi getRelations(IRepositoryIdentifier pid) throws SAXException, ParserConfigurationException, IOException {
         log.trace("Entering getRelations");
         String stream = getDatastreamContent(pid, RELS_SYS_STREAM);
         SysRelationStreamApi api = new SysRelationStreamApi(pid, stream.getBytes(StandardCharsets.UTF_8));
         return api;
     }
-
 
 }
