@@ -180,4 +180,8 @@ public class WorkContainsEntity implements Serializable {
                Objects.equals(this.manifestationId, other.manifestationId);
     }
 
+    @Override
+    public String toString() {
+        return "WorkContainsEntity{" + "version=" + version + ", corepoWorkId=" + corepoWorkId + ", manifestationId=" + manifestationId + '}';
+    }
 }

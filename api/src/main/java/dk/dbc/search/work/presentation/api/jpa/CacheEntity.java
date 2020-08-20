@@ -25,6 +25,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Objects;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -33,7 +34,6 @@ import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.LockModeType;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
@@ -136,6 +136,34 @@ public class CacheEntity implements Serializable {
         em.detach(this);
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + Objects.hashCode(this.manifestationId);
+        hash = 47 * hash + Objects.hashCode(this.modified);
+        hash = 47 * hash + Objects.hashCode(this.content);
+        hash = 47 * hash + this.version;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        final CacheEntity other = (CacheEntity) obj;
+        return this.version == other.version &&
+               Objects.equals(this.manifestationId, other.manifestationId) &&
+               Objects.equals(this.content, other.content) &&
+               Objects.equals(this.modified, other.modified);
+    }
+
+    @Override
+    public String toString() {
+        return "CacheEntity{" + "version=" + version + ", manifestationId=" + manifestationId + ", modified=" + modified + '}';
+    }
+
     @Converter
     public static class JsonConverter implements AttributeConverter<ManifestationInformation, PGobject> {
 
@@ -168,5 +196,4 @@ public class CacheEntity implements Serializable {
             }
         }
     }
-
 }

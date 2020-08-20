@@ -177,7 +177,7 @@ public class RecordEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "RecordEntity{" + "persistentWorkId=" + persistentWorkId + ", corepoWorkId=" + corepoWorkId + ", modified=" + modified + ", content=" + content + ", version=" + version + '}';
+        return "RecordEntity{" + "persistentWorkId=" + persistentWorkId + ", corepoWorkId=" + corepoWorkId + ", modified=" + modified + ", version=" + version + '}';
     }
 
     @Converter
@@ -212,5 +212,4 @@ public class RecordEntity implements Serializable {
             }
         }
     }
-
 }
