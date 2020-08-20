@@ -11,7 +11,6 @@ CREATE UNIQUE INDEX records_corepoWorkId ON records(corepoWorkId);
 CREATE TABLE workContains (
   version INTEGER NOT NULL DEFAULT 0,
   corepoWorkId TEXT NOT NULL,
-  unitId TEXT NOT NULL,
   manifestationId TEXT NOT NULL PRIMARY KEY
 );
 

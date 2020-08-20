@@ -45,14 +45,12 @@ public class WorkContainsEntityIT extends JpaBase {
                       Stream.of("870970-basis:25912233", "710100-katalog:25912233", "766500-katalog:25912233")
                               .forEach(m -> {
                                   WorkContainsEntity wce = WorkContainsEntity.from(em, "870970-basis:25912233", m);
-                                  wce.setUnitId("unit:0");
                                   wce.save();
                               });
                       // Make work b
                       Stream.of("870970-basis:23645564", "710100-katalog:23645564")
                               .forEach(m -> {
                                   WorkContainsEntity wce = WorkContainsEntity.from(em, "870970-basis:23645564", m);
-                                  wce.setUnitId("unit:1");
                                   wce.save();
                               });
                   });
@@ -76,7 +74,6 @@ public class WorkContainsEntityIT extends JpaBase {
                   }
                   WorkContainsEntity extra = jpa(em -> {
                       WorkContainsEntity wce = WorkContainsEntity.from(em, "870970-basis:25912233", "911116-katalog:25912233");
-                      wce.setUnitId("unit:0");
                       return wce;
                   });
 
