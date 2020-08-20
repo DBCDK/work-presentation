@@ -33,6 +33,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.LockModeType;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
@@ -69,7 +70,7 @@ public class CacheEntity implements Serializable {
     transient EntityManager em;
 
     public static CacheEntity from(EntityManager em, String manifestationId) {
-        CacheEntity entity = em.find(CacheEntity.class, em, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+        CacheEntity entity = em.find(CacheEntity.class, manifestationId, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
         if (entity == null) {
             entity = new CacheEntity(manifestationId);
         }
@@ -134,7 +135,7 @@ public class CacheEntity implements Serializable {
     public void detach() {
         em.detach(this);
     }
-    
+
     @Converter
     public static class JsonConverter implements AttributeConverter<ManifestationInformation, PGobject> {
 
