@@ -33,7 +33,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
-public class ParallelCacheContentBuilderIT extends JpaBaseWithCorepo {
+public class ParallelCacheContentBuilderIT extends JpaBase {
 
     @Test
     public void testPartsGetsDeleted() throws Exception {

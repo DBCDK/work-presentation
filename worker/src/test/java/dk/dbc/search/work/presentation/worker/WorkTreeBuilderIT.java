@@ -32,7 +32,7 @@ import static org.hamcrest.Matchers.*;
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
-public class WorkTreeBuilderIT extends JpaBaseWithCorepo {
+public class WorkTreeBuilderIT extends JpaBase {
 
     private static final Logger log = LoggerFactory.getLogger(WorkTreeBuilderIT.class);
 

@@ -28,7 +28,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
-public class WorkerIT extends JpaBaseWithCorepo {
+public class WorkerIT extends JpaBase {
 
     @Test
     public void testWork() throws Exception {

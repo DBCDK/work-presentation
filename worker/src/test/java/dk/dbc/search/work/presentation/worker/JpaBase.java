@@ -21,7 +21,6 @@ package dk.dbc.search.work.presentation.worker;
 import dk.dbc.corepo.queue.QueueJob;
 import dk.dbc.pgqueue.PreparedQueueSupplier;
 import dk.dbc.pgqueue.QueueSupplier;
-import dk.dbc.search.work.presentation.api.jpa.JpaBase;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -41,9 +40,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
-public class JpaBaseWithCorepo extends JpaBase<BeanFactory> {
+public class JpaBase extends dk.dbc.search.work.presentation.api.jpa.JpaBase<BeanFactory> {
 
-    private static final Logger log = LoggerFactory.getLogger(JpaBaseWithCorepo.class);
+    private static final Logger log = LoggerFactory.getLogger(JpaBase.class);
 
     protected static PGSimpleDataSource corepoDataSource;
 
@@ -85,8 +84,6 @@ public class JpaBaseWithCorepo extends JpaBase<BeanFactory> {
     public BeanFactory createBeanFactory(Map<String, String> env, EntityManager em) {
         return new BeanFactory(env, em, corepoDataSource);
     }
-
-
 
     public void waitForQueue(int seconds) throws SQLException, InterruptedException {
         Instant timeout = Instant.now().plusSeconds(seconds);

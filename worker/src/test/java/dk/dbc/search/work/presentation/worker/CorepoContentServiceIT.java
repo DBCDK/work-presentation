@@ -30,7 +30,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
-public class CorepoContentServiceIT extends JpaBaseWithCorepo {
+public class CorepoContentServiceIT extends JpaBase {
 
     @Test
     public void testObjectMetaData() throws Exception {
