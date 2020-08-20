@@ -41,14 +41,9 @@ public class BeanFactory {
     private final Bean<ParallelCacheContentBuilder> parallelCacheContentBuilder = new Bean<>(new ParallelCacheContentBuilder(), this::setupParallelCacheContentBuilder);
     private final Bean<CorepoContentService> corepoContentService = new Bean<>(new CorepoContentService(), this::setupCorepoContentService);
     private final Bean<PresentationObjectBuilder> presentationObjectBuilder = new Bean<>(new PresentationObjectBuilder(), this::setupPresentationObjectBuilder);
+    private final Bean<WorkConsolidator> workConsolidator = new Bean<>(new WorkConsolidator(), this::setupWorkConsolidator);
     private final Bean<Worker> worker = new Bean<>(new Worker(), this::setupWorker);
     private final Bean<WorkTreeBuilder> workTreeBuilder = new Bean<>(new WorkTreeBuilder(), this::setupWorkTreeBuilder);
-
-//    public BeanFactory(EntityManager em, DataSource corepoDataSource, String... envs) {
-//        this.entityManager = em;
-//        this.corepoDataSource = corepoDataSource;
-//        this.config = makeConfig(config(envs));
-//    }
 
     public BeanFactory(Map<String, String> envs, EntityManager em, DataSource corepoDataSource) {
         this.entityManager = em;
@@ -112,7 +107,16 @@ public class BeanFactory {
 
     private void setupPresentationObjectBuilder(PresentationObjectBuilder bean) {
         bean.parallelCacheContentBuilder = parallelCacheContentBuilder.get();
+        bean.workConsolidator = workConsolidator.get();
         bean.workTreeBuilder = workTreeBuilder.get();
+    }
+
+    public WorkConsolidator getWorkConsolidator() {
+        return workConsolidator.get();
+    }
+
+    private void setupWorkConsolidator(WorkConsolidator bean) {
+        bean.em = entityManager;
     }
 
     public Worker getWorker() {
@@ -125,6 +129,11 @@ public class BeanFactory {
         bean.dataSource = corepoDataSource;
         bean.metrics = null;
         bean.presentationObjectBuilder = presentationObjectBuilder.get();
+    }
+
+    public BeanFactory withWorkTreeBuilder(WorkTreeBuilder bean) {
+        workTreeBuilder.set(bean);
+        return this;
     }
 
     public WorkTreeBuilder getWorkTreeBuilder() {
