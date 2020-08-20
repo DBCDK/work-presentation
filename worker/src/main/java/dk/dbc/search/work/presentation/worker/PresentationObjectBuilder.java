@@ -18,7 +18,9 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
+import dk.dbc.search.work.presentation.worker.tree.WorkTree;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.transaction.Transactional;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
@@ -26,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This produces all the fields a presentation request possibly can result in.
- *
+ * <p>
  * The presentation request then filters this.
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
@@ -36,6 +38,12 @@ public class PresentationObjectBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(PresentationObjectBuilder.class);
 
+    @Inject
+    WorkTreeBuilder workTreeBuilder;
+
+    @Inject
+    ParallelCacheContentBuilder parallelCacheContentBuilder;
+
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     @Timed
     public void process(String pid) {
@@ -44,6 +52,11 @@ public class PresentationObjectBuilder {
             return;
         }
         log.info("Processing job: {}", pid);
+
+        WorkTree tree = workTreeBuilder.buildTree(pid);
+        tree.prettyPrint(log::trace);
+        parallelCacheContentBuilder.updateCache(tree); // Needs to be before .updateWorkContains(tree)
+        parallelCacheContentBuilder.updateWorkContains(tree);
     }
 
 }
