@@ -23,16 +23,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,78 +44,55 @@ import static org.eclipse.persistence.config.PersistenceUnitProperties.JDBC_USER
 /**
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
+ * @param <BF>
  */
-public class JpaBase {
+public class JpaBase<BF> {
 
     private static final Logger log = LoggerFactory.getLogger(JpaBase.class);
 
     protected static PGSimpleDataSource dataSource;
     private static HashMap<String, String> entityManagerProperties;
     private static EntityManagerFactory entityManagerFactory;
-    private EntityManager entityManager;
 
     @FunctionalInterface
-    public static interface JpaVoidExecution {
+    public interface JpaVoidExecution {
 
         public void execute(EntityManager em) throws Exception;
     }
 
     @FunctionalInterface
-    public static interface JpaExecution<T extends Object> {
+    public interface JpaBeanVoidExecution<BF> {
 
-        public T execute(EntityManager em) throws Exception;
+        public void execute(BF beanFactory) throws Exception;
     }
 
     public void jpa(JpaVoidExecution ex) {
-        EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
-            ex.execute(entityManager);
-            transaction.commit();
-        } catch (Exception err) {
-            if (transaction.isActive()) {
-                try {
-                    transaction.rollback();
-                } catch (Exception e) {
-                    log.error("Error rolling back transaction: {}", e.getMessage());
-                    log.debug("Error rolling back transaction: ", e);
+            EntityTransaction transaction = entityManager.getTransaction();
+            transaction.begin();
+            try {
+                ex.execute(entityManager);
+                transaction.commit();
+            } catch (Exception err) {
+                if (transaction.isActive()) {
+                    try {
+                        transaction.rollback();
+                    } catch (Exception e) {
+                        log.error("Error rolling back transaction: {}", e.getMessage());
+                        log.debug("Error rolling back transaction: ", e);
+                    }
                 }
+                if (err instanceof RuntimeException)
+                    throw (RuntimeException) err;
+                throw new RuntimeException(err);
             }
-            if (err instanceof RuntimeException)
-                throw (RuntimeException) err;
-            throw new RuntimeException(err);
+        } finally {
+            entityManager.close();
+            entityManagerFactory.getCache().evictAll();
         }
     }
 
-    public <T> T jpa(JpaExecution<T> ex) {
-        EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
-        try {
-            T t = ex.execute(entityManager);
-            transaction.commit();
-            return t;
-        } catch (Exception err) {
-            if (transaction.isActive()) {
-                try {
-                    transaction.rollback();
-                } catch (Exception e) {
-                    log.error("Error rolling back transaction: {}", e.getMessage());
-                    log.debug("Error rolling back transaction: ", e);
-                }
-            }
-            if (err instanceof RuntimeException)
-                throw (RuntimeException) err;
-            throw new RuntimeException(err);
-        }
-    }
-
-    public void flushAndEvict() {
-        jpa(em -> {
-            em.flush();
-            em.clear();
-        });
-        entityManagerFactory.getCache().evictAll();
-    }
 
     @BeforeAll
     public static void setUpEntityManagerAndDataSource() {
@@ -146,6 +122,32 @@ public class JpaBase {
             }
         };
         entityManagerFactory = Persistence.createEntityManagerFactory("workPresentationTest_PU", entityManagerProperties);
+    }
+
+    public WithEnv withConfigEnv(String... envs) {
+        Map<String, String> env = Arrays.stream(envs)
+                .map(s -> s.split("=", 2))
+                .collect(Collectors.toMap(a -> a[0], a -> a[1]));
+        return new WithEnv(env);
+    }
+
+    public BF createBeanFactory(Map<String, String> env, EntityManager em) {
+        return null;
+    }
+
+    public class WithEnv {
+
+        private final Map<String, String> env;
+
+        public WithEnv(Map<String, String> env) {
+            this.env = env;
+        }
+
+        public void jpaWithBeans(JpaBeanVoidExecution<BF> execution) {
+            jpa(em -> {
+                execution.execute(createBeanFactory(env, em));
+            });
+        }
     }
 
     protected static PGSimpleDataSource getDataSource(String databaseName) throws NumberFormatException {
@@ -193,21 +195,4 @@ public class JpaBase {
         return ds;
     }
 
-    @BeforeEach
-    public void setUpEntityManager() {
-        log.info("setUpEntityManager");
-        entityManagerFactory.getCache().evictAll();
-        entityManager = entityManagerFactory.createEntityManager();
-    }
-
-    @AfterEach
-    public void tearDownEntityManager() {
-        log.info("tearDownEntityManager");
-        entityManager.close();
-        entityManager = null;
-    }
-
-    @AfterAll
-    public static void tearEntityManagerAndDataSource() {
-    }
 }

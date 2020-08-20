@@ -28,6 +28,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Map;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -40,7 +41,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
-public class JpaBaseWithCorepo extends JpaBase {
+public class JpaBaseWithCorepo extends JpaBase<BeanFactory> {
 
     private static final Logger log = LoggerFactory.getLogger(JpaBaseWithCorepo.class);
 
@@ -80,6 +81,13 @@ public class JpaBaseWithCorepo extends JpaBase {
         }
     }
 
+    @Override
+    public BeanFactory createBeanFactory(Map<String, String> env, EntityManager em) {
+        return new BeanFactory(env, em, corepoDataSource);
+    }
+
+
+
     public void waitForQueue(int seconds) throws SQLException, InterruptedException {
         Instant timeout = Instant.now().plusSeconds(seconds);
         for (;;) {
@@ -97,45 +105,5 @@ public class JpaBaseWithCorepo extends JpaBase {
                 Thread.sleep(100L);
             }
         }
-    }
-
-    WithEnv withConfigEnv(String... env) {
-        return new WithEnv(this, env);
-    }
-
-    @FunctionalInterface
-    interface JpaBeanExecution<T extends Object> {
-
-        public T execute(BeanFactory beanFactory) throws Exception;
-    }
-
-    @FunctionalInterface
-    interface JpaBeanVoidExecution {
-
-        public void execute(BeanFactory beanFactory) throws Exception;
-    }
-
-    class WithEnv {
-
-        private final JpaBaseWithCorepo base;
-        private final String[] env;
-
-        WithEnv(JpaBaseWithCorepo base, String[] env) {
-            this.base = base;
-            this.env = env;
-        }
-
-        <T> T jpaWithBeans(JpaBeanExecution<T> execution) {
-            return base.jpa(em -> {
-                return execution.execute(new BeanFactory(em, dataSource, corepoDataSource, env));
-            });
-        }
-
-        void jpaWithBeans(JpaBeanVoidExecution execution) {
-            base.jpa(em -> {
-                execution.execute(new BeanFactory(em, dataSource, corepoDataSource, env));
-            });
-        }
-
     }
 }

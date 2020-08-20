@@ -36,7 +36,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
-public class RecordEntityIT extends JpaBase {
+public class RecordEntityIT extends JpaBase<Object> {
 
     public RecordEntityIT() {
     }
@@ -58,31 +58,30 @@ public class RecordEntityIT extends JpaBase {
         wi.subject = "emne";
         wi.description = "beskrivelse";
         wi.manifestationInformationList = ml;
-        Map<String, List<ManifestationInformation>> unitInfo = new HashMap<String, List<ManifestationInformation>>();
+        Map<String, List<ManifestationInformation>> unitInfo = new HashMap<>();
         unitInfo.put("unitId", ml);
         wi.dbUnitInformation = unitInfo;
 
-        RecordEntity oldEntity = new RecordEntity("a", "b", Timestamp.from(Instant.now()), wi );
 
+        RecordEntity oldEntity = new RecordEntity("a", "b", Timestamp.from(Instant.now()), wi);
         jpa(em -> {
             em.persist(oldEntity);
         });
-        flushAndEvict();
-        RecordEntity newEntity = jpa(em -> {
-            return RecordEntity.from(em, "a");
+
+        jpa(em -> {
+            RecordEntity newEntity = RecordEntity.from(em, "a");
+            System.out.println("newEntity = " + newEntity);
+            System.out.println("oldEntity = " + oldEntity);
+
+            assertThat(newEntity, is(oldEntity));
         });
 
-        System.out.println("newEntity = " + newEntity);
-        System.out.println("oldEntity = " + oldEntity);
-
-        assertThat(newEntity, is(oldEntity));
     }
 
     @Test
     public void testSaveAndDelete() throws Exception {
         System.out.println("testSaveAndDelete");
 
-        flushAndEvict();
         jpa(em -> {
             RecordEntity rec = RecordEntity.from(em, "work-of-x");
             assertThat(rec.persist, is(true)); // NEW
@@ -91,19 +90,16 @@ public class RecordEntityIT extends JpaBase {
             rec.setModified(Timestamp.from(Instant.now()));
             rec.save();
         });
-        flushAndEvict();
         jpa(em -> {
             RecordEntity rec = RecordEntity.from(em, "work-of-x");
             assertThat(rec.persist, is(false)); // FROM DB
             rec.save();
         });
-        flushAndEvict();
         jpa(em -> {
             RecordEntity rec = RecordEntity.from(em, "work-of-x");
             assertThat(rec.persist, is(false)); // FROM DB
             rec.delete();
         });
-        flushAndEvict();
         jpa(em -> {
             RecordEntity rec = RecordEntity.from(em, "work-of-x");
             assertThat(rec.persist, is(true)); // NEW

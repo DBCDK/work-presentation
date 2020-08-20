@@ -35,30 +35,35 @@ import org.glassfish.jersey.client.JerseyClientBuilder;
  */
 public class BeanFactory {
 
-    private final EntityManager em;
-    private final DataSource wpDataSource;
-    private final DataSource coDataSource;
+    private final EntityManager entityManager;
+    private final DataSource corepoDataSource;
     private final Config config;
+    private final Bean<ParallelCacheContentBuilder> parallelCacheContentBuilder = new Bean<>(new ParallelCacheContentBuilder(), this::setupParallelCacheContentBuilder);
     private final Bean<CorepoContentService> corepoContentService = new Bean<>(new CorepoContentService(), this::setupCorepoContentService);
     private final Bean<PresentationObjectBuilder> presentationObjectBuilder = new Bean<>(new PresentationObjectBuilder(), this::setupPresentationObjectBuilder);
     private final Bean<Worker> worker = new Bean<>(new Worker(), this::setupWorker);
     private final Bean<WorkTreeBuilder> workTreeBuilder = new Bean<>(new WorkTreeBuilder(), this::setupWorkTreeBuilder);
 
-    public BeanFactory(EntityManager em, DataSource wpDataSource, DataSource coDataSource, String... envs) {
-        this.em = em;
-        this.wpDataSource = wpDataSource;
-        this.coDataSource = coDataSource;
+//    public BeanFactory(EntityManager em, DataSource corepoDataSource, String... envs) {
+//        this.entityManager = em;
+//        this.corepoDataSource = corepoDataSource;
+//        this.config = makeConfig(config(envs));
+//    }
+
+    public BeanFactory(Map<String, String> envs, EntityManager em, DataSource corepoDataSource) {
+        this.entityManager = em;
+        this.corepoDataSource = corepoDataSource;
         this.config = makeConfig(envs);
     }
 
-    private static Config makeConfig(String... envs) {
+    private static Config makeConfig(Map<String, String> envs) {
         Map<String, String> env = new HashMap<>();
         env.putAll(config("COREPO_CONTENT_SERVICE_URL=" + System.getenv("COREPO_CONTENT_SERVICE_URL"),
                           "SYSTEM_NAME=test",
                           "THREADS=1",
                           "QUEUES=queue",
                           "QUEUE_DEDUPLICATION=true")); // Default settings
-        env.putAll(config(envs));
+        env.putAll(envs);
         Config config = new Config(env) {
             @Override
             protected ClientBuilder clientBuilder() {
@@ -84,40 +89,51 @@ public class BeanFactory {
         return this;
     }
 
+    public ParallelCacheContentBuilder getParallelCacheContentBuilder() {
+        return parallelCacheContentBuilder.get();
+    }
+
+    private void setupParallelCacheContentBuilder(ParallelCacheContentBuilder bean) {
+        bean.em = entityManager;
+        bean.executor = Executors.newCachedThreadPool();
+    }
+
     public CorepoContentService getCorepoContentService() {
         return corepoContentService.get();
     }
 
-    private void setupCorepoContentService(CorepoContentService contentService) {
-        contentService.config = config;
+    private void setupCorepoContentService(CorepoContentService bean) {
+        bean.config = config;
     }
 
     public PresentationObjectBuilder getPresentationObjectBuilder() {
         return presentationObjectBuilder.get();
     }
 
-    private void setupPresentationObjectBuilder(PresentationObjectBuilder pob) {
+    private void setupPresentationObjectBuilder(PresentationObjectBuilder bean) {
+        bean.parallelCacheContentBuilder = parallelCacheContentBuilder.get();
+        bean.workTreeBuilder = workTreeBuilder.get();
     }
 
     public Worker getWorker() {
         return worker.get();
     }
 
-    private void setupWorker(Worker workerBean) {
-        workerBean.config = config;
-        workerBean.executor = Executors.newCachedThreadPool();
-        workerBean.dataSource = coDataSource;
-        workerBean.metrics = null;
-        workerBean.presentationObjectBuilder = presentationObjectBuilder.get();
+    private void setupWorker(Worker bean) {
+        bean.config = config;
+        bean.executor = Executors.newCachedThreadPool();
+        bean.dataSource = corepoDataSource;
+        bean.metrics = null;
+        bean.presentationObjectBuilder = presentationObjectBuilder.get();
     }
 
     public WorkTreeBuilder getWorkTreeBuilder() {
         return workTreeBuilder.get();
     }
 
-    private void setupWorkTreeBuilder(WorkTreeBuilder treeBean) {
-        treeBean.contentService = corepoContentService.get();
-        treeBean.em = em;
+    private void setupWorkTreeBuilder(WorkTreeBuilder bean) {
+        bean.contentService = corepoContentService.get();
+        bean.em = entityManager;
     }
 
     private static class Bean<T> {
