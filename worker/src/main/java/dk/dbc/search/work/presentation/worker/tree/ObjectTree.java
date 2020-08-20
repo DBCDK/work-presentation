@@ -18,7 +18,6 @@
  */
 package dk.dbc.search.work.presentation.worker.tree;
 
-import dk.dbc.search.work.presentation.worker.cache.CacheDataBuilder;
 import java.time.Instant;
 import java.util.HashMap;
 
@@ -26,7 +25,7 @@ import java.util.HashMap;
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
-public class ObjectTree extends HashMap<String, CacheDataBuilder> {
+public class ObjectTree extends HashMap<String, CacheContentBuilder> {
 
     private static final long serialVersionUID = 0x4976FB455503CDEEL;
 

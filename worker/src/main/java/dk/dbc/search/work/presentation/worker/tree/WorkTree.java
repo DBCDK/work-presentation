@@ -18,7 +18,6 @@
  */
 package dk.dbc.search.work.presentation.worker.tree;
 
-import dk.dbc.search.work.presentation.worker.cache.CacheDataBuilder;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.time.Instant;
 import java.util.HashMap;
@@ -36,12 +35,12 @@ public class WorkTree extends HashMap<String, UnitTree> {
 
     private static final long serialVersionUID = 0x899E4144D4AA6ABBL;
 
-    private final String work;
+    private final String corepoWorkId;
     private String primary;
     private final Instant modified;
 
-    public WorkTree(String work, Instant modified) {
-        this.work = work;
+    public WorkTree(String corepoWorkId, Instant modified) {
+        this.corepoWorkId = corepoWorkId;
         this.modified = modified;
     }
 
@@ -72,13 +71,17 @@ public class WorkTree extends HashMap<String, UnitTree> {
         return "work-of-" + getPrimary();
     }
 
+    public String getCorepoWorkId() {
+        return corepoWorkId;
+    }
+
     @Override
     public String toString() {
-        return "WorkTree{" + "work=" + work + ", primary=" + getPrimary() + ", modified=" + modified + ", " + super.toString() + "}";
+        return "WorkTree{" + "corepoWorkId=" + corepoWorkId + ", primary=" + getPrimary() + ", modified=" + modified + ", " + super.toString() + "}";
     }
 
     public void prettyPrint(Consumer<String> logger) {
-        prettyPrintln(logger, "Work: %s", work);
+        prettyPrintln(logger, "Work: %s", corepoWorkId);
         prettyPrintln(logger, " |-- primary: %s", getPrimary());
         prettyPrintln(logger, " %s modified: %s", isEmpty() ? "`--" : "|--", modified);
         for (Iterator<Entry<String, UnitTree>> units = entrySet().iterator() ; units.hasNext() ;) {
@@ -87,20 +90,20 @@ public class WorkTree extends HashMap<String, UnitTree> {
             String unitPrefix = units.hasNext() ? "|--" : "`--";
             prettyPrintln(logger, " %s Unit: %s", unitPrefix, nextUnit.getKey());
             unitPrefix = units.hasNext() ? "|  " : "   ";
-            prettyPrintln(logger, " %s |-- primary: %s", unitPrefix, unit.isPrimary());
-            prettyPrintln(logger, " %s %s modified: %s", unitPrefix, unit.isEmpty() ? "`--" : "|--", unit.getModified());
+            prettyPrintln(logger, " %s  |-- primary: %s", unitPrefix, unit.isPrimary());
+            prettyPrintln(logger, " %s  %s modified: %s", unitPrefix, unit.isEmpty() ? "`--" : "|--", unit.getModified());
             for (Iterator<Entry<String, ObjectTree>> objs = unit.entrySet().iterator() ; objs.hasNext() ;) {
                 Map.Entry<String, ObjectTree> nextObj = objs.next();
                 ObjectTree obj = nextObj.getValue();
                 String objPrefix = objs.hasNext() ? "|--" : "`--";
-                prettyPrintln(logger, " %s %s Obj: %s", unitPrefix, objPrefix, nextObj.getKey());
+                prettyPrintln(logger, " %s  %s Obj: %s", unitPrefix, objPrefix, nextObj.getKey());
                 objPrefix = objs.hasNext() ? "|  " : "   ";
-                prettyPrintln(logger, " %s %s |-- primary: %s", unitPrefix, objPrefix, obj.isPrimary());
-                prettyPrintln(logger, " %s %s %s modified: %s", unitPrefix, objPrefix, obj.isEmpty() ? "`--" : "|--", obj.getModified());
-                for (Iterator<Entry<String, CacheDataBuilder>> streams = obj.entrySet().iterator() ; streams.hasNext() ;) {
-                    Map.Entry<String, CacheDataBuilder> nextStream = streams.next();
+                prettyPrintln(logger, " %s  %s  |-- primary: %s", unitPrefix, objPrefix, obj.isPrimary());
+                prettyPrintln(logger, " %s  %s  %s modified: %s", unitPrefix, objPrefix, obj.isEmpty() ? "`--" : "|--", obj.getModified());
+                for (Iterator<Entry<String, CacheContentBuilder>> streams = obj.entrySet().iterator() ; streams.hasNext() ;) {
+                    Map.Entry<String, CacheContentBuilder> nextStream = streams.next();
                     String streamPrefix = streams.hasNext() ? "|--" : "`--";
-                    prettyPrintln(logger, " %s %s %s Manifestation: %s: %s", unitPrefix, objPrefix, streamPrefix, nextStream.getKey(), nextStream.getValue());
+                    prettyPrintln(logger, " %s  %s  %s Manifestation: %s: %s", unitPrefix, objPrefix, streamPrefix, nextStream.getKey(), nextStream.getValue());
                 }
             }
         }

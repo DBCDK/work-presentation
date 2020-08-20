@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package dk.dbc.search.work.presentation.worker.cache;
+package dk.dbc.search.work.presentation.worker.tree;
 
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -29,7 +29,7 @@ import java.time.Instant;
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
 @SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
-public class CacheDataBuilder {
+public class CacheContentBuilder {
 
     public static final String LOCAL_DATA = "localData.";
     private static final int LOCAL_DATA_LEN = LOCAL_DATA.length();
@@ -40,11 +40,11 @@ public class CacheDataBuilder {
     private final String manifestationId;
     private final Timestamp modified;
 
-    public CacheDataBuilder(String corepoId, String localStream, Instant modified, boolean deleted) {
+    public CacheContentBuilder(String corepoId, String localStream, Instant modified, boolean deleted) {
         this(corepoId, localStream, Timestamp.from(modified), deleted);
     }
 
-    public CacheDataBuilder(String corepoId, String localStream, Timestamp modified, boolean deleted) {
+    public CacheContentBuilder(String corepoId, String localStream, Timestamp modified, boolean deleted) {
         if (!localStream.startsWith(LOCAL_DATA)) {
             throw new IllegalStateException("Trying to build a CacheDataBuilder for stream: " + localStream);
         }
@@ -82,6 +82,6 @@ public class CacheDataBuilder {
 
     @Override
     public String toString() {
-        return "CacheDataBuilder{" + "manifestationId=" + manifestationId + ", deleted=" + deleted + ", modified=" + modified + '}';
+        return "CacheContentBuilder{" + "manifestationId=" + manifestationId + ", deleted=" + deleted + ", modified=" + modified + '}';
     }
 }

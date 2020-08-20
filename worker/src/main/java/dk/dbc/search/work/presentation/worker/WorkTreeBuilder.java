@@ -21,7 +21,7 @@ package dk.dbc.search.work.presentation.worker;
 import dk.dbc.search.work.presentation.worker.tree.UnitTree;
 import dk.dbc.search.work.presentation.worker.tree.ObjectTree;
 import dk.dbc.search.work.presentation.worker.tree.WorkTree;
-import dk.dbc.search.work.presentation.worker.cache.CacheDataBuilder;
+import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
 import dk.dbc.search.work.presentation.worker.corepo.DataStreamMetaData;
 import dk.dbc.search.work.presentation.worker.corepo.ObjectMetaData;
 import dk.dbc.search.work.presentation.worker.corepo.RelsSys;
@@ -96,9 +96,9 @@ public class WorkTreeBuilder {
         Instant modified = objectMetaData.getModified();
 
         contentService.datastreams(object).getStreams().forEach(stream -> {
-            if (stream.startsWith(CacheDataBuilder.LOCAL_DATA)) {
+            if (stream.startsWith(CacheContentBuilder.LOCAL_DATA)) {
                 DataStreamMetaData streamMetaData = contentService.datastreamMetaData(object, stream);
-                objectTree.put(stream, new CacheDataBuilder(object, stream, modified, !streamMetaData.isActive()));
+                objectTree.put(stream, new CacheContentBuilder(object, stream, modified, !streamMetaData.isActive()));
             }
         });
         return objectTree;
