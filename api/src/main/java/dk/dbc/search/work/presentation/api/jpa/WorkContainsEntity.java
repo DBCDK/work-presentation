@@ -87,6 +87,7 @@ public class WorkContainsEntity implements Serializable {
     public static List<WorkContainsEntity> listFrom(EntityManager em, String corepoWorkId) {
         List<WorkContainsEntity> works = em.createNamedQuery("allWithCorepoWorkId", WorkContainsEntity.class)
                 .setParameter("corepoWorkId", corepoWorkId)
+                .setLockMode(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
                 .getResultList();
         works.forEach(w -> {
             w.em = em;
