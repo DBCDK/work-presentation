@@ -32,8 +32,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
-import javax.ejb.Stateless;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.enterprise.concurrent.ManagedExecutorService;
+import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.slf4j.Logger;
@@ -44,7 +46,8 @@ import org.slf4j.MDC;
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
-@Stateless
+@Singleton
+@Lock(LockType.READ)
 public class ParallelCacheContentBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(ParallelCacheContentBuilder.class);
@@ -165,5 +168,4 @@ public class ParallelCacheContentBuilder {
             }
         };
     }
-
 }
