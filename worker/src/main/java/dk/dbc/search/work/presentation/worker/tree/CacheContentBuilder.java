@@ -38,13 +38,9 @@ public class CacheContentBuilder {
 //    private final String localStream;
     private final boolean deleted;
     private final String manifestationId;
-    private final Timestamp modified;
+    private final Instant modified;
 
     public CacheContentBuilder(String corepoId, String localStream, Instant modified, boolean deleted) {
-        this(corepoId, localStream, Timestamp.from(modified), deleted);
-    }
-
-    public CacheContentBuilder(String corepoId, String localStream, Timestamp modified, boolean deleted) {
         if (!localStream.startsWith(LOCAL_DATA)) {
             throw new IllegalStateException("Trying to build a CacheDataBuilder for stream: " + localStream);
         }
@@ -62,7 +58,7 @@ public class CacheContentBuilder {
     }
 
     public Timestamp getModified() {
-        return modified;
+        return Timestamp.from(modified);
     }
 
     public boolean isDeleted() {
