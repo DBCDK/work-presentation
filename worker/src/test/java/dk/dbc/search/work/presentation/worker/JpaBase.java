@@ -51,11 +51,12 @@ public class JpaBase extends dk.dbc.search.work.presentation.api.jpa.JpaBase<Bea
         corepoDataSource = getDataSource("corepo");
         try (Connection connection = dataSource.getConnection() ;
              Statement stmt = connection.createStatement()) {
-            stmt.executeUpdate("CREATE DATABASE corepo");
-        } catch (SQLException ex) {
-            if (ex.toString().contains("database \"corepo\" already exists"))
-                return;
-            throw ex;
+            boolean hasCorepoDb;
+            try (ResultSet resultSet = stmt.executeQuery("SELECT 1 FROM pg_database WHERE datname = 'corepo'")) {
+                hasCorepoDb = resultSet.next();
+            }
+            if (!hasCorepoDb)
+                stmt.executeUpdate("CREATE DATABASE corepo");
         }
         dk.dbc.corepo.access.DatabaseMigrator.migrate(getDataSource("corepo"));
     }
