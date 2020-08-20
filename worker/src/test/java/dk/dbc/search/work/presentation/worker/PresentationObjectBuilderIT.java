@@ -16,20 +16,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package dk.dbc.search.work.presentation.worker;
 
-import java.time.Duration;
-import javax.ejb.embeddable.EJBContainer;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeAll;
+import dk.dbc.search.work.presentation.api.jpa.RecordEntity;
+import dk.dbc.search.work.presentation.worker.tree.WorkTree;
+import java.time.Instant;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -37,38 +32,73 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class PresentationObjectBuilderIT extends JpaBase {
 
-    public PresentationObjectBuilderIT() {
-    }
-
-    @BeforeAll
-    public static void setUpClass() {
-    }
-
-    @AfterAll
-    public static void tearDownClass() {
-    }
-
-    @BeforeEach
-    public void setUp() {
-    }
-
-    @AfterEach
-    public void tearDown() {
-    }
-
-    /**
-     * Test of process method, of class PresentationObjectBuilder.
-     */
     @Test
-    public void testProcess() throws Exception {
-        System.out.println("process");
-        String pid = "";
-        EJBContainer container = javax.ejb.embeddable.EJBContainer.createEJBContainer();
-        PresentationObjectBuilder instance = (PresentationObjectBuilder)container.getContext().lookup("java:global/classes/PresentationObjectBuilder");
-        instance.process(pid);
-        container.close();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testWork() throws Exception {
+        System.out.println("testWork");
+
+        System.out.println("  Process a work");
+        withConfigEnv()
+                .jpaWithBeans(beanFactory -> {
+                    PresentationObjectBuilder bean = beanFactory.getPresentationObjectBuilder();
+                    bean.process("work:62");
+                });
+
+        System.out.println("  Verify that the parts are in the database");
+        jpa(em -> {
+            assertThat(countRecordEntries(em), is(1));
+            assertThat(countCacheEntries(em), is(5));
+            assertThat(countWorkContainsEntries(em), is(5));
+
+            RecordEntity record = RecordEntity.fromCorepoWorkId(em, "work:62").get();
+            System.out.println("record = " + record);
+            System.out.println("record = " + record.getContent());
+            assertThat(record.getModified(), not(nullValue()));
+            assertThat(record.getModified().toInstant().toString(), is("2020-06-17T19:32:07.853Z"));
+        });
+
+        System.out.println("  Process same work with a fake deleted record");
+        withConfigEnv()
+                .jpaWithBeans(beanFactory -> {
+                    beanFactory.withWorkTreeBuilder(new WorkTreeBuilder() {
+                        @Override
+                        public WorkTree buildTree(String corepoWorkId) {
+                            return new WorkTree(corepoWorkId, Instant.now());
+                        }
+                    });
+                    PresentationObjectBuilder bean = beanFactory.getPresentationObjectBuilder();
+                    bean.process("work:62");
+                });
+
+        System.out.println("  Verify that the parts are purged from the database");
+        jpa(em -> {
+            assertThat(countRecordEntries(em), is(0));
+            assertThat(countCacheEntries(em), is(0));
+            assertThat(countWorkContainsEntries(em), is(0));
+        });
     }
 
+        @Test
+    public void testADeletedWork() throws Exception {
+        System.out.println("testADeletedWork");
+
+        System.out.println("  Process a work with a fake deleted record on an empty database");
+        withConfigEnv()
+                .jpaWithBeans(beanFactory -> {
+                    beanFactory.withWorkTreeBuilder(new WorkTreeBuilder() {
+                        @Override
+                        public WorkTree buildTree(String corepoWorkId) {
+                            return new WorkTree(corepoWorkId, Instant.now());
+                        }
+                    });
+                    PresentationObjectBuilder bean = beanFactory.getPresentationObjectBuilder();
+                    bean.process("work:62");
+                });
+
+        System.out.println("  Verify that nothing has appeared in the database");
+        jpa(em -> {
+            assertThat(countRecordEntries(em), is(0));
+            assertThat(countCacheEntries(em), is(0));
+            assertThat(countWorkContainsEntries(em), is(0));
+        });
+    }
 }
