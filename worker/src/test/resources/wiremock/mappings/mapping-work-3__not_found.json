@@ -1,0 +1,17 @@
+{
+  "id": "8c49082e-aa5e-395e-b22d-bc3766d7de8f",
+  "request": {
+    "url": "/corepo-content-service/rest/objects/work:3",
+    "method": "GET"
+  },
+  "response": {
+    "status": 404,
+    "bodyFileName": "body-work-3__not_found.xml",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/xml",
+      "X-Frame-Options": "SAMEORIGIN"
+    }
+  },
+  "uuid": "8c49082e-aa5e-395e-b22d-bc3766d7de8f"
+}

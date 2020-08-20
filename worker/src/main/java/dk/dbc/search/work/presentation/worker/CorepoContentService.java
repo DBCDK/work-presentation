@@ -111,7 +111,7 @@ public class CorepoContentService {
         } catch (WebApplicationException | IOException ex) {
             log.error("Error requesting {}: {}", uri, ex.getMessage());
             log.debug("Error requesting {}: ", uri, ex);
-            throw new RuntimeException("Error requesting: " + uri, ex);
+            throw new RuntimeException("Error requesting: " + uri + ": " + ex.getMessage(), ex);
         }
     }
 }

@@ -19,12 +19,14 @@
 package dk.dbc.search.work.presentation.worker;
 
 import dk.dbc.search.work.presentation.worker.tree.WorkTree;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 /**
  *
@@ -45,4 +47,32 @@ public class WorkTreeBuilderIT extends JpaBaseWithCorepo {
                     assertThat(tree.getPersistentWorkId(), is("work-of-870970-basis:00010529"));
                 });
     }
+
+    @Test
+    public void testWorkDoesNotExist() throws Exception {
+        System.out.println("testWorkDoesNotExist");
+        RuntimeException ex = Assertions.assertThrows(RuntimeException.class, () -> {
+        withConfigEnv()
+                .jpaWithBeans(bf -> {
+                    WorkTreeBuilder workTreeBuilder = bf.getWorkTreeBuilder();
+                    WorkTree tree = workTreeBuilder.buildTree("work:3");
+                    tree.prettyPrint(System.out::println);
+                });
+        });
+        assertThat(ex.getMessage(), containsString("HTTP 404 Not Found"));
+        assertThat(ex.getMessage(), containsString("/rest/objects/work:3"));
+    }
+
+    @Test
+    public void testWorkDeleted() throws Exception {
+        System.out.println("testWorkDeleted");
+        withConfigEnv()
+                .jpaWithBeans(bf -> {
+                    WorkTreeBuilder workTreeBuilder = bf.getWorkTreeBuilder();
+                    WorkTree tree = workTreeBuilder.buildTree("work:27827958");
+                    tree.prettyPrint(System.out::println);
+                    assertThat(tree.getPersistentWorkId(), nullValue());
+                });
+    }
+
 }
