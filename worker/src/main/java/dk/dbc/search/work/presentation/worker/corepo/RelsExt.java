@@ -24,7 +24,9 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *
@@ -46,6 +48,14 @@ public class RelsExt {
 
     public List<String> get(RelsExtType key) {
         return map.getOrDefault(key, Collections.EMPTY_LIST);
+    }
+
+    public Set<Map.Entry<RelsExtType, List<String>>> entrySet() {
+        return map.entrySet();
+    }
+
+    public Stream<String> values() {
+        return map.values().stream().flatMap(List::stream);
     }
 
     @Override

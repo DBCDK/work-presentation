@@ -22,9 +22,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -44,11 +47,30 @@ public class WorkTree extends HashMap<String, UnitTree> {
         this.modified = modified;
     }
 
+    public List<CacheContentBuilder> extractActiveCacheContentBuilders() {
+        return this.values().stream()
+                .flatMap(u -> u.values().stream())
+                .flatMap(o -> o.values().stream())
+                .filter(builder -> !builder.isDeleted())
+                .collect(Collectors.toList());
+    }
+
+    public Set<String> extractManifestationIds() {
+        return extractActiveCacheContentBuilders().stream()
+                .map(CacheContentBuilder::getManifestationId)
+                .collect(Collectors.toSet());
+    }
+
     public Instant getModified() {
         return modified;
     }
 
-    public String getPrimary() {
+    /**
+     * Find the "owner" of the work
+     *
+     * @return a manifestation id or null if none exists (deleted work)
+     */
+    public String getPrimaryManifestationId() {
         if (isEmpty())
             return null;
         if (primary == null) {
@@ -68,7 +90,7 @@ public class WorkTree extends HashMap<String, UnitTree> {
     public String getPersistentWorkId() {
         if (isEmpty())
             return null;
-        return "work-of-" + getPrimary();
+        return "work-of-" + getPrimaryManifestationId();
     }
 
     public String getCorepoWorkId() {
@@ -77,39 +99,39 @@ public class WorkTree extends HashMap<String, UnitTree> {
 
     @Override
     public String toString() {
-        return "WorkTree{" + "corepoWorkId=" + corepoWorkId + ", primary=" + getPrimary() + ", modified=" + modified + ", " + super.toString() + "}";
+        return "WorkTree{" + "corepoWorkId=" + corepoWorkId + ", primary=" + getPrimaryManifestationId() + ", modified=" + modified + ", " + super.toString() + "}";
     }
 
     public void prettyPrint(Consumer<String> logger) {
-        prettyPrintln(logger, "Work: %s", corepoWorkId);
-        prettyPrintln(logger, " |-- primary: %s", getPrimary());
-        prettyPrintln(logger, " %s modified: %s", isEmpty() ? "`--" : "|--", modified);
+        println(logger, "Work: %s", corepoWorkId);
+        println(logger, " |-- primary: %s", getPrimaryManifestationId());
+        println(logger, " %s modified: %s", isEmpty() ? "`--" : "|--", modified);
         for (Iterator<Entry<String, UnitTree>> units = entrySet().iterator() ; units.hasNext() ;) {
             Map.Entry<String, UnitTree> nextUnit = units.next();
             UnitTree unit = nextUnit.getValue();
             String unitPrefix = units.hasNext() ? "|--" : "`--";
-            prettyPrintln(logger, " %s Unit: %s", unitPrefix, nextUnit.getKey());
+            println(logger, " %s Unit: %s", unitPrefix, nextUnit.getKey());
             unitPrefix = units.hasNext() ? "|  " : "   ";
-            prettyPrintln(logger, " %s  |-- primary: %s", unitPrefix, unit.isPrimary());
-            prettyPrintln(logger, " %s  %s modified: %s", unitPrefix, unit.isEmpty() ? "`--" : "|--", unit.getModified());
+            println(logger, " %s  |-- primary: %s", unitPrefix, unit.isPrimary());
+            println(logger, " %s  %s modified: %s", unitPrefix, unit.isEmpty() ? "`--" : "|--", unit.getModified());
             for (Iterator<Entry<String, ObjectTree>> objs = unit.entrySet().iterator() ; objs.hasNext() ;) {
                 Map.Entry<String, ObjectTree> nextObj = objs.next();
                 ObjectTree obj = nextObj.getValue();
                 String objPrefix = objs.hasNext() ? "|--" : "`--";
-                prettyPrintln(logger, " %s  %s Obj: %s", unitPrefix, objPrefix, nextObj.getKey());
+                println(logger, " %s  %s Obj: %s", unitPrefix, objPrefix, nextObj.getKey());
                 objPrefix = objs.hasNext() ? "|  " : "   ";
-                prettyPrintln(logger, " %s  %s  |-- primary: %s", unitPrefix, objPrefix, obj.isPrimary());
-                prettyPrintln(logger, " %s  %s  %s modified: %s", unitPrefix, objPrefix, obj.isEmpty() ? "`--" : "|--", obj.getModified());
+                println(logger, " %s  %s  |-- primary: %s", unitPrefix, objPrefix, obj.isPrimary());
+                println(logger, " %s  %s  %s modified: %s", unitPrefix, objPrefix, obj.isEmpty() ? "`--" : "|--", obj.getModified());
                 for (Iterator<Entry<String, CacheContentBuilder>> streams = obj.entrySet().iterator() ; streams.hasNext() ;) {
                     Map.Entry<String, CacheContentBuilder> nextStream = streams.next();
                     String streamPrefix = streams.hasNext() ? "|--" : "`--";
-                    prettyPrintln(logger, " %s  %s  %s Manifestation: %s: %s", unitPrefix, objPrefix, streamPrefix, nextStream.getKey(), nextStream.getValue());
+                    println(logger, " %s  %s  %s Manifestation: %s: %s", unitPrefix, objPrefix, streamPrefix, nextStream.getKey(), nextStream.getValue());
                 }
             }
         }
     }
 
-    private void prettyPrintln(Consumer<String> logger, String format, Object... objs) {
+    private void println(Consumer<String> logger, String format, Object... objs) {
         logger.accept(String.format(Locale.ROOT, format, objs));
     }
 

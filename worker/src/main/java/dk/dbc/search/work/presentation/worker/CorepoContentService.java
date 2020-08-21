@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import org.apache.commons.io.IOUtils;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +49,13 @@ public class CorepoContentService {
     @Inject
     public Config config;
 
+    /**
+     * Fetch a RELS-SYS stream from corepo-content-service
+     *
+     * @param id the repository-id
+     * @return parsed RELS-SYS
+     */
+    @Timed
     public RelsSys relsSys(String id) {
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{id}/datastreams/RELS-SYS/content")
@@ -56,6 +64,13 @@ public class CorepoContentService {
         return callUrl(uri, RelsSys::new);
     }
 
+    /**
+     * Fetch a RELS-EXT stream from corepo-content-service
+     *
+     * @param id the repository-id
+     * @return parsed RELS-EXT
+     */
+    @Timed
     public RelsExt relsExt(String id) {
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{id}/datastreams/RELS-EXT/content")
@@ -64,6 +79,15 @@ public class CorepoContentService {
         return callUrl(uri, RelsExt::new);
     }
 
+    /**
+     * Fetch a metadata of an object (work/unit/obj) from corepo-content-service
+     * <p>
+     * Timestamps and active/deleted
+     *
+     * @param id the repository-id
+     * @return parsed Metadata
+     */
+    @Timed
     public ObjectMetaData objectMetaData(String id) {
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{id}")
@@ -72,6 +96,16 @@ public class CorepoContentService {
         return callUrl(uri, ObjectMetaData::new);
     }
 
+    /**
+     * Fetch a metadata of a datastream from corepo-content-service
+     * <p>
+     * Timestamp and active/deleted
+     *
+     * @param id     the repository-id
+     * @param stream the stream of the repositoryId
+     * @return parsed Metadata
+     */
+    @Timed
     public DataStreamMetaData datastreamMetaData(String id, String stream) {
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{id}/datastreams/{stream}")
@@ -80,6 +114,14 @@ public class CorepoContentService {
         return callUrl(uri, DataStreamMetaData::new);
     }
 
+    /**
+     * Fetch a list of a datastream for an object (work/unit/obj) from
+     * corepo-content-service
+     *
+     * @param id the repository-id
+     * @return list of stream names
+     */
+    @Timed
     public DataStreams datastreams(String id) {
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{id}/datastreams")
@@ -88,6 +130,14 @@ public class CorepoContentService {
         return callUrl(uri, DataStreams::new);
     }
 
+    /**
+     * Fetch a content of a datastream from corepo-content-service
+     *
+     * @param id     the repository-id
+     * @param stream the stream of the repositoryId
+     * @return XML content as a String
+     */
+    @Timed
     public String datastreamContent(String id, String stream) {
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{id}/datastreams/{stream}/content")

@@ -38,6 +38,7 @@ import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -59,12 +60,15 @@ public class ParallelCacheContentBuilder {
     public ExecutorService executor;
 
     /**
-     * This requires WorkContains to contain all the data from before the work
-     * is
+     * Deletes all cache entries for a corepoWorkId, in case the object is
      * deleted
+     * <p>
+     * This requires WorkContains to contain all the data from before the work
+     * is deleted
      *
      * @param corepoWorkId Identifier of work to be deleted
      */
+    @Timed
     public void deleteCacheForCorepoWorkId(String corepoWorkId) {
         Set<String> manifestationsInDatabase = getManifestationIdsFromDatabase(corepoWorkId);
         manifestationsInDatabase.forEach(manifestationId -> {
@@ -72,13 +76,22 @@ public class ParallelCacheContentBuilder {
         });
     }
 
+    /**
+     * Save all the parts of the work to cache
+     * <p>
+     * This checks all the cache objects, pruning those not needed, and
+     * (re)building new/updated in parallel
+     *
+     * @param tree The structure of the entire work
+     */
+    @Timed
     public void updateCache(WorkTree tree) {
         ArrayList<Future<Runnable>> parallelBuild = new ArrayList<>();
 
         // Flatten into all builders
-        List<CacheContentBuilder> builders = extractActiveCacheContentBuilders(tree);
+        List<CacheContentBuilder> builders = tree.extractActiveCacheContentBuilders();
         // Extract active manifestationId
-        Set<String> activeManifestationIds = extractManifestationIds(builders);
+        Set<String> activeManifestationIds = tree.extractManifestationIds();
 
         log.debug("activeManifestationIds: {}", activeManifestationIds);
 
@@ -113,28 +126,18 @@ public class ParallelCacheContentBuilder {
         });
     }
 
+    /**
+     * Save the manifestation list for the work
+     *
+     * @param tree The structure of the entire work
+     */
     public void updateWorkContains(WorkTree tree) {
         String corepoWorkId = tree.getCorepoWorkId();
-        List<CacheContentBuilder> activeCacheContentBuilders = extractActiveCacheContentBuilders(tree);
-        Set<String> activeManifestationIds = extractManifestationIds(activeCacheContentBuilders);
+        Set<String> activeManifestationIds = tree.extractManifestationIds();
         List<WorkContainsEntity> workContains = activeManifestationIds.stream()
                 .map(m -> WorkContainsEntity.from(em, corepoWorkId, m))
                 .collect(Collectors.toList());
         WorkContainsEntity.updateToList(em, corepoWorkId, workContains);
-    }
-
-    private List<CacheContentBuilder> extractActiveCacheContentBuilders(WorkTree tree) {
-        return tree.values().stream()
-                .flatMap(u -> u.values().stream())
-                .flatMap(o -> o.values().stream())
-                .filter(builder -> !builder.isDeleted())
-                .collect(Collectors.toList());
-    }
-
-    private Set<String> extractManifestationIds(List<CacheContentBuilder> builders) {
-        return builders.stream()
-                .map(CacheContentBuilder::getManifestationId)
-                .collect(Collectors.toSet());
     }
 
     private Set<String> getManifestationIdsFromDatabase(String corepoWorkId) {
@@ -144,6 +147,17 @@ public class ParallelCacheContentBuilder {
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * Build a job that computes the content of a cache entity
+     * <p>
+     * The result is a chain of code executions, the first is to be run in an
+     * executor-service, the second, which interacts with the EmtityManager is
+     * to be run in the original transaction.
+     *
+     * @param cacheObj    The entity that needs content
+     * @param dataBuilder The content producer
+     * @return Something that is given to an ExecutorService
+     */
     private Callable<Runnable> parallelJob(CacheEntity cacheObj, CacheContentBuilder dataBuilder) {
         String manifestationId = cacheObj.getManifestationId();
         log.info("Upserting manifestation: {}", manifestationId);

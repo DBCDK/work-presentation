@@ -18,7 +18,9 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
+import dk.dbc.search.work.presentation.api.jpa.CacheEntity;
 import dk.dbc.search.work.presentation.api.jpa.RecordEntity;
+import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.worker.tree.WorkTree;
 import java.sql.Timestamp;
@@ -28,6 +30,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.InternalServerErrorException;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 
 /**
  *
@@ -42,12 +45,25 @@ public class WorkConsolidator {
     @PersistenceContext(unitName = "workPresentation_PU")
     public EntityManager em;
 
+    /**
+     * Remove a work record from the database
+     *
+     * @param corepoWorkId corepo-work-id of the work
+     */
+    @Timed
     public void deleteWork(String corepoWorkId) {
         RecordEntity.fromCorepoWorkId(em, corepoWorkId)
                 .ifPresent(RecordEntity::delete);
-
     }
 
+    /**
+     * Save a to the database
+     *
+     * @param corepoWorkId corepo-work-id of the work
+     * @param tree         The structure of the entire work
+     * @param content      The record content
+     */
+    @Timed
     public void saveWork(String corepoWorkId, WorkTree tree, WorkInformation content) {
         RecordEntity record = RecordEntity.from(em, tree.getPersistentWorkId());
         record.setCorepoWorkId(corepoWorkId);
@@ -66,8 +82,27 @@ public class WorkConsolidator {
         record.save();
     }
 
+    /**
+     * Consolidate all manifestations into a work-record
+     * <p>
+     * This contains at sum of all the information that can be given from the
+     * web-service. Which will then filter the content before presentation.
+     *
+     * @param tree The structure of the entire work
+     * @return Work record
+     */
+    @Timed
     public WorkInformation buildWorkInformation(WorkTree tree) {
-        return new WorkInformation();
+        WorkInformation work = new WorkInformation();
+        ManifestationInformation primary = CacheEntity.from(em, tree.getPrimaryManifestationId())
+                .getContent();
+        work.creator = primary.creator;
+        work.description = primary.description;
+        work.fullTitle = primary.fullTitle;
+        work.subjects = primary.subjects; // TODO accumulate all menifestations subjects
+        work.title = primary.title;
+        work.workId = tree.getPersistentWorkId();
+        return work;
     }
 
     private static int instantCmp(Instant a, Instant b) {
