@@ -32,7 +32,7 @@ public class DataStreamsTest extends Base {
     @Test
     public void testStreams() throws Exception {
         System.out.println("testStreams");
-        withtResource("content.xml", is -> {
+        withResource("content.xml", is -> {
                   DataStreams dataStreams = new DataStreams(is);
                   System.out.println("dataStreams = " + dataStreams);
                   assertThat(dataStreams.getStreams(), containsInAnyOrder("DC", "RELS-EXT", "RELS-SYS"));

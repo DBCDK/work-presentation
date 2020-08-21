@@ -32,7 +32,7 @@ public class ObjectMetaDataTest extends Base {
     @Test
     public void testActive() throws Exception {
         System.out.println("testActive");
-        withtResource("active.xml", is -> {
+        withResource("active.xml", is -> {
                   ObjectMetaData metaData = new ObjectMetaData(is);
                   System.out.println("metaData = " + metaData);
                   assertThat(metaData.isActive(), is(true));
@@ -42,7 +42,7 @@ public class ObjectMetaDataTest extends Base {
     @Test
     public void testDeleted() throws Exception {
         System.out.println("testDeleted");
-        withtResource("deleted.xml", is -> {
+        withResource("deleted.xml", is -> {
                   ObjectMetaData metaData = new ObjectMetaData(is);
                   System.out.println("metaData = " + metaData);
                   assertThat(metaData.isActive(), is(false));

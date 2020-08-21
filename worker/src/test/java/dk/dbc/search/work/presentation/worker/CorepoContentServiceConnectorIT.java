@@ -30,13 +30,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
-public class CorepoContentServiceIT extends JpaBase {
+public class CorepoContentServiceConnectorIT extends JpaBase {
 
     @Test
     public void testObjectMetaData() throws Exception {
         System.out.println("testObjectMetaData");
         withConfigEnv().jpaWithBeans(beanFactory -> {
-            CorepoContentService bean = beanFactory.getCorepoContentService();
+            CorepoContentServiceConnector bean = beanFactory.getCorepoContentService();
             ObjectMetaData metaData = bean.objectMetaData("work:19");
             System.out.println("metaData = " + metaData);
             assertThat(metaData.isActive(), is(true));
@@ -48,7 +48,7 @@ public class CorepoContentServiceIT extends JpaBase {
     public void testDatastreamContent() throws Exception {
         System.out.println("testdataStreamContent");
         withConfigEnv().jpaWithBeans(beanFactory -> {
-            CorepoContentService bean = beanFactory.getCorepoContentService();
+            CorepoContentServiceConnector bean = beanFactory.getCorepoContentService();
             String commonData = bean.datastreamContent("870970-basis:22476319", "commonData");
             System.out.println("commonData = " + commonData);
             assertThat(commonData, containsString("Udviklingsværkstedet for Naturformidling"));
@@ -59,7 +59,7 @@ public class CorepoContentServiceIT extends JpaBase {
     public void testDatastreamMetaData() throws Exception {
         System.out.println("testDatastreamMetaData");
         withConfigEnv().jpaWithBeans(beanFactory -> {
-            CorepoContentService bean = beanFactory.getCorepoContentService();
+            CorepoContentServiceConnector bean = beanFactory.getCorepoContentService();
             DataStreamMetaData dataStream = bean.datastreamMetaData("870970-basis:22476319", "commonData");
             System.out.println("dataStream = " + dataStream);
             assertThat(dataStream.isActive(), is(true));
@@ -71,7 +71,7 @@ public class CorepoContentServiceIT extends JpaBase {
     public void testRelsSys() throws Exception {
         System.out.println("testRelsSys");
         withConfigEnv().jpaWithBeans(beanFactory -> {
-            CorepoContentService bean = beanFactory.getCorepoContentService();
+            CorepoContentServiceConnector bean = beanFactory.getCorepoContentService();
             RelsSys relsSys = bean.relsSys("work:19");
             System.out.println("relsSys = " + relsSys);
             assertThat(relsSys.getChildren(), containsInAnyOrder("unit:20"));

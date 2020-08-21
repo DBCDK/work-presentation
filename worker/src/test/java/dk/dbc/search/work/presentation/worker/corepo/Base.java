@@ -27,7 +27,7 @@ import org.junit.jupiter.api.function.ThrowingConsumer;
  */
 public class Base {
 
-    protected void withtResource(String file, ThrowingConsumer<InputStream> scope) throws Exception {
+    protected void withResource(String file, ThrowingConsumer<InputStream> scope) throws Exception {
         String resource = getClass().getSimpleName().replaceAll("(IT|Test)$", "/" + file);
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(resource)) {
             if (is == null)

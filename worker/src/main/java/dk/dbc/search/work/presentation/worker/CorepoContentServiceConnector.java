@@ -42,9 +42,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
 @Stateless
-public class CorepoContentService {
+public class CorepoContentServiceConnector {
 
-    private static final Logger log = LoggerFactory.getLogger(CorepoContentService.class);
+    private static final Logger log = LoggerFactory.getLogger(CorepoContentServiceConnector.class);
 
     @Inject
     public Config config;
@@ -60,7 +60,7 @@ public class CorepoContentService {
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{id}/datastreams/RELS-SYS/content")
                 .build(id);
-        log.debug("Fetcing {} to RelsSys object", id);
+        log.debug("Fetching {} to RelsSys object", id);
         return callUrl(uri, RelsSys::new);
     }
 
@@ -75,7 +75,7 @@ public class CorepoContentService {
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{id}/datastreams/RELS-EXT/content")
                 .build(id);
-        log.debug("Fetcing {} to RelsExt object", id);
+        log.debug("Fetching {} to RelsExt object", id);
         return callUrl(uri, RelsExt::new);
     }
 
@@ -92,7 +92,7 @@ public class CorepoContentService {
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{id}")
                 .build(id);
-        log.debug("Fetcing {} to ObjectMetaData object", id);
+        log.debug("Fetching {} to ObjectMetaData object", id);
         return callUrl(uri, ObjectMetaData::new);
     }
 
@@ -110,7 +110,7 @@ public class CorepoContentService {
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{id}/datastreams/{stream}")
                 .build(id, stream);
-        log.debug("Fetcing {} to DataStreamMetaData object", id);
+        log.debug("Fetching {} to DataStreamMetaData object", id);
         return callUrl(uri, DataStreamMetaData::new);
     }
 
@@ -126,7 +126,7 @@ public class CorepoContentService {
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{id}/datastreams")
                 .build(id);
-        log.debug("Fetcing {} to DataStreams object", id);
+        log.debug("Fetching {} to DataStreams object", id);
         return callUrl(uri, DataStreams::new);
     }
 
@@ -142,7 +142,7 @@ public class CorepoContentService {
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{id}/datastreams/{stream}/content")
                 .build(id, stream);
-        log.debug("Fetcing {} to String", id);
+        log.debug("Fetching {} to String", id);
         return callUrl(uri, is -> IOUtils.toString(is, UTF_8));
     }
 

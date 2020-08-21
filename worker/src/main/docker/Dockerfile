@@ -9,7 +9,7 @@ LABEL \
       SYSTEM_NAME="environment in which it runs for hazelcast naming (required)" \
       USER_AGENT="Http request header value for 'User-Agent' (default: WorkPresentationWorker/1.0)" \
       WORK_PRESENTATION_POSTGRES_URL="database url (required: user:pass@host:port/database)" \
-      COREPO_CONTENT_SERVICE_URL="CORepo content service URL (required)"\
+      COREPO_CONTENT_SERVICE_URL="Corepo content service URL (required)"\
       COREPO_POSTGRES_URL="database url (required: user:pass@host:port/database)" \
       QUEUE_DEDUPLICATE="If duplicate queue entries should be collapsed (default: true)" \
       COREPO_CONTENT_SERVICE_URL="Rest service (http) for corepo content (required)" \

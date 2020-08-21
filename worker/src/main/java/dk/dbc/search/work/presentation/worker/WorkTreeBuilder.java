@@ -45,7 +45,7 @@ public class WorkTreeBuilder {
     private static final Logger log = LoggerFactory.getLogger(WorkTreeBuilder.class);
 
     @Inject
-    CorepoContentService contentService;
+    CorepoContentServiceConnector contentService;
 
     @PersistenceContext(unitName = "workPresentation_PU")
     EntityManager em;

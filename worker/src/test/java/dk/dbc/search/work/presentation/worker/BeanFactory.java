@@ -39,7 +39,7 @@ public class BeanFactory {
     private final DataSource corepoDataSource;
     private final Config config;
     private final Bean<ParallelCacheContentBuilder> parallelCacheContentBuilder = new Bean<>(new ParallelCacheContentBuilder(), this::setupParallelCacheContentBuilder);
-    private final Bean<CorepoContentService> corepoContentService = new Bean<>(new CorepoContentService(), this::setupCorepoContentService);
+    private final Bean<CorepoContentServiceConnector> corepoContentService = new Bean<>(new CorepoContentServiceConnector(), this::setupCorepoContentService);
     private final Bean<PresentationObjectBuilder> presentationObjectBuilder = new Bean<>(new PresentationObjectBuilder(), this::setupPresentationObjectBuilder);
     private final Bean<WorkConsolidator> workConsolidator = new Bean<>(new WorkConsolidator(), this::setupWorkConsolidator);
     private final Bean<Worker> worker = new Bean<>(new Worker(), this::setupWorker);
@@ -93,11 +93,11 @@ public class BeanFactory {
         bean.executor = Executors.newCachedThreadPool();
     }
 
-    public CorepoContentService getCorepoContentService() {
+    public CorepoContentServiceConnector getCorepoContentService() {
         return corepoContentService.get();
     }
 
-    private void setupCorepoContentService(CorepoContentService bean) {
+    private void setupCorepoContentService(CorepoContentServiceConnector bean) {
         bean.config = config;
     }
 

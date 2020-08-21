@@ -34,7 +34,7 @@ public class RelsSysTest extends Base {
     @Test
     public void testPrimaryManifestation() throws Exception {
         System.out.println("testPrimaryManifestation");
-        withtResource("manifestation-primary.xml", is -> {
+        withResource("manifestation-primary.xml", is -> {
                   RelsSys relsSys = new RelsSys(is);
                   System.out.println("relsSys = " + relsSys);
                   assertThat(relsSys.isPrimary(), is(true));
@@ -46,7 +46,7 @@ public class RelsSysTest extends Base {
     @Test
     public void testNonPrimaryManifestation() throws Exception {
         System.out.println("testNonPrimaryManifestation");
-        withtResource("manifestation-non-primary.xml", is -> {
+        withResource("manifestation-non-primary.xml", is -> {
                   RelsSys relsSys = new RelsSys(is);
                   System.out.println("relsSys = " + relsSys);
                   assertThat(relsSys.isPrimary(), is(false));
@@ -58,7 +58,7 @@ public class RelsSysTest extends Base {
     @Test
     public void testPrimaryUnit() throws Exception {
         System.out.println("testPrimaryUnit");
-        withtResource("unit-primary.xml", is -> {
+        withResource("unit-primary.xml", is -> {
                   RelsSys relsSys = new RelsSys(is);
                   System.out.println("relsSys = " + relsSys);
                   assertThat(relsSys.isPrimary(), is(true));
@@ -70,7 +70,7 @@ public class RelsSysTest extends Base {
     @Test
     public void testNotPrimaryUnit() throws Exception {
         System.out.println("testNotPrimaryUnit");
-        withtResource("unit-not-primary.xml", is -> {
+        withResource("unit-not-primary.xml", is -> {
                   RelsSys relsSys = new RelsSys(is);
                   System.out.println("relsSys = " + relsSys);
                   assertThat(relsSys.isPrimary(), is(false));
@@ -83,7 +83,7 @@ public class RelsSysTest extends Base {
     @Test
     public void testWork() throws Exception {
         System.out.println("testWork");
-        withtResource("work.xml", is -> {
+        withResource("work.xml", is -> {
                   RelsSys relsSys = new RelsSys(is);
                   System.out.println("relsSys = " + relsSys);
                   assertThat(relsSys.isPrimary(), is(true));

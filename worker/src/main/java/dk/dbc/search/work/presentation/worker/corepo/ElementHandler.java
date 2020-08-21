@@ -73,7 +73,7 @@ abstract class ElementHandler extends DefaultHandler {
         }
     }
 
-    private StringBuilder buffer; // if Null buffer has bin delivered upon close
+    private StringBuilder buffer; // if Null buffer has been delivered upon close
     private final HashMap<String, String> lastAttributes = new HashMap<>();
     private String lastUri;
     private String lastLocalName;

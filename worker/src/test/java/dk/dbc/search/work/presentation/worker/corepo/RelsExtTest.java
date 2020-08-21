@@ -32,7 +32,7 @@ public class RelsExtTest extends Base {
     @Test
     public void testRelsExt() throws Exception {
         System.out.println("testRelsExt");
-        withtResource("content.xml", is -> {
+        withResource("content.xml", is -> {
                   RelsExt relsExt = new RelsExt(is);
                   System.out.println("relsExt = " + relsExt);
                   assertThat(relsExt.get(RelsExtType.HAS_REVIEW), not(empty()));

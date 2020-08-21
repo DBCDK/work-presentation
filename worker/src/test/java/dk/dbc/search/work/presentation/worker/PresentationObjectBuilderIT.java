@@ -77,7 +77,7 @@ public class PresentationObjectBuilderIT extends JpaBase {
         });
     }
 
-        @Test
+    @Test
     public void testADeletedWork() throws Exception {
         System.out.println("testADeletedWork");
 

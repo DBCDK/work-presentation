@@ -76,7 +76,7 @@ public class WorkConsolidator {
             });
         });
         Instant modified = builder.build().max(WorkConsolidator::instantCmp)
-                .orElseThrow(() -> new InternalServerErrorException("Cound not extrace modified from tree of " + corepoWorkId));
+                .orElseThrow(() -> new InternalServerErrorException("Cound not extract modified from tree of " + corepoWorkId));
         record.setModified(Timestamp.from(modified));
         record.setContent(content);
         record.save();
@@ -85,7 +85,7 @@ public class WorkConsolidator {
     /**
      * Consolidate all manifestations into a work-record
      * <p>
-     * This contains at sum of all the information that can be given from the
+     * This contains the sum of all the information that can be given from the
      * web-service. Which will then filter the content before presentation.
      *
      * @param tree The structure of the entire work
