@@ -55,7 +55,7 @@ public class RecordEntityIT extends JpaBase<Object> {
         wi.workId = "a";
         wi.title = "title";
         wi.creator = "hans andersen";
-        wi.subject = "emne";
+        wi.subjects = Arrays.asList("emne");
         wi.description = "beskrivelse";
         wi.manifestationInformationList = ml;
         Map<String, List<ManifestationInformation>> unitInfo = new HashMap<>();
