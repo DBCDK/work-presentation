@@ -42,9 +42,14 @@ import static org.eclipse.persistence.config.PersistenceUnitProperties.JDBC_URL;
 import static org.eclipse.persistence.config.PersistenceUnitProperties.JDBC_USER;
 
 /**
+ * Transaction oriented helper for integration-tests
+ * <p>
+ * Override the method
+ * {@link #createBeanFactory(java.util.Map, javax.persistence.EntityManager)} to
+ * make beans for calls to .withConfigEnv(...).jpaWithBeans(beanFactory -> {})
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
- * @param <BF>
+ * @param <BF> a beanFactory
  */
 public class JpaBase<BF> {
 
@@ -92,7 +97,6 @@ public class JpaBase<BF> {
             entityManagerFactory.getCache().evictAll();
         }
     }
-
 
     @BeforeAll
     public static void setUpEntityManagerAndDataSource() {
