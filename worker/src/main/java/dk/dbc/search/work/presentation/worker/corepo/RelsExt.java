@@ -41,7 +41,7 @@ public class RelsExt {
         this.map = new EnumMap<>((Map<RelsExtType, List<String>>) fields.getFields()
                 .entrySet()
                 .stream()
-                .map(e -> new AbstractMap.SimpleEntry<>(RelsExtType.of(e.getKey()), Collections.unmodifiableList(e.getValue())))
+                .map(e -> new AbstractMap.SimpleEntry<>(RelsExtType.from(e.getKey()), Collections.unmodifiableList(e.getValue())))
                 .filter(e -> e.getKey() != null)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
     }

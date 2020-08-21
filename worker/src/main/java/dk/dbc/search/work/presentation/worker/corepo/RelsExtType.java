@@ -60,7 +60,7 @@ public enum RelsExtType {
         return text;
     }
 
-    public static RelsExtType of(String text) {
+    public static RelsExtType from(String text) {
         return LOOKUP.get(text);
     }
 }
