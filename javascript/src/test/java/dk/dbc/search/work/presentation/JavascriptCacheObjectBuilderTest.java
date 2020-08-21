@@ -80,7 +80,7 @@ public class JavascriptCacheObjectBuilderTest {
                       }
                   }
                   JavascriptCacheObjectBuilder js = jsSupplier.get();
-                  ManifestationInformation information = js.extractManifestationInformation(manifestationId, null);
+                  ManifestationInformation information = js.extractManifestationInformation(manifestationId, xmlObjects);
                   System.out.println("information = " + information);
                   try (FileOutputStream os = new FileOutputStream(dir.resolve("actual.json").toFile())) {
                       O.writeValue(os, information);

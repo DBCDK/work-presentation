@@ -1,9 +1,9 @@
 {
-    "pid": "example",
-    "title": "Nothing",
-    "fullTitle": "The incredible long and tedious story about nothing",
-    "creators": [ "That developer character" ],
-    "description": "It is not really about anything",
-    "subjects": [ "borring", "another" ],
-    "types": [ "book" ]
+  "title" : "værkstedstekniske beregninger",
+  "fullTitle" : "Værkstedstekniske beregninger. M2, Boring",
+  "description" : null,
+  "pid" : "example",
+  "creators" : [ ],
+  "subjects" : [ ],
+  "types" : [ "Bog" ]
 }
