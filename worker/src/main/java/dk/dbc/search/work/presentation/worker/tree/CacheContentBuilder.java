@@ -74,6 +74,7 @@ public class CacheContentBuilder {
      * @param corepoContentService Where to extract data streams from
      * @param js                   the JavaScript abstraction
      * @return Manifestation Object
+     * @throws Exception Threwn by JavaScript engine
      */
     public ManifestationInformation generateContent(CorepoContentServiceConnector corepoContentService, JavascriptCacheObjectBuilder js) throws Exception {
         HashMap<String, String> dataStreams = new HashMap<String, String>() {
