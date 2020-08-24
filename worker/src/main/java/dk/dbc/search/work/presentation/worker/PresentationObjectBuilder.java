@@ -49,7 +49,7 @@ public class PresentationObjectBuilder {
     WorkConsolidator workConsolidator;
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    @Timed
+    @Timed(reusable = true)
     public void process(String corepoWorkId) {
         if (!corepoWorkId.startsWith("work:")) {
             log.info("Skipping job: {} (not a work)", corepoWorkId);

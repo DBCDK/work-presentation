@@ -50,7 +50,7 @@ public class WorkConsolidator {
      *
      * @param corepoWorkId corepo-work-id of the work
      */
-    @Timed
+    @Timed(reusable = true)
     public void deleteWork(String corepoWorkId) {
         RecordEntity.fromCorepoWorkId(em, corepoWorkId)
                 .ifPresent(RecordEntity::delete);
@@ -63,7 +63,7 @@ public class WorkConsolidator {
      * @param tree         The structure of the entire work
      * @param content      The record content
      */
-    @Timed
+    @Timed(reusable = true)
     public void saveWork(String corepoWorkId, WorkTree tree, WorkInformation content) {
         RecordEntity record = RecordEntity.from(em, tree.getPersistentWorkId());
         record.setCorepoWorkId(corepoWorkId);
@@ -91,7 +91,7 @@ public class WorkConsolidator {
      * @param tree The structure of the entire work
      * @return Work record
      */
-    @Timed
+    @Timed(reusable = true)
     public WorkInformation buildWorkInformation(WorkTree tree) {
         WorkInformation work = new WorkInformation();
         ManifestationInformation primary = CacheEntity.from(em, tree.getPrimaryManifestationId())

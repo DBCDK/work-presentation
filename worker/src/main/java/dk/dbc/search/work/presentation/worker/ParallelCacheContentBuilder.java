@@ -68,7 +68,7 @@ public class ParallelCacheContentBuilder {
      *
      * @param corepoWorkId Identifier of work to be deleted
      */
-    @Timed
+    @Timed(reusable = true)
     public void deleteCacheForCorepoWorkId(String corepoWorkId) {
         Set<String> manifestationsInDatabase = getManifestationIdsFromDatabase(corepoWorkId);
         manifestationsInDatabase.forEach(manifestationId -> {
@@ -84,7 +84,7 @@ public class ParallelCacheContentBuilder {
      *
      * @param tree The structure of the entire work
      */
-    @Timed
+    @Timed(reusable = true)
     public void updateCache(WorkTree tree) {
         ArrayList<Future<Runnable>> parallelBuild = new ArrayList<>();
 
