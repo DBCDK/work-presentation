@@ -95,9 +95,10 @@
                         <configuration>
                             <includeTypes>zip</includeTypes>
                             <excludeTransitive>true</excludeTransitive>
-                            <outputDirectory>${project.build.directory}/test-classes</outputDirectory>
+                            <outputDirectory>${project.build.directory}/classes</outputDirectory>
                             <useSubDirectoryPerArtifact>false</useSubDirectoryPerArtifact>
                             <stripVersion>true</stripVersion>
+                            <excludes>**/*.test.js</excludes>
                         </configuration>
                     </execution>
                 </executions>
