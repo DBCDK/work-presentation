@@ -48,13 +48,13 @@ public class RecordEntityIT extends JpaBase<Object> {
         ManifestationInformation mi = new ManifestationInformation();
         mi.manifestationId = "c";
         mi.title = "mTitle";
-        mi.materialType = "book";
+        mi.materialTypes = Arrays.asList("book");
         List<ManifestationInformation> ml = Arrays.asList(mi);
 
         WorkInformation wi = new WorkInformation();
         wi.workId = "a";
         wi.title = "title";
-        wi.creator = "hans andersen";
+        wi.creators = Arrays.asList("hans andersen");
         wi.subjects = Arrays.asList("emne");
         wi.description = "beskrivelse";
         wi.manifestationInformationList = ml;

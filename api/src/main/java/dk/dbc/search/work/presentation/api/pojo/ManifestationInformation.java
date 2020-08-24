@@ -18,15 +18,15 @@ public class ManifestationInformation implements Serializable {
 
     public String fullTitle;
 
-    public String creator;
+    public List<String> creators;
 
     public String description;
 
     @JsonProperty("subjects")
     public List<String> subjects;
 
-    @JsonProperty("type")
-    public String materialType;
+    @JsonProperty("types")
+    public List<String> materialTypes;
 
     @Override
     public boolean equals(Object o) {
@@ -36,15 +36,15 @@ public class ManifestationInformation implements Serializable {
         return Objects.equals(manifestationId, that.manifestationId) &&
                 Objects.equals(title, that.title) &&
                 Objects.equals(fullTitle, that.fullTitle) &&
-                Objects.equals(creator, that.creator) &&
+                Objects.equals(creators, that.creators) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(subjects, that.subjects) &&
-                Objects.equals(materialType, that.materialType);
+                Objects.equals(materialTypes, that.materialTypes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(manifestationId, title, fullTitle, creator, description, subjects, materialType);
+        return Objects.hash(manifestationId, title, fullTitle, creators, description, subjects, materialTypes);
     }
 
     @Override
@@ -53,10 +53,10 @@ public class ManifestationInformation implements Serializable {
                "manifestationId='" + manifestationId + '\'' +
                ", title='" + title + '\'' +
                ", fullTitle='" + fullTitle + '\'' +
-               ", creator='" + creator + '\'' +
+               ", creators='" + creators + '\'' +
                ", description='" + description + '\'' +
-               ", subject='" + subjects + '\'' +
-               ", materialType='" + materialType + '\'' +
+               ", subjects='" + subjects + '\'' +
+               ", type='" + materialTypes + '\'' +
                '}';
     }
 }

@@ -17,7 +17,8 @@ public class WorkInformation implements Serializable {
 
     public String fullTitle;
 
-    public String creator;
+    @JsonProperty("creators")
+    public List<String> creators;
 
     public String description;
 
@@ -46,7 +47,7 @@ public class WorkInformation implements Serializable {
         return Objects.equals(workId, that.workId) &&
                 Objects.equals(title, that.title) &&
                 Objects.equals(fullTitle, that.fullTitle) &&
-                Objects.equals(creator, that.creator) &&
+                Objects.equals(creators, that.creators) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(subjects, that.subjects) &&
                 Objects.equals(dbUnitInformation, that.dbUnitInformation) &&
@@ -55,7 +56,7 @@ public class WorkInformation implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(workId, title, fullTitle, creator, description, subjects, dbUnitInformation, manifestationInformationList);
+        return Objects.hash(workId, title, fullTitle, creators, description, subjects, dbUnitInformation, manifestationInformationList);
     }
 
     @Override
@@ -64,7 +65,7 @@ public class WorkInformation implements Serializable {
                 "workId='" + workId + '\'' +
                 ", title='" + title + '\'' +
                 ", fullTitle='" + fullTitle + '\'' +
-                ", creator='" + creator + '\'' +
+                ", creators='" + creators + '\'' +
                 ", description='" + description + '\'' +
                 ", subjects='" + subjects + '\'' +
                 ", dbUnitInformation=" + dbUnitInformation +

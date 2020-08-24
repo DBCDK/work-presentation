@@ -98,7 +98,7 @@ public class WorkConsolidator {
         WorkInformation work = new WorkInformation();
         ManifestationInformation primary = CacheEntity.from(em, tree.getPrimaryManifestationId())
                 .getContent();
-        work.creator = primary.creator;
+        work.creators = primary.creators;
         work.description = primary.description;
         work.fullTitle = primary.fullTitle;
         work.subjects = primary.subjects; // TODO accumulate all menifestations subjects
