@@ -1,0 +1,17 @@
+{
+  "id": "c9e707ac-b1e0-3c13-a755-7e29b233aa91",
+  "request": {
+    "url": "/corepo-content-service/rest/objects/830520-katalog:000025251/datastreams/commonData/content",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "body-830520-katalog-000025251_commonData-content.xml",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/xml",
+      "X-Frame-Options": "SAMEORIGIN"
+    }
+  },
+  "uuid": "c9e707ac-b1e0-3c13-a755-7e29b233aa91"
+}

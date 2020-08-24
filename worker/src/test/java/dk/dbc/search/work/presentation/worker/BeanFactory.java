@@ -91,6 +91,8 @@ public class BeanFactory {
     private void setupParallelCacheContentBuilder(ParallelCacheContentBuilder bean) {
         bean.em = entityManager;
         bean.executor = Executors.newCachedThreadPool();
+        bean.corepoContentService = corepoContentService.get();
+        bean.init();
     }
 
     public CorepoContentServiceConnector getCorepoContentService() {

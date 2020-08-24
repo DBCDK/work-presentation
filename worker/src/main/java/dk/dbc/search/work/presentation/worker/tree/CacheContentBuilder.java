@@ -18,10 +18,13 @@
  */
 package dk.dbc.search.work.presentation.worker.tree;
 
+import dk.dbc.search.work.presentation.JavascriptCacheObjectBuilder;
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
+import dk.dbc.search.work.presentation.worker.CorepoContentServiceConnector;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.HashMap;
 
 /**
  * Data structure for information about cache entries
@@ -34,8 +37,8 @@ public class CacheContentBuilder {
     public static final String LOCAL_DATA = "localData.";
     private static final int LOCAL_DATA_LEN = LOCAL_DATA.length();
 
-//    private final String corepoId;
-//    private final String localStream;
+    private final String corepoId;
+    private final String localStream;
     private final boolean deleted;
     private final String manifestationId;
     private final Instant modified;
@@ -44,8 +47,8 @@ public class CacheContentBuilder {
         if (!localStream.startsWith(LOCAL_DATA)) {
             throw new IllegalStateException("Trying to build a CacheDataBuilder for stream: " + localStream);
         }
-//        this.corepoId = corepoId;
-//        this.localStream = localStream;
+        this.corepoId = corepoId;
+        this.localStream = localStream;
         this.modified = modified;
         this.deleted = deleted;
         this.manifestationId = localStream.substring(LOCAL_DATA_LEN) +
@@ -68,16 +71,24 @@ public class CacheContentBuilder {
     /**
      * Produces information about this manifestation for storing in the cache
      *
+     * @param corepoContentService Where to extract data streams from
+     * @param js                   the JavaScript abstraction
      * @return Manifestation Object
      */
-    public ManifestationInformation generateContent() {
-        ManifestationInformation result = new ManifestationInformation();
-        result.manifestationId = manifestationId;
-        return result;
+    public ManifestationInformation generateContent(CorepoContentServiceConnector corepoContentService, JavascriptCacheObjectBuilder js) throws Exception {
+        HashMap<String, String> dataStreams = new HashMap<String, String>() {
+            {
+                put("localData", corepoContentService.datastreamContent(corepoId, localStream));
+                put("commonData", corepoContentService.datastreamContent(corepoId, "commonData"));
+                put("DC", corepoContentService.datastreamContent(corepoId, "DC"));
+            }
+        };
+        return js.extractManifestationInformation(manifestationId, dataStreams);
     }
 
     @Override
     public String toString() {
-        return "CacheContentBuilder{" + "manifestationId=" + manifestationId + ", deleted=" + deleted + ", modified=" + modified + '}';
+        return "CacheContentBuilder{" + "manifestationId=" + manifestationId + ", corepoId=" + corepoId + ", localStream=" + localStream + ", deleted=" + deleted + ", modified=" + modified + '}';
     }
+
 }
