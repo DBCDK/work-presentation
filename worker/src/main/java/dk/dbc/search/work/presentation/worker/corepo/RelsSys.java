@@ -26,6 +26,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Pojo to represent a CorepoContentService response for the rels-sys stream of
+ * an object
+ * <p>
+ * This makes the object/unit/work child/parent/primary uniform - it is supplied
+ * with different names from each type of record
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */

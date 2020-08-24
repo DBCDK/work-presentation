@@ -37,6 +37,13 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
+ * A basic SAX parser that calls
+ * {@link #element(java.lang.String, java.lang.String, java.util.Map, java.lang.String)}
+ * for xml elements
+ * <p>
+ * If an element contains only text it is called with the text. If an element
+ * contains nested elements if is called with null as text. No indication of a
+ * closed element is provided
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */

@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
+ * Known external relations (from addi-service)
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */

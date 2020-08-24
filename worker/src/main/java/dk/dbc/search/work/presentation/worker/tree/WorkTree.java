@@ -30,6 +30,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
+ * Pojo to represent the root of a work tree, when extracting from corepo
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */

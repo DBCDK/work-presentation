@@ -23,6 +23,8 @@ import java.time.Instant;
 import java.util.Map;
 
 /**
+ * Pojo to represent a CorepoContentService response for the metadata of an
+ * object
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */

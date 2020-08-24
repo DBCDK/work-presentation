@@ -29,6 +29,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * Pojo to represent a CorepoContentService response for the Rels-Ext stream on
+ * a unit
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */

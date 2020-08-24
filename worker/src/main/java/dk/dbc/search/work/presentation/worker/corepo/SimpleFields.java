@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Collects all elements with only text into a map from tags localName to the
+ * text value(s) (a list for repeated tags)
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
@@ -40,7 +42,8 @@ class SimpleFields extends ElementHandler {
 
     @Override
     public void element(String uri, String localName, Map<String, String> attributes, String characters) {
-        fields.computeIfAbsent(localName, k -> new ArrayList<>()).add(characters);
+        if (characters != null)
+            fields.computeIfAbsent(localName, k -> new ArrayList<>()).add(characters);
     }
 
     public String getFirst(String key) {

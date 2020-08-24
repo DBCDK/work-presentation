@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Pojo to represent a CorepoContentService response for the list of datastreams
+ * related to an object
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */

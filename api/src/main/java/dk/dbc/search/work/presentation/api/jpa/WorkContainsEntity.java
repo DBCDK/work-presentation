@@ -97,7 +97,7 @@ public class WorkContainsEntity implements Serializable {
     }
 
     /**
-     * Ensure that the database only contains the entries from the is after
+     * Ensure that the database only contains the entries from the list after
      * commit
      *
      * @param em           EntityManager that stores WorkContainsEntities

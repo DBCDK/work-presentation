@@ -57,7 +57,9 @@ public class WorkConsolidator {
     }
 
     /**
-     * Save a to the database
+     * Save a work record to the database
+     *
+     * The work is represented by a {@link RecordEntity}
      *
      * @param corepoWorkId corepo-work-id of the work
      * @param tree         The structure of the entire work

@@ -22,6 +22,7 @@ import java.time.Instant;
 import java.util.HashMap;
 
 /**
+ * Pojo to represent the leaf of a work tree, when extracting from corepo
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
