@@ -1,0 +1,17 @@
+{
+  "id": "4199462a-1285-331a-ae74-0c82d39a87e6",
+  "request": {
+    "url": "/corepo-content-service/rest/objects/work:27827958",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "body-work-27827958__deleted.xml",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/xml",
+      "X-Frame-Options": "SAMEORIGIN"
+    }
+  },
+  "uuid": "4199462a-1285-331a-ae74-0c82d39a87e6"
+}

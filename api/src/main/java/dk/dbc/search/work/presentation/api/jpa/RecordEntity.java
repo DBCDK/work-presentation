@@ -20,7 +20,7 @@ package dk.dbc.search.work.presentation.api.jpa;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dk.dbc.search.work.presentation.api.jpa.pojo.WorkInformation;
+import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.postgresql.util.PGobject;
 
@@ -37,7 +37,11 @@ import javax.persistence.Version;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import javax.persistence.LockModeType;
+import javax.persistence.NamedQuery;
 
 /**
  *
@@ -45,6 +49,10 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "records")
+@NamedQuery(
+        name = "withCorepoWorkId",
+        query = "SELECT r FROM RecordEntity r WHERE r.corepoWorkId = :corepoWorkId"
+)
 public class RecordEntity implements Serializable {
 
     private static final long serialVersionUID = 0x6d07e1639b2ced36L;
@@ -73,12 +81,27 @@ public class RecordEntity implements Serializable {
     transient EntityManager em;
 
     public static RecordEntity from(EntityManager em, String persistentWorkId) {
-        RecordEntity entity = em.find(RecordEntity.class, persistentWorkId);
+        RecordEntity entity = em.find(RecordEntity.class,
+                                      persistentWorkId,
+                                      LockModeType.OPTIMISTIC_FORCE_INCREMENT);
         if (entity == null) {
             entity = new RecordEntity(persistentWorkId);
         }
         entity.em = em;
         return entity;
+    }
+
+    public static Optional<RecordEntity> fromCorepoWorkId(EntityManager em, String corepoWorkId) {
+        List<RecordEntity> list = em.createNamedQuery("withCorepoWorkId", RecordEntity.class)
+                .setParameter("corepoWorkId", corepoWorkId)
+                .setLockMode(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
+                .setMaxResults(1)
+                .getResultList();
+        if(list.isEmpty())
+            return Optional.empty();
+        RecordEntity entity = list.get(0);
+        entity.em = em;
+        return Optional.of(entity);
     }
 
     protected RecordEntity() {
@@ -177,15 +200,16 @@ public class RecordEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "RecordEntity{" + "persistentWorkId=" + persistentWorkId + ", corepoWorkId=" + corepoWorkId + ", modified=" + modified + ", content=" + content + ", version=" + version + '}';
+        return "RecordEntity{" + "persistentWorkId=" + persistentWorkId + ", corepoWorkId=" + corepoWorkId + ", modified=" + modified + ", version=" + version + '}';
     }
 
     @Converter
     public static class JsonConverter implements AttributeConverter<WorkInformation, PGobject> {
+
         private static final ObjectMapper O = new ObjectMapper();
 
         @Override
-        public PGobject convertToDatabaseColumn(WorkInformation workInformation)  throws IllegalStateException {
+        public PGobject convertToDatabaseColumn(WorkInformation workInformation) throws IllegalStateException {
             try {
                 final PGobject res = new PGobject();
                 res.setType("jsonb");
@@ -212,5 +236,4 @@ public class RecordEntity implements Serializable {
             }
         }
     }
-
 }

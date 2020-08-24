@@ -21,13 +21,14 @@ package dk.dbc.search.work.presentation.worker;
 import dk.dbc.corepo.queue.QueueJob;
 import dk.dbc.pgqueue.PreparedQueueSupplier;
 import dk.dbc.pgqueue.QueueSupplier;
-import dk.dbc.search.work.presentation.api.jpa.JpaBase;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Map;
+import javax.persistence.EntityManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,9 +40,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
-public class JpaBaseWithCorepo extends JpaBase {
+public class JpaBase extends dk.dbc.search.work.presentation.api.jpa.JpaBase<BeanFactory> {
 
-    private static final Logger log = LoggerFactory.getLogger(JpaBaseWithCorepo.class);
+    private static final Logger log = LoggerFactory.getLogger(JpaBase.class);
 
     protected static PGSimpleDataSource corepoDataSource;
 
@@ -50,11 +51,12 @@ public class JpaBaseWithCorepo extends JpaBase {
         corepoDataSource = getDataSource("corepo");
         try (Connection connection = dataSource.getConnection() ;
              Statement stmt = connection.createStatement()) {
-            stmt.executeUpdate("CREATE DATABASE corepo");
-        } catch (SQLException ex) {
-            if (ex.toString().contains("database \"corepo\" already exists"))
-                return;
-            throw ex;
+            boolean hasCorepoDb;
+            try (ResultSet resultSet = stmt.executeQuery("SELECT 1 FROM pg_database WHERE datname = 'corepo'")) {
+                hasCorepoDb = resultSet.next();
+            }
+            if (!hasCorepoDb)
+                stmt.executeUpdate("CREATE DATABASE corepo");
         }
         dk.dbc.corepo.access.DatabaseMigrator.migrate(getDataSource("corepo"));
     }
@@ -79,6 +81,11 @@ public class JpaBaseWithCorepo extends JpaBase {
         }
     }
 
+    @Override
+    public BeanFactory createBeanFactory(Map<String, String> env, EntityManager em) {
+        return new BeanFactory(env, em, corepoDataSource);
+    }
+
     public void waitForQueue(int seconds) throws SQLException, InterruptedException {
         Instant timeout = Instant.now().plusSeconds(seconds);
         for (;;) {
@@ -91,11 +98,23 @@ public class JpaBaseWithCorepo extends JpaBase {
                         return;
                 }
                 Duration between = Duration.between(Instant.now(), timeout);
-                if(between.isNegative())
+                if (between.isNegative())
                     Assertions.fail("Timedout waiting for queue to drain");
                 Thread.sleep(100L);
             }
         }
+    }
+
+    protected int countRecordEntries(EntityManager em) {
+        return (int) (long) (Long) em.createNativeQuery("SELECT COUNT(1) FROM records").getSingleResult();
+    }
+
+    protected int countCacheEntries(EntityManager em) {
+        return (int) (long) (Long) em.createNativeQuery("SELECT COUNT(1) FROM cache").getSingleResult();
+    }
+
+    protected int countWorkContainsEntries(EntityManager em) {
+        return (int) (long) (Long) em.createNativeQuery("SELECT COUNT(1) FROM workcontains").getSingleResult();
     }
 
 }

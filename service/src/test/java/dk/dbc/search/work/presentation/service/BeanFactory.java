@@ -38,18 +38,19 @@ public class BeanFactory {
     private final DataSource dataSource;
     private final Config config;
 
-    public BeanFactory(EntityManager em, DataSource dataSource, String... envs) {
+
+    public BeanFactory(Map<String, String> envs, EntityManager em, DataSource dataSource) {
         this.em = em;
         this.dataSource = dataSource;
         this.config = makeConfig(envs);
     }
 
-    private static Config makeConfig(String... envs) {
+    private static Config makeConfig(Map<String, String> envs) {
         Map<String, String> env = new HashMap<>();
         env.putAll(config("COREPO_SOLR_URL=" + System.getenv("COREPO_SOLR_URL"),
                           "VIP_CORE_URL=" + System.getenv("VIP_CORE_URL"),
                           "SYSTEM_NAME=test")); // Default settings
-        env.putAll(config(envs));
+        env.putAll(envs);
         Config config = new Config(env) {
             @Override
             protected ClientBuilder clientBuilder() {

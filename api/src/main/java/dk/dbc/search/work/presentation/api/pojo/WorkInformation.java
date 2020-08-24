@@ -1,4 +1,4 @@
-package dk.dbc.search.work.presentation.api.jpa.pojo;
+package dk.dbc.search.work.presentation.api.pojo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -15,11 +15,14 @@ public class WorkInformation implements Serializable {
 
     public String title;
 
+    public String fullTitle;
+
     public String creator;
 
     public String description;
 
-    public String subject;
+    @JsonProperty("subjects")
+    public List<String> subjects;
 
     @JsonProperty("dbUnits")
     public Map<String, List<ManifestationInformation>> dbUnitInformation;
@@ -42,16 +45,17 @@ public class WorkInformation implements Serializable {
         WorkInformation that = (WorkInformation) o;
         return Objects.equals(workId, that.workId) &&
                 Objects.equals(title, that.title) &&
+                Objects.equals(fullTitle, that.fullTitle) &&
                 Objects.equals(creator, that.creator) &&
                 Objects.equals(description, that.description) &&
-                Objects.equals(subject, that.subject) &&
+                Objects.equals(subjects, that.subjects) &&
                 Objects.equals(dbUnitInformation, that.dbUnitInformation) &&
                 Objects.equals(manifestationInformationList, that.manifestationInformationList);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(workId, title, creator, description, subject, dbUnitInformation, manifestationInformationList);
+        return Objects.hash(workId, title, fullTitle, creator, description, subjects, dbUnitInformation, manifestationInformationList);
     }
 
     @Override
@@ -59,9 +63,10 @@ public class WorkInformation implements Serializable {
         return "WorkInformation{" +
                 "workId='" + workId + '\'' +
                 ", title='" + title + '\'' +
+                ", fullTitle='" + fullTitle + '\'' +
                 ", creator='" + creator + '\'' +
                 ", description='" + description + '\'' +
-                ", subject='" + subject + '\'' +
+                ", subjects='" + subjects + '\'' +
                 ", dbUnitInformation=" + dbUnitInformation +
                 ", manifestationInformationList=" + manifestationInformationList +
                 '}';
