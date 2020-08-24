@@ -1,0 +1,20 @@
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <rdf:Description rdf:about="info:fedora/unit:1007058">
+        <hasReview xmlns="http://oss.dbc.dk/rdf/dbcaddi#">unit:28244282</hasReview>
+        <hasReview xmlns="http://oss.dbc.dk/rdf/dbcaddi#">unit:27596035</hasReview>
+        <hasReview xmlns="http://oss.dbc.dk/rdf/dbcaddi#">unit:27596060</hasReview>
+        <hasReview xmlns="http://oss.dbc.dk/rdf/dbcaddi#">unit:27596037</hasReview>
+        <hasReview xmlns="http://oss.dbc.dk/rdf/dbcaddi#">unit:27596061</hasReview>
+        <hasReview xmlns="http://oss.dbc.dk/rdf/dbcaddi#">unit:3886925</hasReview>
+        <hasReview xmlns="http://oss.dbc.dk/rdf/dbcaddi#">unit:3945734</hasReview>
+        <hasReview xmlns="http://oss.dbc.dk/rdf/dbcaddi#">unit:3368994</hasReview>
+        <hasReview xmlns="http://oss.dbc.dk/rdf/dbcaddi#">unit:3389119</hasReview>
+        <hasReview xmlns="http://oss.dbc.dk/rdf/dbcaddi#">unit:3366966</hasReview>
+        <hasReview xmlns="http://oss.dbc.dk/rdf/dbcaddi#">unit:3369760</hasReview>
+        <hasDescriptionFromPublisher xmlns="http://oss.dbc.dk/rdf/dbcaddi#">unit:30729947</hasDescriptionFromPublisher>
+        <hasCreatorDescription xmlns="http://oss.dbc.dk/rdf/dbcaddi#">unit:2034134</hasCreatorDescription>
+        <hasCreatorDescription xmlns="http://oss.dbc.dk/rdf/dbcaddi#">unit:3790175</hasCreatorDescription>
+        <hasCreatorDescription xmlns="http://oss.dbc.dk/rdf/dbcaddi#">unit:28227503</hasCreatorDescription>
+        <hasCreatorDescription xmlns="http://oss.dbc.dk/rdf/dbcaddi#">unit:24423397</hasCreatorDescription>
+    </rdf:Description>
+</rdf:RDF>

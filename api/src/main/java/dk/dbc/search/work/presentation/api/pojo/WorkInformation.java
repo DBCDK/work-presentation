@@ -65,9 +65,9 @@ public class WorkInformation implements Serializable {
                 "workId='" + workId + '\'' +
                 ", title='" + title + '\'' +
                 ", fullTitle='" + fullTitle + '\'' +
-                ", creator='" + creators + '\'' +
+                ", creators='" + creators + '\'' +
                 ", description='" + description + '\'' +
-                ", subject='" + subjects + '\'' +
+                ", subjects='" + subjects + '\'' +
                 ", dbUnitInformation=" + dbUnitInformation +
                 ", manifestationInformationList=" + manifestationInformationList +
                 '}';

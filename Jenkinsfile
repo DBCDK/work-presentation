@@ -92,7 +92,7 @@ pipeline {
                 script {
                     def allDockerFiles = findFiles glob: '**/Dockerfile'
                     def dockerFiles = allDockerFiles.findAll { f -> f.path.endsWith("target/docker/Dockerfile") }
-                    def version = readMavenPom().version
+                    def version = readMavenPom().version.replace('-SNAPSHOT', '')
 
                     for (def f : dockerFiles) {
                         def dirName = f.path.take(f.path.length() - "target/docker/Dockerfile".length())
@@ -187,17 +187,17 @@ pipeline {
             step([$class: 'JavadocArchiver', javadocDir: 'target/site/apidocs', keepAll: false])
             archiveArtifacts artifacts: '**/target/*-jar-with-dependencies.jar', fingerprint: true
             script {
-                if( currentBuild.getPreviousBuild() != null && currentBuild.getPreviousBuild().result == 'FAILURE' ) {
+                if( "${env.BRANCH_NAME}" == 'master' && currentBuild.getPreviousBuild() != null && currentBuild.getPreviousBuild().result == 'FAILURE' ) {
                     emailext(
                             recipientProviders: [developers(), culprits()],
                             to: teamEmail,
-                            subject: "[Jenkins] ${env.JOB_NAME} #${env.BUILD_NUMBER} failed",
+                            subject: "[Jenkins] ${env.JOB_NAME} #${env.BUILD_NUMBER} back to normal",
                             mimeType: 'text/html; charset=UTF-8',
                             body: "<p>The master is back to normal.</p><p><a href=\"${env.BUILD_URL}\">Build information</a>.</p>",
                             attachLog: false)
                     slackSend(channel: teamSlack,
-                            color: 'warning',
-                            message: "${env.JOB_NAME} #${env.BUILD_NUMBER} failed and needs attention: ${env.BUILD_URL}",
+                            color: 'good',
+                            message: "${env.JOB_NAME} #${env.BUILD_NUMBER} back to normal: ${env.BUILD_URL}",
                             tokenCredentialId: 'slack-global-integration-token')
                 }
             }

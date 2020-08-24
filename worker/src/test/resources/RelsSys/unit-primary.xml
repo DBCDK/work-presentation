@@ -1,0 +1,14 @@
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <rdf:Description rdf:about="info:fedora/unit:2">
+        <hasMemberOfUnit xmlns="info:fedora/">870970-basis:01430351</hasMemberOfUnit>
+        <hasPrimaryBibObject xmlns="info:fedora/">870970-basis:01430351</hasPrimaryBibObject>
+        <isMemberOfWork xmlns="info:fedora/">work:1</isMemberOfWork>
+        <isPrimaryUnitObjectFor xmlns="info:fedora/">work:1</isPrimaryUnitObjectFor>
+        <hasMemberOfUnit xmlns="info:fedora/">300840-katalog:100643898</hasMemberOfUnit>
+        <hasMemberOfUnit xmlns="info:fedora/">850020-katalog:0023681</hasMemberOfUnit>
+        <hasMemberOfUnit xmlns="info:fedora/">800010-katalog:99122618592105763</hasMemberOfUnit>
+        <hasMemberOfUnit xmlns="info:fedora/">800010-katalog:99122875633105763</hasMemberOfUnit>
+        <hasMemberOfUnit xmlns="info:fedora/">800010-katalog:99122768539405763</hasMemberOfUnit>
+        <hasMemberOfUnit xmlns="info:fedora/">800010-katalog:99122502410405763</hasMemberOfUnit>
+    </rdf:Description>
+</rdf:RDF>

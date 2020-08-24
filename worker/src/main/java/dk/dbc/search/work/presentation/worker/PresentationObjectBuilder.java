@@ -18,7 +18,10 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
+import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
+import dk.dbc.search.work.presentation.worker.tree.WorkTree;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.transaction.Transactional;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
@@ -26,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This produces all the fields a presentation request possibly can result in.
- *
+ * <p>
  * The presentation request then filters this.
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
@@ -36,14 +39,35 @@ public class PresentationObjectBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(PresentationObjectBuilder.class);
 
+    @Inject
+    WorkTreeBuilder workTreeBuilder;
+
+    @Inject
+    ParallelCacheContentBuilder parallelCacheContentBuilder;
+
+    @Inject
+    WorkConsolidator workConsolidator;
+
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    @Timed
-    public void process(String pid) {
-        if (!pid.startsWith("work:")) {
-            log.info("Skipping job: {}", pid);
+    @Timed(reusable = true)
+    public void process(String corepoWorkId) {
+        if (!corepoWorkId.startsWith("work:")) {
+            log.info("Skipping job: {} (not a work)", corepoWorkId);
             return;
         }
-        log.info("Processing job: {}", pid);
+        log.info("Processing job: {}", corepoWorkId);
+
+        WorkTree tree = workTreeBuilder.buildTree(corepoWorkId);
+        tree.prettyPrint(log::trace);
+        parallelCacheContentBuilder.updateCache(tree); // Needs to be before .updateWorkContains(tree)
+        parallelCacheContentBuilder.updateWorkContains(tree);
+        if (tree.isEmpty()) {
+            workConsolidator.deleteWork(corepoWorkId);
+        } else {
+            WorkInformation content = workConsolidator.buildWorkInformation(tree);
+            workConsolidator.saveWork(corepoWorkId, tree, content);
+
+        }
     }
 
 }

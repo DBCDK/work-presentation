@@ -78,6 +78,7 @@ public class Config {
                         context.getHeaders().putSingle("User-Agent", userAgent)
                 )
                 .build();
+        this.corepoContentService = UriBuilder.fromPath(getOrFail("COREPO_CONTENT_SERVICE_URL"));
     }
 
     public UriBuilder getCorepoContentService() {

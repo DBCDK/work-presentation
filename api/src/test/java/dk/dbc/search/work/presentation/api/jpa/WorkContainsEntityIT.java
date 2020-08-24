@@ -18,9 +18,6 @@
  */
 package dk.dbc.search.work.presentation.api.jpa;
 
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
@@ -34,71 +31,45 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
-public class WorkContainsEntityIT extends JpaBase {
+public class WorkContainsEntityIT extends JpaBase<Object> {
 
     @Test
     public void saveMultiple() throws Exception {
         System.out.println("saveMultiple");
-        assertTimeout(Duration.ofMillis(500L), () -> {
-                  jpa(em -> {
-                      // Make work a
-                      Stream.of("870970-basis:25912233", "710100-katalog:25912233", "766500-katalog:25912233")
-                              .forEach(m -> {
-                                  WorkContainsEntity wce = WorkContainsEntity.from(em, "870970-basis:25912233", m);
-                                  wce.setUnitId("unit:0");
-                                  wce.save();
-                              });
-                      // Make work b
-                      Stream.of("870970-basis:23645564", "710100-katalog:23645564")
-                              .forEach(m -> {
-                                  WorkContainsEntity wce = WorkContainsEntity.from(em, "870970-basis:23645564", m);
-                                  wce.setUnitId("unit:1");
-                                  wce.save();
-                              });
-                  });
-              });
+        String corepoWorkId = "870970-basis:25912233";
 
-        assertTimeout(Duration.ofMillis(500L), () -> {
-                  System.out.println("fetch list, remove one(766500), add one(911116), update list");
-                  flushAndEvict();
-                  List<WorkContainsEntity> works = jpa(em -> {
-                      return new ArrayList<WorkContainsEntity>(WorkContainsEntity.listFrom(em, "870970-basis:25912233"));
-                  });
+        System.out.println(" - Make a work");
+        jpa(em -> {
+            List<WorkContainsEntity> works = Stream.of(corepoWorkId, "710100-katalog:25912233", "766500-katalog:25912233")
+                    .map(m -> WorkContainsEntity.from(em, corepoWorkId, m))
+                    .collect(toList());
+            System.out.println("works = " + works);
+            WorkContainsEntity.updateToList(em, corepoWorkId, works);
+        });
 
-                  List<String> manifestationIds = works.stream().map(WorkContainsEntity::getManifestationId).collect(toList());
-                  System.out.println("manifestationIds = " + manifestationIds);
-                  assertThat(manifestationIds, containsInAnyOrder("710100-katalog:25912233", "766500-katalog:25912233", "870970-basis:25912233"));
+        System.out.println(" - Verify work from database");
+        jpa(em -> {
+            List<WorkContainsEntity> works = WorkContainsEntity.listFrom(em, "870970-basis:25912233");
+            List<String> manifestationIds = works.stream().map(WorkContainsEntity::getManifestationId).collect(toList());
+            System.out.println("manifestationIds = " + manifestationIds);
+            assertThat(manifestationIds, containsInAnyOrder("710100-katalog:25912233", "766500-katalog:25912233", "870970-basis:25912233"));
+        });
 
-                  for (Iterator<WorkContainsEntity> iterator = works.iterator() ; iterator.hasNext() ;) {
-                      WorkContainsEntity next = iterator.next();
-                      if (next.getManifestationId().equals("766500-katalog:25912233"))
-                          iterator.remove();
-                  }
-                  WorkContainsEntity extra = jpa(em -> {
-                      WorkContainsEntity wce = WorkContainsEntity.from(em, "870970-basis:25912233", "911116-katalog:25912233");
-                      wce.setUnitId("unit:0");
-                      return wce;
-                  });
+        System.out.println(" - Make a work with different content");
+        jpa(em -> {
+            List<WorkContainsEntity> works = Stream.of(corepoWorkId, "710100-katalog:25912233", "911116-katalog:25912233")
+                    .map(m -> WorkContainsEntity.from(em, corepoWorkId, m))
+                    .collect(toList());
+            System.out.println("works = " + works);
+            WorkContainsEntity.updateToList(em, corepoWorkId, works);
+        });
 
-                  works.add(extra);
-                  manifestationIds = works.stream().map(WorkContainsEntity::getManifestationId).collect(toList());
-                  System.out.println("list = " + manifestationIds);
-
-                  jpa(em -> {
-                      WorkContainsEntity.updateToList(em, "870970-basis:25912233", works);
-                  });
-
-              });
-        assertTimeout(Duration.ofMillis(500L), () -> {
-                  System.out.println("validate update list");
-                  flushAndEvict();
-                  List<WorkContainsEntity> works = jpa(em -> {
-                      return new ArrayList<WorkContainsEntity>(WorkContainsEntity.listFrom(em, "870970-basis:25912233"));
-                  });
-
-                  List<String> manifestationIds = works.stream().map(WorkContainsEntity::getManifestationId).collect(toList());
-                  System.out.println("manifestationIds = " + manifestationIds);
-                  assertThat(manifestationIds, containsInAnyOrder("710100-katalog:25912233", "870970-basis:25912233", "911116-katalog:25912233"));
-              });
+        System.out.println(" - Verify work from database");
+        jpa(em -> {
+            List<WorkContainsEntity> works = WorkContainsEntity.listFrom(em, "870970-basis:25912233");
+            List<String> manifestationIds = works.stream().map(WorkContainsEntity::getManifestationId).collect(toList());
+            System.out.println("manifestationIds = " + manifestationIds);
+            assertThat(manifestationIds, containsInAnyOrder("710100-katalog:25912233", "870970-basis:25912233", "911116-katalog:25912233"));
+        });
     }
 }

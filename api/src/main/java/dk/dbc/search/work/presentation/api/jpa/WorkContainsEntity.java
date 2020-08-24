@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -56,9 +57,6 @@ public class WorkContainsEntity implements Serializable {
     @Column(updatable = false, nullable = false)
     private String corepoWorkId;
 
-    @Column(nullable = false)
-    private String unitId;
-
     @Column(updatable = false, nullable = false)
     private String manifestationId;
 
@@ -89,6 +87,7 @@ public class WorkContainsEntity implements Serializable {
     public static List<WorkContainsEntity> listFrom(EntityManager em, String corepoWorkId) {
         List<WorkContainsEntity> works = em.createNamedQuery("allWithCorepoWorkId", WorkContainsEntity.class)
                 .setParameter("corepoWorkId", corepoWorkId)
+                .setLockMode(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
                 .getResultList();
         works.forEach(w -> {
             w.em = em;
@@ -153,14 +152,6 @@ public class WorkContainsEntity implements Serializable {
         this.corepoWorkId = corepoWorkId;
     }
 
-    public String getUnitId() {
-        return unitId;
-    }
-
-    public void setUnitId(String unitId) {
-        this.unitId = unitId;
-    }
-
     public String getManifestationId() {
         return manifestationId;
     }
@@ -169,4 +160,29 @@ public class WorkContainsEntity implements Serializable {
         this.manifestationId = manifestationId;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + Objects.hashCode(this.corepoWorkId);
+        hash = 47 * hash + Objects.hashCode(this.manifestationId);
+        hash = 47 * hash + this.version;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        final WorkContainsEntity other = (WorkContainsEntity) obj;
+        return this.version == other.version &&
+               Objects.equals(this.corepoWorkId, other.corepoWorkId) &&
+               Objects.equals(this.manifestationId, other.manifestationId);
+    }
+
+    @Override
+    public String toString() {
+        return "WorkContainsEntity{" + "version=" + version + ", corepoWorkId=" + corepoWorkId + ", manifestationId=" + manifestationId + '}';
+    }
 }

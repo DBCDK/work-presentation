@@ -1,0 +1,18 @@
+{
+  "id": "a3292aad-6f67-34b3-ae3e-07af36904d55",
+  "request": {
+    "url": "/corepo-content-service/rest/objects/870970-basis:22476319/datastreams/commonData/content",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "body-870970-basis-22476319_commonData-content.xml",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/xml",
+      "Transfer-Encoding": "chunked",
+      "X-Frame-Options": "SAMEORIGIN"
+    }
+  },
+  "uuid": "a3292aad-6f67-34b3-ae3e-07af36904d55"
+}

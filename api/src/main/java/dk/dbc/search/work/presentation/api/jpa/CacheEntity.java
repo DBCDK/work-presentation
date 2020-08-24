@@ -25,6 +25,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Objects;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -69,7 +70,7 @@ public class CacheEntity implements Serializable {
     transient EntityManager em;
 
     public static CacheEntity from(EntityManager em, String manifestationId) {
-        CacheEntity entity = em.find(CacheEntity.class, em, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+        CacheEntity entity = em.find(CacheEntity.class, manifestationId, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
         if (entity == null) {
             entity = new CacheEntity(manifestationId);
         }
@@ -143,7 +144,35 @@ public class CacheEntity implements Serializable {
     public void detach() {
         em.detach(this);
     }
-    
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + Objects.hashCode(this.manifestationId);
+        hash = 47 * hash + Objects.hashCode(this.modified);
+        hash = 47 * hash + Objects.hashCode(this.content);
+        hash = 47 * hash + this.version;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        final CacheEntity other = (CacheEntity) obj;
+        return this.version == other.version &&
+               Objects.equals(this.manifestationId, other.manifestationId) &&
+               Objects.equals(this.content, other.content) &&
+               Objects.equals(this.modified, other.modified);
+    }
+
+    @Override
+    public String toString() {
+        return "CacheEntity{" + "version=" + version + ", manifestationId=" + manifestationId + ", modified=" + modified + '}';
+    }
+
     @Converter
     public static class JsonConverter implements AttributeConverter<ManifestationInformation, PGobject> {
 
@@ -176,5 +205,4 @@ public class CacheEntity implements Serializable {
             }
         }
     }
-
 }
