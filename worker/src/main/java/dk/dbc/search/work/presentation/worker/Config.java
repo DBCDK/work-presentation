@@ -50,6 +50,7 @@ public class Config {
 
     private UriBuilder corepoContentService;
     private Client httpClient;
+    private int jsPoolSize;
     private String[] queues;
     private boolean queueDeduplicate;
     private int threads;
@@ -79,10 +80,15 @@ public class Config {
                 )
                 .build();
         this.corepoContentService = UriBuilder.fromPath(getOrFail("COREPO_CONTENT_SERVICE_URL"));
+        this.jsPoolSize = Integer.max(1, Integer.parseInt(getOrFail("JS_POOL_SIZE")));
     }
 
     public UriBuilder getCorepoContentService() {
         return corepoContentService.clone();
+    }
+
+    public int getJsPoolSize() {
+        return jsPoolSize;
     }
 
     public Client getHttpClient() {

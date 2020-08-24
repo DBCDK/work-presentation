@@ -65,6 +65,9 @@ public class ParallelCacheContentBuilder {
     public ExecutorService executor;
 
     @Inject
+    Config config;
+
+    @Inject
     CorepoContentServiceConnector corepoContentService;
 
     QuickPool<JavascriptCacheObjectBuilder> jsWorkers;
@@ -73,6 +76,7 @@ public class ParallelCacheContentBuilder {
     public void init() {
         jsWorkers = new QuickPool<>(JavascriptCacheObjectBuilder.builder()
                 .build());
+        jsWorkers.setMaxTotal(config.getJsPoolSize());
     }
 
     /**
@@ -186,9 +190,9 @@ public class ParallelCacheContentBuilder {
                     MDC.setContextMap(mdc);
                 }
                 log.info("Generating content for: {}", manifestationId);
-                ManifestationInformation mi = jsWorkers.valueExec(js -> {
-                    return dataBuilder.generateContent(corepoContentService, js);
-                }).value();
+                ManifestationInformation mi = jsWorkers
+                        .valueExec(js -> dataBuilder.generateContent(corepoContentService, js))
+                        .value();
                 cacheObj.setContent(mi);
                 cacheObj.setModified(dataBuilder.getModified());
 
