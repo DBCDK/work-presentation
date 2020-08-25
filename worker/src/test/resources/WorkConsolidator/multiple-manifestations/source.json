@@ -1,0 +1,19 @@
+{
+    "primary": "870970-basis:0",
+    "units": {
+        "unit:1": {
+            "870970-basis:0": {
+                "870970-basis:0": {
+                    "title": "Two Things",
+                    "creators": [ "Me" ],
+                    "subjects": [ "mice", "men" ]
+                },
+                "710100-katalog:0": {
+                    "title": "Two Things",
+                    "creators": [ "Me", "You" ],
+                    "subjects": [ "mice", "elephants" ]
+                }
+            }
+        }
+    }
+}
