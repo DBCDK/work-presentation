@@ -29,7 +29,8 @@ import java.util.HashMap;
  */
 @SuppressFBWarnings({"EI_EXPOSE_REP2", "EI_EXPOSE_REP"})
 public class UnitTree extends HashMap<String, ObjectTree> {
-private static final long serialVersionUID = 0xD3F195C554AB12ACL;
+
+    private static final long serialVersionUID = 0xD3F195C554AB12ACL;
 
     private final boolean primary;
     private final Instant modified;

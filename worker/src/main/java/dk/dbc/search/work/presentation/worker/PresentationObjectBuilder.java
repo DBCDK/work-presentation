@@ -18,8 +18,12 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
+import dk.dbc.corepo.queue.QueueJob;
+import dk.dbc.log.LogWith;
+import dk.dbc.pgqueue.consumer.JobMetaData;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.worker.tree.WorkTree;
+import java.sql.Connection;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -50,11 +54,21 @@ public class PresentationObjectBuilder {
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     @Timed(reusable = true)
-    public void process(String corepoWorkId) {
-        if (!corepoWorkId.startsWith("work:")) {
-            log.info("Skipping job: {} (not a work)", corepoWorkId);
-            return;
+    public void processJob(Connection connection, QueueJob job, JobMetaData metaData) {
+        String corepoWorkId = job.getPid();
+        try (LogWith logWith = LogWith.track(job.getTrackingId())
+                .pid(corepoWorkId);) {
+            if (corepoWorkId.startsWith("work:")) {
+                process(corepoWorkId);
+            }
+        } catch (RuntimeException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
         }
+    }
+
+    void process(String corepoWorkId) {
         log.info("Processing job: {}", corepoWorkId);
 
         WorkTree tree = workTreeBuilder.buildTree(corepoWorkId);
@@ -66,7 +80,6 @@ public class PresentationObjectBuilder {
         } else {
             WorkInformation content = workConsolidator.buildWorkInformation(tree);
             workConsolidator.saveWork(corepoWorkId, tree, content);
-
         }
     }
 

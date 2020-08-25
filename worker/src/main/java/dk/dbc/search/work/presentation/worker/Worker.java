@@ -19,10 +19,7 @@
 package dk.dbc.search.work.presentation.worker;
 
 import dk.dbc.corepo.queue.QueueJob;
-import dk.dbc.log.LogWith;
-import dk.dbc.pgqueue.consumer.JobMetaData;
 import dk.dbc.pgqueue.consumer.QueueWorker;
-import java.sql.Connection;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import javax.annotation.PostConstruct;
@@ -82,25 +79,13 @@ public class Worker implements HealthCheck {
                 .fromEnvWithDefaults()
                 .executor(executor)
                 .metricRegistryMicroProfile(metrics)
-                .build(config.getThreads(), this::work);
+                .build(config.getThreads(), presentationObjectBuilder::processJob);
         worker.start();
     }
 
     @PreDestroy
     public void destroy() {
         worker.stop();
-    }
-
-    public void work(Connection connection, QueueJob job, JobMetaData metaData) {
-        try (LogWith logWith = LogWith.track(job.getTrackingId())
-                .pid(job.getPid());) {
-
-            presentationObjectBuilder.process(job.getPid());
-        } catch (RuntimeException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
     }
 
     @Override
