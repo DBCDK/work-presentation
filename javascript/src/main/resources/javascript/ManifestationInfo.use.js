@@ -31,7 +31,7 @@ var ManifestationInfo = (function() {
                 "fullTitle": null, //from commonData stream or localData stream if title element present, string, must be present
                 "creators": [], //from commonData stream creator - array, empty array if no data
                 "description": null, //from commonData stream dcterms:abstract - string, null if no data
-                "subjects": [], //commonData or localData if subject element present, array, empty array if no data
+                "subjects": [], //from dc stream if subject element present, array, empty array if no data
                 "types": [] //from DC stream, array, most be present
             };
         var dcStreamXml = XmlUtil.fromString( dataStreamObject.DC );
@@ -39,6 +39,9 @@ var ManifestationInfo = (function() {
         var localDataXml = XmlUtil.fromString( dataStreamObject.localData );
         manifestationObject.title = getTitle( dcStreamXml );
         manifestationObject.fullTitle = getFullTitle( commonDataXml, localDataXml );
+        manifestationObject.creators = getCreators( dcStreamXml );
+        manifestationObject.description = getAbstract( commonDataXml, localDataXml );
+        manifestationObject.subjects = getSubjects( dcStreamXml );
         manifestationObject.types = getTypes( dcStreamXml );
 
         Log.trace( "Leaving: ManifestationInfo.getManifestationInfoFromXmlObjects function" );
@@ -63,6 +66,7 @@ var ManifestationInfo = (function() {
         Log.trace( "Entering: ManifestationInfo.getTitle function" );
 
         var title = XPath.selectText( "/oai_dc:dc/dc:title", dcStreamXml );
+        Log.debug( "ManifestationInfo.getTitle title found=", title );
 
         if ( "" === title ) {
             RecordProcessing.terminateProcessingAndFailRecord(
@@ -104,6 +108,7 @@ var ManifestationInfo = (function() {
                 "ManifestationInfo.getFullTitle no full title was found in local or common stream" );
         }
 
+        Log.debug( "ManifestationInfo.getFullTitle title full found=", titleFull );
 
         Log.trace( "Leaving: ManifestationInfo.getFullTitle function" );
 
@@ -111,12 +116,46 @@ var ManifestationInfo = (function() {
     }
 
     /**
-     * Function that extracts type from the provided DC stream
+     * Function that extracts creators from the provided DC stream
+     *
+     * @type {function}
+     * @syntax ManifestationInfo.getCreators( dcStreamXml )
+     * @param {Document} dcStreamXml the dc stream as xml
+     * @return {Array} the extracted creators
+     * @function
+     * @name ManifestationInfo.getCreators
+     */
+
+    function getCreators( dcStreamXml ) {
+
+        Log.trace( "Entering: ManifestationInfo.getCreators function" );
+
+        var creators = [];
+        var allCreators = XPath.selectMultipleText( "/oai_dc:dc/dc:creator", dcStreamXml );
+        for ( var i = 0; i < allCreators.length; i++ ){
+            var creator = allCreators[ i ];
+            //dont add match strings or nobirth versions
+            if ( !creator.match(/MATCHSTRING:|NOBIRTH:/ ) ){
+                creators.push( creator );
+            }
+        }
+        Log.debug( "ManifestationInfo.getCreators creators found=", creators );
+
+
+        Log.trace( "Leaving: ManifestationInfo.getCreators function" );
+
+        return creators;
+    }
+
+
+
+    /**
+     * Function that extracts types from the provided DC stream
      *
      * @type {function}
      * @syntax ManifestationInfo.getTypes( dcStreamXml )
      * @param {Document} dcStreamXml the dc stream as xml
-     * @return {String} the extracted full type
+     * @return {Array} the extracted types
      * @function
      * @name ManifestationInfo.getTypes
      */
@@ -133,8 +172,8 @@ var ManifestationInfo = (function() {
             //set sammensat boolean for now, we might have to add it if its the only one
             if ( "Sammensat materiale" === type  ){
                 foundSammensat = true;
-            } //dont add sammensat materiale and work type
-            if ( "Sammensat materiale" !== type && !type.match(/WORK:/ ) ){
+            } //dont add sammensat materiale and work or record type
+            if ( "Sammensat materiale" !== type && !type.match(/WORK:|RECORD:/ ) ){
                 types.push( type );
             }
         } //end for loop
@@ -146,6 +185,7 @@ var ManifestationInfo = (function() {
             RecordProcessing.terminateProcessingAndFailRecord(
                 "ManifestationInfo.getTypes no type was found in dc stream\n" + dcStreamXml );
         }
+        Log.debug( "ManifestationInfo.getTypes types found=", types );
 
 
         Log.trace( "Leaving: ManifestationInfo.getTypes function" );
@@ -153,12 +193,76 @@ var ManifestationInfo = (function() {
         return types;
     }
 
+    /**
+     * Function that extracts the abstract from the either the local data stream
+     * or if not present there the common data stream
+     *
+     * @type {function}
+     * @syntax ManifestationInfo.getAbstract( commonData, localData )
+     * @param {Document} commonData the common stream as xml
+     * @param {Document} localData the local stream as xml
+     * @return {String|null} the extracted abstract or null if no abstract
+     * @function
+     * @name ManifestationInfo.getAbstract
+     */
+
+    function getAbstract( commonData, localData ) {
+
+        Log.trace( "Entering: ManifestationInfo.getAbstract function" );
+
+        //first check if localData has an abstract
+        var abstract = XPath.selectText( '/ting:localData/dkabm:record/dcterms:abstract', localData );
+
+        if ( "" === abstract ) {
+            abstract = XPath.selectText( '/ting:container/dkabm:record/dcterms:abstract', commonData );
+        }
+
+
+        abstract = ( "" === abstract) ? null : abstract;
+
+        Log.debug( "ManifestationInfo.getAbstract abstract found=", String( abstract ) );
+
+
+        Log.trace( "Leaving: ManifestationInfo.getAbstract function" );
+
+        return abstract;
+    }
+
+
+    /**
+     * Function that extracts subjects from the provided DC stream
+     *
+     * @type {function}
+     * @syntax ManifestationInfo.getSubjects( dcStreamXml )
+     * @param {Document} dcStreamXml the dc stream as xml
+     * @return {Array} the extracted subjects
+     * @function
+     * @name ManifestationInfo.getSubjects
+     */
+
+    function getSubjects( dcStreamXml ) {
+
+        Log.trace( "Entering: ManifestationInfo.getSubjects function" );
+
+        var subjects = XPath.selectMultipleText( "/oai_dc:dc/dc:subject", dcStreamXml );
+
+        Log.debug( "ManifestationInfo.getSubjects subjects found=", subjects );
+
+
+        Log.trace( "Leaving: ManifestationInfo.getSubjects function" );
+
+        return subjects;
+    }
+
 
     return {
         getManifestationInfoFromXmlObjects: getManifestationInfoFromXmlObjects,
         getTitle: getTitle,
         getFullTitle: getFullTitle,
-        getTypes: getTypes
+        getCreators: getCreators,
+        getTypes: getTypes,
+        getAbstract: getAbstract,
+        getSubjects: getSubjects
 
     };
 })();

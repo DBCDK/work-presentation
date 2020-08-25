@@ -1,0 +1,34 @@
+<oai_dc:dc
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <dc:title>vildheks</dc:title>
+    <dc:title>MATCHSTRING:vildheksildproevenbind1oevenbind1</dc:title>
+    <dc:title>MATCH:vildhe</dc:title>
+    <dc:creator>lene kꜳberbøl</dc:creator>
+    <dc:creator>NOBIRTH:lene kꜳberbøl</dc:creator>
+    <dc:creator>MATCHSTRING:kꜳberbøll</dc:creator>
+    <dc:creator>MATCHSTRING:kꜳberbøll</dc:creator>
+    <dc:language>Dansk</dc:language>
+    <dc:subject>dyr</dc:subject>
+    <dc:subject>fantasy</dc:subject>
+    <dc:subject>for 10 år</dc:subject>
+    <dc:subject>for 11 år</dc:subject>
+    <dc:subject>for 12 år</dc:subject>
+    <dc:subject>for 13 år</dc:subject>
+    <dc:subject>for 14 år</dc:subject>
+    <dc:subject>hekse</dc:subject>
+    <dc:subject>piger</dc:subject>
+    <dc:type>Bog</dc:type>
+    <dc:type>WORK:literature</dc:type>
+    <dc:type>RECORD:multivolume</dc:type>
+    <dc:publisher>alvilda</dc:publisher>
+    <dc:publisher>MATCHSTRING:alvilda</dc:publisher>
+    <dc:contributor>anders walter</dc:contributor>
+    <dc:contributor>jens trasborg</dc:contributor>
+    <dc:date>2010</dc:date>
+    <dc:identifier>870970-basis:28394438</dc:identifier>
+    <dc:identifier>ISBN:9788771050486</dc:identifier>
+    <dc:identifier>MATCH:ISBN:9788771050486</dc:identifier>
+    <dc:relation>28395272</dc:relation>
+</oai_dc:dc>
