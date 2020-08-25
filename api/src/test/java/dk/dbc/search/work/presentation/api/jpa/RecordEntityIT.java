@@ -25,9 +25,11 @@ import org.junit.jupiter.api.Test;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -49,16 +51,16 @@ public class RecordEntityIT extends JpaBase<Object> {
         mi.manifestationId = "c";
         mi.title = "mTitle";
         mi.materialTypes = Arrays.asList("book");
-        List<ManifestationInformation> ml = Arrays.asList(mi);
+        Set<ManifestationInformation> ml = Collections.singleton(mi);
 
         WorkInformation wi = new WorkInformation();
         wi.workId = "a";
         wi.title = "title";
         wi.creators = Arrays.asList("hans andersen");
-        wi.subjects = Arrays.asList("emne");
+        wi.subjects = Collections.singleton("emne");
         wi.description = "beskrivelse";
         wi.manifestationInformationList = ml;
-        Map<String, List<ManifestationInformation>> unitInfo = new HashMap<>();
+        Map<String, Set<ManifestationInformation>> unitInfo = new HashMap<>();
         unitInfo.put("unitId", ml);
         wi.dbUnitInformation = unitInfo;
 

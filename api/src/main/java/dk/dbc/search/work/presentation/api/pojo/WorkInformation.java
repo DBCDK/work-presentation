@@ -1,12 +1,15 @@
 package dk.dbc.search.work.presentation.api.pojo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class WorkInformation implements Serializable {
 
     private static final long serialVersionUID = -5483372029181835470L;
@@ -23,13 +26,13 @@ public class WorkInformation implements Serializable {
     public String description;
 
     @JsonProperty("subjects")
-    public List<String> subjects;
+    public Set<String> subjects;
 
     @JsonProperty("dbUnits")
-    public Map<String, List<ManifestationInformation>> dbUnitInformation;
+    public Map<String, Set<ManifestationInformation>> dbUnitInformation;
 
     @JsonProperty("records")
-    public List<ManifestationInformation> manifestationInformationList;
+    public Set<ManifestationInformation> manifestationInformationList;
 
     public WorkInformation() {
     }

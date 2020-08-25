@@ -1,5 +1,6 @@
 package dk.dbc.search.work.presentation.api.pojo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -8,7 +9,9 @@ import java.util.List;
 import java.util.Objects;
 
 @SuppressFBWarnings("UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ManifestationInformation implements Serializable {
+
     private static final long serialVersionUID = 8070506196810189178L;
 
     @JsonProperty("pid")
@@ -30,16 +33,18 @@ public class ManifestationInformation implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         ManifestationInformation that = (ManifestationInformation) o;
         return Objects.equals(manifestationId, that.manifestationId) &&
-                Objects.equals(title, that.title) &&
-                Objects.equals(fullTitle, that.fullTitle) &&
-                Objects.equals(creators, that.creators) &&
-                Objects.equals(description, that.description) &&
-                Objects.equals(subjects, that.subjects) &&
-                Objects.equals(materialTypes, that.materialTypes);
+               Objects.equals(title, that.title) &&
+               Objects.equals(fullTitle, that.fullTitle) &&
+               Objects.equals(creators, that.creators) &&
+               Objects.equals(description, that.description) &&
+               Objects.equals(subjects, that.subjects) &&
+               Objects.equals(materialTypes, that.materialTypes);
     }
 
     @Override
@@ -53,10 +58,10 @@ public class ManifestationInformation implements Serializable {
                "manifestationId='" + manifestationId + '\'' +
                ", title='" + title + '\'' +
                ", fullTitle='" + fullTitle + '\'' +
-               ", creators='" + creators + '\'' +
+               ", creators=" + creators +
                ", description='" + description + '\'' +
-               ", subjects='" + subjects + '\'' +
-               ", type='" + materialTypes + '\'' +
+               ", subjects=" + subjects +
+               ", types=" + materialTypes +
                '}';
     }
 }
