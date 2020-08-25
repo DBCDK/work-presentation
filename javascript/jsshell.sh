@@ -8,6 +8,6 @@
 )
 
 
-search=( "${0%/*}/src/main/resources/javascript" $(find "${0%/*}/target/test-classes/javascript" -type d) )
+search=( "${0%/*}/src/main/resources/javascript" $(find "${0%/*}/target/classes/javascript" -type d) )
 
 exec dbc-jsshell --search "${search[*]/#/file:}" "$@"

@@ -34,9 +34,21 @@ var ManifestationInfo = (function() {
                 "subjects": [], //from dc stream if subject element present, array, empty array if no data
                 "types": [] //from DC stream, array, most be present
             };
-        var dcStreamXml = XmlUtil.fromString( dataStreamObject.DC );
-        var commonDataXml = XmlUtil.fromString( dataStreamObject.commonData );
-        var localDataXml = XmlUtil.fromString( dataStreamObject.localData );
+
+        //check that we have necessary data streams
+        if ( dataStreamObject.DC && dataStreamObject.commonData ) {
+            var dcStreamXml = XmlUtil.fromString( dataStreamObject.DC );
+            var commonDataXml = XmlUtil.fromString( dataStreamObject.commonData );
+        } else {
+            RecordProcessing.terminateProcessingAndFailRecord(
+                "ManifestationInfo.getManifestationInfoFromXmlObjects missing either commonData or DC stream" );
+        }
+
+        if ( dataStreamObject.localData ) {
+            var localDataXml = XmlUtil.fromString( dataStreamObject.localData );
+        } else {
+            localDataXml = XmlUtil.fromString( "<empty/>" );
+        }
         manifestationObject.title = getTitle( dcStreamXml );
         manifestationObject.fullTitle = getFullTitle( commonDataXml, localDataXml );
         manifestationObject.creators = getCreators( dcStreamXml );
@@ -132,10 +144,10 @@ var ManifestationInfo = (function() {
 
         var creators = [];
         var allCreators = XPath.selectMultipleText( "/oai_dc:dc/dc:creator", dcStreamXml );
-        for ( var i = 0; i < allCreators.length; i++ ){
+        for ( var i = 0; i < allCreators.length; i++ ) {
             var creator = allCreators[ i ];
             //dont add match strings or nobirth versions
-            if ( !creator.match(/MATCHSTRING:|NOBIRTH:/ ) ){
+            if ( !creator.match( /MATCHSTRING:|NOBIRTH:/ ) ) {
                 creators.push( creator );
             }
         }
@@ -146,7 +158,6 @@ var ManifestationInfo = (function() {
 
         return creators;
     }
-
 
 
     /**
@@ -167,17 +178,17 @@ var ManifestationInfo = (function() {
         var types = [];
         var allTypes = XPath.selectMultipleText( "/oai_dc:dc/dc:type", dcStreamXml );
         var foundSammensat = false;
-        for ( var i = 0; i < allTypes.length; i++ ){
+        for ( var i = 0; i < allTypes.length; i++ ) {
             var type = allTypes[ i ];
             //set sammensat boolean for now, we might have to add it if its the only one
-            if ( "Sammensat materiale" === type  ){
+            if ( "Sammensat materiale" === type ) {
                 foundSammensat = true;
             } //dont add sammensat materiale and work or record type
-            if ( "Sammensat materiale" !== type && !type.match(/WORK:|RECORD:/ ) ){
+            if ( "Sammensat materiale" !== type && !type.match( /WORK:|RECORD:/ ) ) {
                 types.push( type );
             }
         } //end for loop
-        if ( 0 === types.length && foundSammensat ){
+        if ( 0 === types.length && foundSammensat ) {
             types.push( "Sammensat materiale" )
         }
 
@@ -218,7 +229,7 @@ var ManifestationInfo = (function() {
         }
 
 
-        abstract = ( "" === abstract) ? null : abstract;
+        abstract = ("" === abstract) ? null : abstract;
 
         Log.debug( "ManifestationInfo.getAbstract abstract found=", String( abstract ) );
 

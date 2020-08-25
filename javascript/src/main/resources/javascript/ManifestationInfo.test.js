@@ -122,6 +122,36 @@ UnitTest.addFixture( "ManifestationInfo.getManifestationInfoFromXmlObjects", fun
         };
 
     Assert.equalValue( "get manifestation info from record with no creators and no subjects", ManifestationInfo.getManifestationInfoFromXmlObjects( manifestationId, xmlObjects ), expected );
+
+
+    xmlObjects = {
+        "DC": dcStream,
+        "commonData": commonData,
+    };
+    manifestationId = "870970-basis:08021473-no-local-data";
+
+    expected =
+        {
+            "pid": "870970-basis:08021473-no-local-data",
+            "title": "værkstedstekniske beregninger",
+            "fullTitle": "Værkstedstekniske beregninger. M2, Boring",
+            "creators": [],
+            "description": null,
+            "subjects": [],
+            "types": [ "Bog" ]
+        };
+
+    Assert.equalValue( "get manifestation info from record with no creators and no subjects - no local data", ManifestationInfo.getManifestationInfoFromXmlObjects( manifestationId, xmlObjects ), expected );
+
+    manifestationId = "870970-basis:08021473-no-data-streams";
+
+    xmlObjects = {};
+
+    Assert.exception( "Stop processing if missing dc stream or common data stream", function() {
+        ManifestationInfo.getManifestationInfoFromXmlObjects( manifestationId, xmlObjects );
+    }, Packages.dk.dbc.javascript.recordprocessing.FailRecord );
+
+
 } );
 
 
@@ -337,7 +367,6 @@ UnitTest.addFixture( "ManifestationInfo.getFullTitle", function() {
 } );
 
 
-
 UnitTest.addFixture( "ManifestationInfo.getCreators", function() {
 
     var dcStreamString =
@@ -357,7 +386,7 @@ UnitTest.addFixture( "ManifestationInfo.getCreators", function() {
 
     var dcStream = XmlUtil.fromString( dcStreamString );
 
-    expected =  [ ] ;
+    expected = [];
 
     Assert.equalValue( "get creator no creators ", ManifestationInfo.getCreators( dcStream ), expected );
 
@@ -395,7 +424,6 @@ UnitTest.addFixture( "ManifestationInfo.getCreators", function() {
 } );
 
 
-
 UnitTest.addFixture( "ManifestationInfo.getTypes", function() {
 
     var dcStreamString =
@@ -415,7 +443,7 @@ UnitTest.addFixture( "ManifestationInfo.getTypes", function() {
 
     var dcStream = XmlUtil.fromString( dcStreamString );
 
-    var expected = [ "Bog" ] ;
+    var expected = [ "Bog" ];
 
     Assert.equalValue( "get one type from dc stream ", ManifestationInfo.getTypes( dcStream ), expected );
 
@@ -448,7 +476,7 @@ UnitTest.addFixture( "ManifestationInfo.getTypes", function() {
 
     dcStream = XmlUtil.fromString( dcStreamString );
 
-    expected =  [ "Lyd (cd)",  "Bog" ] ;
+    expected = [ "Lyd (cd)", "Bog" ];
 
     Assert.equalValue( "get multiple types  but no sammensat ", ManifestationInfo.getTypes( dcStream ), expected );
 
@@ -469,7 +497,7 @@ UnitTest.addFixture( "ManifestationInfo.getTypes", function() {
 
     dcStream = XmlUtil.fromString( dcStreamString );
 
-    expected =  [ "Sammensat materiale" ] ;
+    expected = [ "Sammensat materiale" ];
 
     Assert.equalValue( "get type sammensat if its the only one (constructed) ", ManifestationInfo.getTypes( dcStream ), expected );
 
@@ -716,7 +744,6 @@ UnitTest.addFixture( "ManifestationInfo.getAbstract", function() {
 
 
 } );
-
 
 
 UnitTest.addFixture( "ManifestationInfo.getSubjects", function() {
