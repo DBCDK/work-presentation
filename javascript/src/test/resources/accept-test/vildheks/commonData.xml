@@ -1,0 +1,477 @@
+<ting:container
+    xmlns:ac="http://biblstandard.dk/ac/namespace/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"
+    xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"
+    xmlns:docbook="http://docbook.org/ns/docbook"
+    xmlns:oss="http://oss.dbc.dk/ns/osstypes"
+    xmlns:ting="http://www.dbc.dk/ting"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <dkabm:record>
+        <ac:identifier>28394438|870970</ac:identifier>
+        <ac:source>Bibliotekskatalog</ac:source>
+        <dc:title>Vildheks</dc:title>
+        <dc:title xsi:type="dkdcplus:full">Vildheks. Bind 1, Ildprøven</dc:title>
+        <dc:title xsi:type="dkdcplus:series">Vildheks ; [Bind] 1</dc:title>
+        <dcterms:alternative>Vildheks</dcterms:alternative>
+        <dc:creator xsi:type="dkdcplus:aut">Lene Kꜳberbøl</dc:creator>
+        <dc:creator xsi:type="oss:sort">Kꜳberbøl, Lene</dc:creator>
+        <dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>
+        <dc:subject xsi:type="dkdcplus:DBCS">dyr</dc:subject>
+        <dc:subject xsi:type="dkdcplus:DBCS">fantasy</dc:subject>
+        <dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>
+        <dc:subject xsi:type="dkdcplus:DBCN">for 10 år</dc:subject>
+        <dc:subject xsi:type="dkdcplus:DBCN">for 11 år</dc:subject>
+        <dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>
+        <dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>
+        <dc:subject xsi:type="dkdcplus:DBCN">for 14 år</dc:subject>
+        <dc:subject xsi:type="dkdcplus:DBCS">hekse</dc:subject>
+        <dc:subject xsi:type="dkdcplus:DBCS">piger</dc:subject>
+        <dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>
+        <dcterms:abstract>Fantasy. Clara er en helt almindelig pige på 12 år. Tror hun da. For et møde med en sort kat fører hende ind i vildheksenes verden, hvor hun selv er heks</dcterms:abstract>
+        <dc:description>Hertil findes supplerende materiale på bogens hjemmeside</dc:description>
+        <dcterms:audience xsi:type="dkdcplus:age">fra 10 år</dcterms:audience>
+        <dcterms:audience>børnematerialer</dcterms:audience>
+        <dkdcplus:version>1. udgave, 11. oplag (2018)</dkdcplus:version>
+        <dc:publisher>Alvilda</dc:publisher>
+        <dc:contributor xsi:type="dkdcplus:ill">Anders Walter</dc:contributor>
+        <dc:contributor xsi:type="dkdcplus:edt">Jens Trasborg</dc:contributor>
+        <dc:date>2010</dc:date>
+        <dc:type xsi:type="dkdcplus:BibDK-Type">Bog</dc:type>
+        <dcterms:extent>155 sider</dcterms:extent>
+        <dc:identifier xsi:type="dkdcplus:ISBN">9788771050486</dc:identifier>
+        <dc:language xsi:type="dcterms:ISO639-2">dan</dc:language>
+        <dc:language>Dansk</dc:language>
+    </dkabm:record>
+    <marcx:collection
+        xmlns:marcx="info:lc/xmlns/marcxchange-v1">
+        <marcx:record format="danMARC2" type="Bibliographic">
+            <marcx:leader>00000name 22000000  4500</marcx:leader>
+            <marcx:datafield ind1="0" ind2="0" tag="001">
+                <marcx:subfield code="a">28394438</marcx:subfield>
+                <marcx:subfield code="b">870970</marcx:subfield>
+                <marcx:subfield code="c">20200302131430</marcx:subfield>
+                <marcx:subfield code="d">20100823</marcx:subfield>
+                <marcx:subfield code="f">a</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="004">
+                <marcx:subfield code="r">n</marcx:subfield>
+                <marcx:subfield code="a">e</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="008">
+                <marcx:subfield code="t">m</marcx:subfield>
+                <marcx:subfield code="u">r</marcx:subfield>
+                <marcx:subfield code="a">2010</marcx:subfield>
+                <marcx:subfield code="z">2018</marcx:subfield>
+                <marcx:subfield code="b">dk</marcx:subfield>
+                <marcx:subfield code="d">x</marcx:subfield>
+                <marcx:subfield code="j">f</marcx:subfield>
+                <marcx:subfield code="l">dan</marcx:subfield>
+                <marcx:subfield code="o">b</marcx:subfield>
+                <marcx:subfield code="v">0</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="009">
+                <marcx:subfield code="a">a</marcx:subfield>
+                <marcx:subfield code="g">xx</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="011">
+                <marcx:subfield code="a">28395272</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="018">
+                <marcx:subfield code="a">28395272</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="021">
+                <marcx:subfield code="e">9788771050486</marcx:subfield>
+                <marcx:subfield code="c">ib.</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="032">
+                <marcx:subfield code="x">ACC201034</marcx:subfield>
+                <marcx:subfield code="a">DBF201832</marcx:subfield>
+                <marcx:subfield code="x">BKM201832</marcx:subfield>
+                <marcx:subfield code="x">DAT201844</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="100">
+                <marcx:subfield code="a">Kꜳberbøl</marcx:subfield>
+                <marcx:subfield code="h">Lene</marcx:subfield>
+                <marcx:subfield code="4">aut</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="245">
+                <marcx:subfield code="a">Vildheks</marcx:subfield>
+                <marcx:subfield code="g">[Bind] 1</marcx:subfield>
+                <marcx:subfield code="c">Ildprøven</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="250">
+                <marcx:subfield code="a">1. udgave</marcx:subfield>
+                <marcx:subfield code="b">÷</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="260">
+                <marcx:subfield code="c">2010</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="260">
+                <marcx:subfield code="a">Kbh.</marcx:subfield>
+                <marcx:subfield code="b">Alvilda</marcx:subfield>
+                <marcx:subfield code="c">2010-</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="300">
+                <marcx:subfield code="a">155 sider</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="504">
+                <marcx:subfield code="a">Fantasy. Clara er en helt almindelig pige på 12 år. Tror hun da. For et møde med en sort kat fører hende ind i vildheksenes verden, hvor hun selv er heks</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="512">
+                <marcx:subfield code="i">Film med titel</marcx:subfield>
+                <marcx:subfield code="t">Vildheks</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="520">
+                <marcx:subfield code="a">Originaludgave: 2010</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="521">
+                <marcx:subfield code="a">1. oplag</marcx:subfield>
+                <marcx:subfield code="c">2010</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="521">
+                <marcx:subfield code="a">2. oplag</marcx:subfield>
+                <marcx:subfield code="c">2011</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="521">
+                <marcx:subfield code="a">3. oplag</marcx:subfield>
+                <marcx:subfield code="c">2011</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="521">
+                <marcx:subfield code="a">4. oplag</marcx:subfield>
+                <marcx:subfield code="c">2012</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="521">
+                <marcx:subfield code="a">5. oplag</marcx:subfield>
+                <marcx:subfield code="c">2013</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="521">
+                <marcx:subfield code="a">6. oplag</marcx:subfield>
+                <marcx:subfield code="c">2014</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="521">
+                <marcx:subfield code="a">7. oplag</marcx:subfield>
+                <marcx:subfield code="c">2015</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="521">
+                <marcx:subfield code="a">9. oplag</marcx:subfield>
+                <marcx:subfield code="c">2017</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="521">
+                <marcx:subfield code="a">10. oplag</marcx:subfield>
+                <marcx:subfield code="c">2017</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="521">
+                <marcx:subfield code="b">11. oplag</marcx:subfield>
+                <marcx:subfield code="c">2018</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="526">
+                <marcx:subfield code="a">Hertil findes supplerende materiale på bogens hjemmeside</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="652">
+                <marcx:subfield code="n">86</marcx:subfield>
+                <marcx:subfield code="z">096</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="652">
+                <marcx:subfield code="o">sk</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="u">for 10 år</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="u">for 11 år</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="u">for 12 år</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="u">for 13 år</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="u">for 14 år</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="s">fantasy</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="s">hekse</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="s">dyr</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="s">piger</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="720">
+                <marcx:subfield code="o">Anders Walter</marcx:subfield>
+                <marcx:subfield code="4">ill</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="720">
+                <marcx:subfield code="o">Jens Trasborg</marcx:subfield>
+                <marcx:subfield code="4">edt</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="900">
+                <marcx:subfield code="a">Kꜳberbøl</marcx:subfield>
+                <marcx:subfield code="z">100</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="990">
+                <marcx:subfield code="o">201832</marcx:subfield>
+                <marcx:subfield code="b">b</marcx:subfield>
+                <marcx:subfield code="b">s</marcx:subfield>
+                <marcx:subfield code="b">l</marcx:subfield>
+                <marcx:subfield code="u">op</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="996">
+                <marcx:subfield code="a">DBC</marcx:subfield>
+            </marcx:datafield>
+        </marcx:record>
+        <marcx:record format="danMARC2" type="BibliographicMain">
+            <marcx:leader>00000namh 22000000  4500</marcx:leader>
+            <marcx:datafield ind1="0" ind2="0" tag="001">
+                <marcx:subfield code="a">28395272</marcx:subfield>
+                <marcx:subfield code="b">870970</marcx:subfield>
+                <marcx:subfield code="c">20181124142726</marcx:subfield>
+                <marcx:subfield code="d">20100823</marcx:subfield>
+                <marcx:subfield code="f">a</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="004">
+                <marcx:subfield code="r">n</marcx:subfield>
+                <marcx:subfield code="a">h</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="008">
+                <marcx:subfield code="b">dk</marcx:subfield>
+                <marcx:subfield code="d">x</marcx:subfield>
+                <marcx:subfield code="j">f</marcx:subfield>
+                <marcx:subfield code="l">dan</marcx:subfield>
+                <marcx:subfield code="o">b</marcx:subfield>
+                <marcx:subfield code="v">0</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="009">
+                <marcx:subfield code="a">a</marcx:subfield>
+                <marcx:subfield code="g">xx</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="100">
+                <marcx:subfield code="a">Kꜳberbøl</marcx:subfield>
+                <marcx:subfield code="h">Lene</marcx:subfield>
+                <marcx:subfield code="4">aut</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="245">
+                <marcx:subfield code="a">Vildheks</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="260">
+                <marcx:subfield code="a">Kbh.</marcx:subfield>
+                <marcx:subfield code="b">Alvilda</marcx:subfield>
+                <marcx:subfield code="c">2010-</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="300">
+                <marcx:subfield code="a">bind</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="526">
+                <marcx:subfield code="a">Hertil findes supplerende materiale på bogens hjemmeside</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="652">
+                <marcx:subfield code="n">86</marcx:subfield>
+                <marcx:subfield code="z">096</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="652">
+                <marcx:subfield code="o">sk</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="u">for 10 år</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="u">for 11 år</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="u">for 12 år</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="u">for 13 år</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="u">for 14 år</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="s">fantasy</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="s">hekse</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="s">dyr</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="s">piger</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="720">
+                <marcx:subfield code="o">Anders Walter</marcx:subfield>
+                <marcx:subfield code="4">ill</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="720">
+                <marcx:subfield code="o">Jens Trasborg</marcx:subfield>
+                <marcx:subfield code="4">edt</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="900">
+                <marcx:subfield code="a">Kꜳberbøl</marcx:subfield>
+                <marcx:subfield code="z">100</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="996">
+                <marcx:subfield code="a">DBC</marcx:subfield>
+            </marcx:datafield>
+        </marcx:record>
+        <marcx:record format="danMARC2" type="BibliographicVolume">
+            <marcx:leader>00000n mb 22000000  4500</marcx:leader>
+            <marcx:datafield ind1="0" ind2="0" tag="001">
+                <marcx:subfield code="a">28394438</marcx:subfield>
+                <marcx:subfield code="b">870970</marcx:subfield>
+                <marcx:subfield code="c">20200302131430</marcx:subfield>
+                <marcx:subfield code="d">20100823</marcx:subfield>
+                <marcx:subfield code="f">a</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="004">
+                <marcx:subfield code="r">n</marcx:subfield>
+                <marcx:subfield code="a">b</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="008">
+                <marcx:subfield code="t">m</marcx:subfield>
+                <marcx:subfield code="u">r</marcx:subfield>
+                <marcx:subfield code="a">2010</marcx:subfield>
+                <marcx:subfield code="z">2018</marcx:subfield>
+                <marcx:subfield code="v">0</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="014">
+                <marcx:subfield code="a">28395272</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="021">
+                <marcx:subfield code="e">9788771050486</marcx:subfield>
+                <marcx:subfield code="c">ib.</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="032">
+                <marcx:subfield code="x">ACC201034</marcx:subfield>
+                <marcx:subfield code="a">DBF201832</marcx:subfield>
+                <marcx:subfield code="x">BKM201832</marcx:subfield>
+                <marcx:subfield code="x">DAT201844</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="245">
+                <marcx:subfield code="g">[Bind] 1</marcx:subfield>
+                <marcx:subfield code="a">Ildprøven</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="250">
+                <marcx:subfield code="a">1. udgave</marcx:subfield>
+                <marcx:subfield code="b">÷</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="260">
+                <marcx:subfield code="c">2010</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="300">
+                <marcx:subfield code="a">155 sider</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="504">
+                <marcx:subfield code="a">Fantasy. Clara er en helt almindelig pige på 12 år. Tror hun da. For et møde med en sort kat fører hende ind i vildheksenes verden, hvor hun selv er heks</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="512">
+                <marcx:subfield code="i">Film med titel</marcx:subfield>
+                <marcx:subfield code="t">Vildheks</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="520">
+                <marcx:subfield code="a">Originaludgave: 2010</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="521">
+                <marcx:subfield code="a">1. oplag</marcx:subfield>
+                <marcx:subfield code="c">2010</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="521">
+                <marcx:subfield code="a">2. oplag</marcx:subfield>
+                <marcx:subfield code="c">2011</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="521">
+                <marcx:subfield code="a">3. oplag</marcx:subfield>
+                <marcx:subfield code="c">2011</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="521">
+                <marcx:subfield code="a">4. oplag</marcx:subfield>
+                <marcx:subfield code="c">2012</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="521">
+                <marcx:subfield code="a">5. oplag</marcx:subfield>
+                <marcx:subfield code="c">2013</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="521">
+                <marcx:subfield code="a">6. oplag</marcx:subfield>
+                <marcx:subfield code="c">2014</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="521">
+                <marcx:subfield code="a">7. oplag</marcx:subfield>
+                <marcx:subfield code="c">2015</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="521">
+                <marcx:subfield code="a">9. oplag</marcx:subfield>
+                <marcx:subfield code="c">2017</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="521">
+                <marcx:subfield code="a">10. oplag</marcx:subfield>
+                <marcx:subfield code="c">2017</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="521">
+                <marcx:subfield code="b">11. oplag</marcx:subfield>
+                <marcx:subfield code="c">2018</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="990">
+                <marcx:subfield code="o">201832</marcx:subfield>
+                <marcx:subfield code="b">b</marcx:subfield>
+                <marcx:subfield code="b">s</marcx:subfield>
+                <marcx:subfield code="b">l</marcx:subfield>
+                <marcx:subfield code="u">op</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="996">
+                <marcx:subfield code="a">DBC</marcx:subfield>
+            </marcx:datafield>
+        </marcx:record>
+    </marcx:collection>
+    <ln:links
+        xmlns:ln="http://oss.dbc.dk/ns/links">
+        <ln:link>
+            <ln:access>remote</ln:access>
+            <ln:accessType/>
+            <ln:linkTo>resolver</ln:linkTo>
+            <ln:relationType>dbcaddi:hasOpenUrl</ln:relationType>
+            <ln:url>_BASEURL_url_ctx_fmt=info:ofi/fmt:kev:mtx:ctx&amp;ctx_ver=Z39.88-2004&amp;rft_val_fmt=info:ofi/fmt:kev:mtx:book&amp;rft.btitle=Vildheks&amp;rft.aulast=Kꜳberbøl&amp;rft.aufirst=Lene&amp;rft.auinit=L&amp;rft.date=2010&amp;rft.isbn=9788771050486&amp;rft.pub=Alvilda&amp;rft.edition=1.+udgave,+11.+oplag+%282018%29&amp;rft.series=Vildheks+;+[Bind]+1&amp;rft.genre=book&amp;rfr_id=info:sid/dbc.dk:870970-basis</ln:url>
+            <ln:collectionIdentifier>870970-basis</ln:collectionIdentifier>
+            <ln:collectionIdentifier>870970-danbib</ln:collectionIdentifier>
+            <ln:collectionIdentifier>870970-bibdk</ln:collectionIdentifier>
+            <ln:collectionIdentifier>150013-palle</ln:collectionIdentifier>
+        </ln:link>
+    </ln:links>
+    <adminData>
+        <recordStatus>active</recordStatus>
+        <creationDate>2016-07-09</creationDate>
+        <libraryType>none</libraryType>
+        <genre>fiktion</genre>
+        <indexingAlias>danmarcxchange</indexingAlias>
+        <accessType>physical</accessType>
+        <workType>literature</workType>
+        <collectionIdentifier>870970-basis</collectionIdentifier>
+        <collectionIdentifier>870970-danbib</collectionIdentifier>
+        <collectionIdentifier>870970-bibdk</collectionIdentifier>
+        <collectionIdentifier>150013-palle</collectionIdentifier>
+    </adminData>
+</ting:container>

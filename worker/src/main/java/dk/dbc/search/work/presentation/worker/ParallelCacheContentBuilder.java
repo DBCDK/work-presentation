@@ -18,8 +18,11 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
+import dk.dbc.search.work.presentation.JavascriptCacheObjectBuilder;
 import dk.dbc.search.work.presentation.api.jpa.CacheEntity;
 import dk.dbc.search.work.presentation.api.jpa.WorkContainsEntity;
+import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
+import dk.dbc.search.work.presentation.worker.pool.QuickPool;
 import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
 import dk.dbc.search.work.presentation.worker.tree.WorkTree;
 import java.util.ArrayList;
@@ -31,10 +34,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.enterprise.concurrent.ManagedExecutorService;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -58,6 +63,21 @@ public class ParallelCacheContentBuilder {
 
     @Resource(type = ManagedExecutorService.class)
     public ExecutorService executor;
+
+    @Inject
+    Config config;
+
+    @Inject
+    CorepoContentServiceConnector corepoContentService;
+
+    QuickPool<JavascriptCacheObjectBuilder> jsWorkers;
+
+    @PostConstruct
+    public void init() {
+        jsWorkers = new QuickPool<>(JavascriptCacheObjectBuilder.builder()
+                .build());
+        jsWorkers.setMaxTotal(config.getJsPoolSize());
+    }
 
     /**
      * Deletes all cache entries for a corepoWorkId, in case the object is
@@ -170,7 +190,10 @@ public class ParallelCacheContentBuilder {
                     MDC.setContextMap(mdc);
                 }
                 log.info("Generating content for: {}", manifestationId);
-                cacheObj.setContent(dataBuilder.generateContent());
+                ManifestationInformation mi = jsWorkers
+                        .valueExec(js -> dataBuilder.generateContent(corepoContentService, js))
+                        .value();
+                cacheObj.setContent(mi);
                 cacheObj.setModified(dataBuilder.getModified());
 
                 return () -> { // This will run in the original thread

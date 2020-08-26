@@ -1,0 +1,18 @@
+<ting:localData
+    xmlns:marcx="info:lc/xmlns/marcxchange-v1"
+    xmlns:ting="http://www.dbc.dk/ting">
+    <marcx:record format="danMARC2" type="BibliographicLocal">
+        <marcx:datafield ind1="0" ind2="0" tag="d08">
+            <marcx:subfield code="a">dj (lfu-post)</marcx:subfield>
+        </marcx:datafield>
+        <marcx:datafield ind1="0" ind2="0" tag="d08">
+            <marcx:subfield code="a">dj (lfu-post)</marcx:subfield>
+        </marcx:datafield>
+        <marcx:datafield ind1="0" ind2="0" tag="d08">
+            <marcx:subfield code="a">dj (lfu-post)</marcx:subfield>
+        </marcx:datafield>
+        <marcx:datafield ind1="0" ind2="0" tag="d08">
+            <marcx:subfield code="a">dj (lfu-post)</marcx:subfield>
+        </marcx:datafield>
+    </marcx:record>
+</ting:localData>
