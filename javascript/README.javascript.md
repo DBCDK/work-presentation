@@ -1,7 +1,7 @@
 # Javascript development in work-presentation
 This is a README specific for working with the javascript part of this work-presentation project. 
 
-##Prerequisites
+## Prerequisites
 You need to have installed the dbc-jsshell and postgresql
 
 
