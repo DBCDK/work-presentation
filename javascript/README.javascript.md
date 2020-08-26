@@ -11,7 +11,7 @@ When you've checked this project out from git the first thing you should do is g
 
 In the following development you should run this command each time you switch branches or the branch has been updated:
 
-	> user@machine:~/work-presentation$ mvn clean verify -DskipITs
+	> user@machine:~/work-presentation$ mvn clean install -DskipITs
 
 This builds the work-presentation jar file with embedded javascript files, but skips the unit tests for the javacode.
 
@@ -105,6 +105,11 @@ The expected output looks like this:
 The pid corresponds to the folder name for the acceptance test. 
 
 
+### Accept actual as expected
+If there is a mismatch between expected and actual json (i.e. your test fails), then the actual json will be located as a file under: 
 
+	> target/test-classes/accept-test/{test-name}/actual.json
+
+ready to copy if the semantics has changed, and the actual is correct.
 
 
