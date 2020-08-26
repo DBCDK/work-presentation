@@ -25,6 +25,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.HashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Data structure for information about cache entries
@@ -33,6 +35,8 @@ import java.util.HashMap;
  */
 @SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class CacheContentBuilder {
+
+    private static final Logger log = LoggerFactory.getLogger(CacheContentBuilder.class);
 
     public static final String LOCAL_DATA = "localData.";
     private static final int LOCAL_DATA_LEN = LOCAL_DATA.length();
@@ -77,13 +81,17 @@ public class CacheContentBuilder {
      * @throws Exception Threwn by JavaScript engine
      */
     public ManifestationInformation generateContent(CorepoContentServiceConnector corepoContentService, JavascriptCacheObjectBuilder js) throws Exception {
-        HashMap<String, String> dataStreams = new HashMap<String, String>() {
-            {
-                put("localData", corepoContentService.datastreamContent(corepoId, localStream));
-                put("commonData", corepoContentService.datastreamContent(corepoId, "commonData"));
-                put("DC", corepoContentService.datastreamContent(corepoId, "DC"));
-            }
-        };
+        String localData = corepoContentService.datastreamContent(corepoId, localStream).trim();
+        String commonData = corepoContentService.datastreamContent(corepoId, "commonData").trim();
+        String dc = corepoContentService.datastreamContent(corepoId, "DC").trim();
+        log.debug("has localData: {}, commonData: {}, DC: {}", !localData.isEmpty(), !commonData.isEmpty(), !dc.isEmpty());
+        HashMap<String, String> dataStreams = new HashMap<>();
+        if (!localData.isEmpty())
+            dataStreams.put("localData", localData);
+        if (!commonData.isEmpty())
+            dataStreams.put("commonData", commonData);
+        if (!dc.isEmpty())
+            dataStreams.put("DC", dc);
         return js.extractManifestationInformation(manifestationId, dataStreams);
     }
 

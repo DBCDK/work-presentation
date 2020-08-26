@@ -27,7 +27,10 @@ import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 
 import java.util.function.Supplier;
+import java.util.logging.Level;
 import javax.annotation.CheckReturnValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Use a functional approach to leasing from a pool
@@ -36,6 +39,8 @@ import javax.annotation.CheckReturnValue;
  * @param <T> Type of the pool leases
  */
 public class QuickPool<T> extends GenericObjectPool<T> {
+
+    private static final Logger log = LoggerFactory.getLogger(QuickPool.class);
 
     /**
      * Constructor for supplier
@@ -59,7 +64,7 @@ public class QuickPool<T> extends GenericObjectPool<T> {
 
     /**
      * Constructor for supplier and validator
-     *
+     * <p>
      * remember to use .setTestOn*(boolean)
      *
      * @param supplier Method that generates a T object
@@ -136,8 +141,13 @@ public class QuickPool<T> extends GenericObjectPool<T> {
             } catch (BadObjectException ex) {
                 invalidateObject(t);
                 throw ex;
+            } catch (Exception ex) {
+                returnObject(t);
+                throw ex;
             }
             returnObject(t);
+        } catch (RuntimeException ex) {
+            throw ex;
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -159,9 +169,14 @@ public class QuickPool<T> extends GenericObjectPool<T> {
             } catch (BadObjectException ex) {
                 invalidateObject(t);
                 throw ex;
+            } catch (Exception ex) {
+                returnObject(t);
+                throw ex;
             }
             returnObject(t);
             return value;
+        } catch (RuntimeException ex) {
+            throw ex;
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -181,6 +196,9 @@ public class QuickPool<T> extends GenericObjectPool<T> {
                 scope.accept(t);
             } catch (BadObjectException ex) {
                 invalidateObject(t);
+                return new ExceptionResultError<>(ex);
+            } catch (Exception ex) {
+                returnObject(t);
                 return new ExceptionResultError<>(ex);
             }
             returnObject(t);
@@ -206,6 +224,9 @@ public class QuickPool<T> extends GenericObjectPool<T> {
                 value = scope.accept(t);
             } catch (BadObjectException ex) {
                 invalidateObject(t);
+                return new ExceptionResultError<>(ex);
+            } catch (Exception ex) {
+                returnObject(t);
                 return new ExceptionResultError<>(ex);
             }
             returnObject(t);
