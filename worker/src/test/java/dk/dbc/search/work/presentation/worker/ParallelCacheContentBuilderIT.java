@@ -18,7 +18,7 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
-import dk.dbc.search.work.presentation.JavascriptCacheObjectBuilder;
+import dk.dbc.search.work.presentation.javascript.JavascriptCacheObjectBuilder;
 import dk.dbc.search.work.presentation.api.jpa.CacheEntity;
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
