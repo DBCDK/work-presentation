@@ -3,7 +3,7 @@
     "units": {
         "unit:1": {
             "870970-basis:0": {
-                "870970-basis:0": {
+                "localData.870970-basis": {
                     "title": "Two Things",
                     "creators": [ "Me" ],
                     "subjects": [ "mice", "men" ]
@@ -12,7 +12,7 @@
         },
         "unit:2": {
             "870970-basis:1": {
-                "870970-basis:1": {
+                "localData.870970-basis": {
                     "title": "Two Things",
                     "creators": [ "Me", "You" ],
                     "subjects": [ "mice", "elephants" ]

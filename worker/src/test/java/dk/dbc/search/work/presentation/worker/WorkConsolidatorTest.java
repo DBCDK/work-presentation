@@ -71,10 +71,10 @@ public class WorkConsolidatorTest {
 
         WorkInformation expected = O.readValue(dir.resolve("expected.json").toFile(), WorkInformation.class);
 
+        System.out.println("Actual:");
+        O.writeValue(System.out, actual);
+        System.out.println("");
         if (!expected.equals(actual)) {
-            System.out.println("Actual:");
-            O.writeValue(System.out, actual);
-            System.out.println("");
             System.out.println("Expected:");
             O.writeValue(System.out, expected);
             System.out.println("");
@@ -88,55 +88,65 @@ public class WorkConsolidatorTest {
     Source readSource(File sourceFile) throws IOException {
         Source source = O.readValue(sourceFile, Source.class);
         source.units.values()
-                .forEach(u -> u.values()
-                        .forEach(obj -> {
-                            obj.forEach((mId, m) -> {
+                .forEach(u -> u
+                        .forEach((objId, obj) -> {
+                            obj.forEach((stream, m) -> {
+                                String mId = manifestationIdOf(objId, stream);
                                 m.manifestationId = mId;
                             });
                         }));
         return source;
     }
 
+    String manifestationIdOf(String objId, String stream) {
+        return stream.substring(CacheContentBuilder.LOCAL_DATA_LEN) + ":" + objId.substring(objId.indexOf(':') + 1);
+    }
+
     public WorkTree workTreeFrom(Source source) {
         WorkTree workTree = new WorkTree("work:-1", Instant.now());
 
         source.units.forEach((unitId, unit) -> {
-            boolean primaryUnit = unit.values().stream()
-                    .map(Map::keySet)
-                    .flatMap(Collection::stream)
-                    .anyMatch(k -> source.primary.equals(k));
+            boolean primaryUnit = unit.entrySet().stream()
+                    .anyMatch(e  -> objectHasPrimary(e.getValue(), e.getKey(), source.primary));
             UnitTree unitTree = new UnitTree(primaryUnit, Instant.now());
             workTree.put(unitId, unitTree);
             unit.forEach((objId, obj) -> {
-                boolean primaryObj = obj.keySet().contains(source.primary);
+                boolean primaryObj = objectHasPrimary(obj, objId, source.primary);
                 ObjectTree objectTree = new ObjectTree(primaryObj, Instant.now());
                 unitTree.put(objId, objectTree);
-                obj.forEach((maniId, mani) -> {
-                    objectTree.put(maniId, new CacheContentBuilder("000000-na:0", "localData.000000", Instant.now(), false) {
-                               @Override
-                               public String toString() {
-                                   return mani.toString();
-                               }
-                           });
+                obj.forEach((localStream, mani) -> {
+                    CacheContentBuilder builder = new CacheContentBuilder(objId, localStream, Instant.now(), false) {
+                        @Override
+                        public String toString() {
+                            return mani.toString();
+                        }
+                    };
+                    objectTree.put(builder.getManifestationId(), builder);
                 });
             });
         });
         return workTree;
     }
 
+    boolean objectHasPrimary(TreeMap<String, ManifestationInformation> obj, String objId, String primary) {
+        return obj.keySet().stream()
+                .map(stream -> manifestationIdOf(objId, stream))
+                .anyMatch(primary::equals);
+    }
+
     public static class Source {
 
         public String primary;
+        //             Unit            Object          Stream
         public TreeMap<String, TreeMap<String, TreeMap<String, ManifestationInformation>>> units;
 
         public ManifestationInformation getManifestationInformation(String id) {
-            return units.values().stream()
+            return units.values().stream() // Unit
                     .map(Map::values)
-                    .flatMap(Collection::stream)
-                    .map(Map::entrySet)
-                    .flatMap(Collection::stream)
-                    .filter(e -> e.getKey().equals(id))
-                    .map(Map.Entry::getValue)
+                    .flatMap(Collection::stream) //Object
+                    .map(Map::values)
+                    .flatMap(Collection::stream) // ManifestationInformation
+                    .filter(m -> m.manifestationId.equals(id))
                     .findAny()
                     .orElseThrow(() -> new IllegalStateException("Trying to get content for id: " + id));
         }

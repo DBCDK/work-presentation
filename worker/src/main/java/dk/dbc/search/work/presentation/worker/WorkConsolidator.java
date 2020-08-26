@@ -22,6 +22,7 @@ import dk.dbc.search.work.presentation.api.jpa.CacheEntity;
 import dk.dbc.search.work.presentation.api.jpa.RecordEntity;
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
+import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
 import dk.dbc.search.work.presentation.worker.tree.ObjectTree;
 import dk.dbc.search.work.presentation.worker.tree.WorkTree;
 import java.sql.Timestamp;
@@ -116,8 +117,9 @@ public class WorkConsolidator {
         work.dbUnitInformation = new HashMap<>();
         tree.forEach((unitId, unit) -> {
             Set<ManifestationInformation> manifestations = unit.values().stream() // All ObjectTree from a unit
-                    .map(ObjectTree::keySet) // Find manifestationIds
+                    .map(ObjectTree::values) // Find manifestationIds
                     .flatMap(Collection::stream) // as a stream of ids
+                    .map(CacheContentBuilder::getManifestationId)
                     .map(this::getCacheContentFor) // Lookup manifestation data
                     .collect(Collectors.toSet());
             work.dbUnitInformation.put(unitId, manifestations);
@@ -143,6 +145,7 @@ public class WorkConsolidator {
      * @return ManifestationInformation
      */
     ManifestationInformation getCacheContentFor(String id) {
+        System.out.println("id = " + id);
         return CacheEntity.from(em, id).getContent();
     }
 

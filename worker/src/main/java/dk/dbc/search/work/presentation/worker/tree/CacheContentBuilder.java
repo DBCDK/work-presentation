@@ -39,7 +39,7 @@ public class CacheContentBuilder {
     private static final Logger log = LoggerFactory.getLogger(CacheContentBuilder.class);
 
     public static final String LOCAL_DATA = "localData.";
-    private static final int LOCAL_DATA_LEN = LOCAL_DATA.length();
+    public static final int LOCAL_DATA_LEN = LOCAL_DATA.length();
 
     private final String corepoId;
     private final String localStream;
