@@ -27,10 +27,7 @@ import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 
 import java.util.function.Supplier;
-import java.util.logging.Level;
 import javax.annotation.CheckReturnValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Use a functional approach to leasing from a pool
@@ -39,8 +36,6 @@ import org.slf4j.LoggerFactory;
  * @param <T> Type of the pool leases
  */
 public class QuickPool<T> extends GenericObjectPool<T> {
-
-    private static final Logger log = LoggerFactory.getLogger(QuickPool.class);
 
     /**
      * Constructor for supplier
