@@ -1,0 +1,17 @@
+{
+  "id": "36825647-baea-33ab-9271-f13a1210e196",
+  "request": {
+    "url": "/corepo-content-service/rest/objects/800010-katalog:99122054413305763/datastreams/localData.800010-katalog/content",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "body-800010-katalog-99122054413305763_800010-content.xml",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/xml",
+      "X-Frame-Options": "SAMEORIGIN"
+    }
+  },
+  "uuid": "36825647-baea-33ab-9271-f13a1210e196"
+}

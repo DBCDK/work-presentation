@@ -18,7 +18,9 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
+import dk.dbc.search.work.presentation.JavascriptCacheObjectBuilder;
 import dk.dbc.search.work.presentation.api.jpa.CacheEntity;
+import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
 import dk.dbc.search.work.presentation.worker.tree.ObjectTree;
 import dk.dbc.search.work.presentation.worker.tree.UnitTree;
@@ -45,17 +47,17 @@ public class ParallelCacheContentBuilderIT extends JpaBase {
         workTree.put("unit:1", unit1);
         ObjectTree obj1 = new ObjectTree(true, Instant.now());
         unit1.put("obj:1", obj1);
-        obj1.put("100000", new CacheContentBuilder("obj:1", "localData.100000", Instant.now(), false));
-        obj1.put("100001", new CacheContentBuilder("obj:1", "localData.100001", Instant.now(), false));
+        obj1.put("100000", new CacheContentBuilderMock("obj:1", "localData.100000", Instant.now(), false));
+        obj1.put("100001", new CacheContentBuilderMock("obj:1", "localData.100001", Instant.now(), false));
         ObjectTree obj2 = new ObjectTree(false, Instant.now());
         unit1.put("obj:2", obj2);
-        obj2.put("200000", new CacheContentBuilder("obj:2", "localData.200000", Instant.now(), false));
-        obj2.put("200001", new CacheContentBuilder("obj:2", "localData.200001", Instant.now(), false));
+        obj2.put("200000", new CacheContentBuilderMock("obj:2", "localData.200000", Instant.now(), false));
+        obj2.put("200001", new CacheContentBuilderMock("obj:2", "localData.200001", Instant.now(), false));
         UnitTree unit2 = new UnitTree(false, Instant.now());
         workTree.put("unit:2", unit2);
         ObjectTree obj3 = new ObjectTree(false, Instant.now());
         unit2.put("obj:3", obj3);
-        obj3.put("300000", new CacheContentBuilder("obj:3", "localData.300000", Instant.now(), false));
+        obj3.put("300000", new CacheContentBuilderMock("obj:3", "localData.300000", Instant.now(), false));
         workTree.prettyPrint(System.out::println);
 
         System.out.println("  Save the full tree");
@@ -76,7 +78,7 @@ public class ParallelCacheContentBuilderIT extends JpaBase {
         });
 
         System.out.println("  Delete datastream from tree");
-        obj2.put("200001", new CacheContentBuilder("obj:2", "localData.200001", Instant.now(), true));
+        obj2.put("200001", new CacheContentBuilderMock("obj:2", "localData.200001", Instant.now(), true));
 
         System.out.println("  Save the tree with a deleted datastream");
         withConfigEnv()
@@ -133,5 +135,19 @@ public class ParallelCacheContentBuilderIT extends JpaBase {
             assertThat(CacheEntity.from(em, "200001:2").getContent(), nullValue());
             assertThat(CacheEntity.from(em, "300000:3").getContent(), nullValue());
         });
+    }
+
+    private static class CacheContentBuilderMock extends CacheContentBuilder {
+
+        public CacheContentBuilderMock(String string, String string1, Instant instnt, boolean bln) {
+            super(string, string1, instnt, bln);
+        }
+
+        @Override
+        public ManifestationInformation generateContent(CorepoContentServiceConnector corepoContentService, JavascriptCacheObjectBuilder js) throws Exception {
+            ManifestationInformation mi = new ManifestationInformation();
+            mi.manifestationId = getManifestationId();
+            return mi;
+        }
     }
 }

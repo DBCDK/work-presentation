@@ -54,6 +54,7 @@ public class BeanFactory {
     private static Config makeConfig(Map<String, String> envs) {
         Map<String, String> env = new HashMap<>();
         env.putAll(config("COREPO_CONTENT_SERVICE_URL=" + System.getenv("COREPO_CONTENT_SERVICE_URL"),
+                          "JS_POOL_SIZE=2",
                           "SYSTEM_NAME=test",
                           "THREADS=1",
                           "QUEUES=queue",
@@ -91,6 +92,9 @@ public class BeanFactory {
     private void setupParallelCacheContentBuilder(ParallelCacheContentBuilder bean) {
         bean.em = entityManager;
         bean.executor = Executors.newCachedThreadPool();
+        bean.config = config;
+        bean.corepoContentService = corepoContentService.get();
+        bean.init();
     }
 
     public CorepoContentServiceConnector getCorepoContentService() {

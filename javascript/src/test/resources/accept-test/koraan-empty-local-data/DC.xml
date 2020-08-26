@@ -1,0 +1,15 @@
+<oai_dc:dc
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <dc:title>koraan magid</dc:title>
+    <dc:title>MATCHSTRING:koraanmagidoraanmagid</dc:title>
+    <dc:title>MATCH:koraan</dc:title>
+    <dc:language>Arabisk</dc:language>
+    <dc:type>Bog</dc:type>
+    <dc:type>WORK:literature</dc:type>
+    <dc:publisher>dywanelawkaf</dc:publisher>
+    <dc:publisher>MATCHSTRING:dywanel</dc:publisher>
+    <dc:date>Ukendt årstal</dc:date>
+    <dc:identifier>870970-basis:00121703</dc:identifier>
+</oai_dc:dc>

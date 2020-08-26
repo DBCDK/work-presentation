@@ -18,7 +18,10 @@
     </parent>
 
     <properties>
+        <corepo.version>1.2-SNAPSHOT</corepo.version>
         <pgqueue.version>1.3-SNAPSHOT</pgqueue.version>
+        <jslib.version>1.3-SNAPSHOT</jslib.version>
+        <jscommon.version>2012.1-SNAPSHOT</jscommon.version>
         <test-plugin.version>3.0.0-M5</test-plugin.version>
     </properties>
 
@@ -29,6 +32,7 @@
     <modules>
         <module>database</module>
         <module>api</module>
+        <module>javascript</module>
         <module>worker</module>
         <module>service</module>
         <module>postgresql</module>
@@ -68,6 +72,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>work-presentation-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>work-presentation-javascript</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

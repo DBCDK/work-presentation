@@ -1,0 +1,219 @@
+<ting:container
+    xmlns:ac="http://biblstandard.dk/ac/namespace/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"
+    xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"
+    xmlns:docbook="http://docbook.org/ns/docbook"
+    xmlns:oss="http://oss.dbc.dk/ns/osstypes"
+    xmlns:ting="http://www.dbc.dk/ting"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <dkabm:record>
+        <ac:identifier>08021473|870970</ac:identifier>
+        <ac:source>Bibliotekskatalog</ac:source>
+        <dc:title>Værkstedstekniske beregninger</dc:title>
+        <dc:title xsi:type="dkdcplus:full">Værkstedstekniske beregninger. M2, Boring</dc:title>
+        <dc:subject xsi:type="dkdcplus:DK5">51.8</dc:subject>
+        <dc:subject xsi:type="dkdcplus:DK5-Text">Regning</dc:subject>
+        <dcterms:audience>voksenmaterialer</dcterms:audience>
+        <dkdcplus:version>2. udgave</dkdcplus:version>
+        <dc:publisher>Jernindustriens Forlag</dc:publisher>
+        <dc:date>1972</dc:date>
+        <dc:type xsi:type="dkdcplus:BibDK-Type">Bog</dc:type>
+        <dcterms:extent>16 sider</dcterms:extent>
+        <dcterms:extent>11 bind</dcterms:extent>
+        <dc:language xsi:type="dcterms:ISO639-2">dan</dc:language>
+        <dc:language>Dansk</dc:language>
+    </dkabm:record>
+    <marcx:collection
+        xmlns:marcx="info:lc/xmlns/marcxchange-v1">
+        <marcx:record format="danMARC2" type="Bibliographic">
+            <marcx:leader>00000n    2200000   4500</marcx:leader>
+            <marcx:datafield ind1="0" ind2="0" tag="001">
+                <marcx:subfield code="a">08021473</marcx:subfield>
+                <marcx:subfield code="b">870970</marcx:subfield>
+                <marcx:subfield code="c">20181124125831</marcx:subfield>
+                <marcx:subfield code="d">19880504</marcx:subfield>
+                <marcx:subfield code="f">a</marcx:subfield>
+                <marcx:subfield code="o">c</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="004">
+                <marcx:subfield code="r">n</marcx:subfield>
+                <marcx:subfield code="a">e</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="008">
+                <marcx:subfield code="t">m</marcx:subfield>
+                <marcx:subfield code="u">u</marcx:subfield>
+                <marcx:subfield code="a">1972</marcx:subfield>
+                <marcx:subfield code="l">dan</marcx:subfield>
+                <marcx:subfield code="b">dk</marcx:subfield>
+                <marcx:subfield code="v">4</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="009">
+                <marcx:subfield code="a">a</marcx:subfield>
+                <marcx:subfield code="g">xx</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="011">
+                <marcx:subfield code="a">50378705</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="018">
+                <marcx:subfield code="a">50378705</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="021">
+                <marcx:subfield code="d">Kr. 74,42 (komplet, excl. facitliste)</marcx:subfield>
+                <marcx:subfield code="n">1020</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="021">
+                <marcx:subfield code="d">Kr. 6,10</marcx:subfield>
+                <marcx:subfield code="n">1022</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="032">
+                <marcx:subfield code="x">DIS197602</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="245">
+                <marcx:subfield code="a">Værkstedstekniske beregninger</marcx:subfield>
+                <marcx:subfield code="g">M2</marcx:subfield>
+                <marcx:subfield code="c">Boring</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="250">
+                <marcx:subfield code="a">2. udgave</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="260">
+                <marcx:subfield code="a">Kbh.</marcx:subfield>
+                <marcx:subfield code="b">Jernindustriens Forlag</marcx:subfield>
+                <marcx:subfield code="c">1972</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="300">
+                <marcx:subfield code="a">16 sider</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="300">
+                <marcx:subfield code="a">11 bind</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="652">
+                <marcx:subfield code="m">51.8</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="996">
+                <marcx:subfield code="a">DBC</marcx:subfield>
+            </marcx:datafield>
+        </marcx:record>
+        <marcx:record format="danMARC2" type="BibliographicMain">
+            <marcx:leader>00000n    2200000   4500</marcx:leader>
+            <marcx:datafield ind1="0" ind2="0" tag="001">
+                <marcx:subfield code="a">50378705</marcx:subfield>
+                <marcx:subfield code="b">870970</marcx:subfield>
+                <marcx:subfield code="c">20181123202934</marcx:subfield>
+                <marcx:subfield code="d">19880504</marcx:subfield>
+                <marcx:subfield code="f">a</marcx:subfield>
+                <marcx:subfield code="o">c</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="004">
+                <marcx:subfield code="r">n</marcx:subfield>
+                <marcx:subfield code="a">h</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="008">
+                <marcx:subfield code="b">dk</marcx:subfield>
+                <marcx:subfield code="v">4</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="009">
+                <marcx:subfield code="a">a</marcx:subfield>
+                <marcx:subfield code="g">xx</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="021">
+                <marcx:subfield code="d">Kr. 74,42 (komplet, excl. facitliste)</marcx:subfield>
+                <marcx:subfield code="n">1020</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="245">
+                <marcx:subfield code="a">Værkstedstekniske beregninger</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="250">
+                <marcx:subfield code="a">2. udgave</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="260">
+                <marcx:subfield code="a">Kbh.</marcx:subfield>
+                <marcx:subfield code="b">Jernindustriens Forlag</marcx:subfield>
+                <marcx:subfield code="c">1972</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="300">
+                <marcx:subfield code="a">11 bind</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="652">
+                <marcx:subfield code="m">51.8</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="996">
+                <marcx:subfield code="a">DBC</marcx:subfield>
+            </marcx:datafield>
+        </marcx:record>
+        <marcx:record format="danMARC2" type="BibliographicVolume">
+            <marcx:leader>00000n    2200000   4500</marcx:leader>
+            <marcx:datafield ind1="0" ind2="0" tag="001">
+                <marcx:subfield code="a">08021473</marcx:subfield>
+                <marcx:subfield code="b">870970</marcx:subfield>
+                <marcx:subfield code="c">20181124125831</marcx:subfield>
+                <marcx:subfield code="d">19880504</marcx:subfield>
+                <marcx:subfield code="f">a</marcx:subfield>
+                <marcx:subfield code="o">c</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="004">
+                <marcx:subfield code="r">n</marcx:subfield>
+                <marcx:subfield code="a">b</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="008">
+                <marcx:subfield code="t">m</marcx:subfield>
+                <marcx:subfield code="u">u</marcx:subfield>
+                <marcx:subfield code="a">1972</marcx:subfield>
+                <marcx:subfield code="l">dan</marcx:subfield>
+                <marcx:subfield code="v">4</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="014">
+                <marcx:subfield code="a">50378705</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="021">
+                <marcx:subfield code="d">Kr. 6,10</marcx:subfield>
+                <marcx:subfield code="n">1022</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="032">
+                <marcx:subfield code="x">DIS197602</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="044">
+                <marcx:subfield code="a">E</marcx:subfield>
+                <marcx:subfield code="b">42c</marcx:subfield>
+                <marcx:subfield code="b">42d</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="245">
+                <marcx:subfield code="g">M2</marcx:subfield>
+                <marcx:subfield code="a">Boring</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="300">
+                <marcx:subfield code="a">16 sider</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="996">
+                <marcx:subfield code="a">DBC</marcx:subfield>
+            </marcx:datafield>
+        </marcx:record>
+    </marcx:collection>
+    <ln:links
+        xmlns:ln="http://oss.dbc.dk/ns/links">
+        <ln:link>
+            <ln:access>remote</ln:access>
+            <ln:accessType/>
+            <ln:linkTo>resolver</ln:linkTo>
+            <ln:relationType>dbcaddi:hasOpenUrl</ln:relationType>
+            <ln:url>REDACTED</ln:url>
+            <ln:collectionIdentifier>870970-basis</ln:collectionIdentifier>
+            <ln:collectionIdentifier>870970-danbib</ln:collectionIdentifier>
+            <ln:collectionIdentifier>870970-bibdk</ln:collectionIdentifier>
+        </ln:link>
+    </ln:links>
+    <adminData>
+        <recordStatus>active</recordStatus>
+        <creationDate>2016-07-09</creationDate>
+        <libraryType>none</libraryType>
+        <genre>nonfiktion</genre>
+        <indexingAlias>danmarcxchange</indexingAlias>
+        <accessType>physical</accessType>
+        <workType>literature</workType>
+        <collectionIdentifier>870970-basis</collectionIdentifier>
+        <collectionIdentifier>870970-danbib</collectionIdentifier>
+        <collectionIdentifier>870970-bibdk</collectionIdentifier>
+    </adminData>
+</ting:container>
