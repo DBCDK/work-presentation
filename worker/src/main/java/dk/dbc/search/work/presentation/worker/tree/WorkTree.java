@@ -91,7 +91,7 @@ public class WorkTree extends HashMap<String, UnitTree> {
     public String getPersistentWorkId() {
         if (isEmpty())
             return null;
-        return "work-of-" + getPrimaryManifestationId();
+        return "work-of:" + getPrimaryManifestationId();
     }
 
     public String getCorepoWorkId() {

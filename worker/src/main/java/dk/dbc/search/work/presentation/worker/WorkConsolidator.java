@@ -22,9 +22,15 @@ import dk.dbc.search.work.presentation.api.jpa.CacheEntity;
 import dk.dbc.search.work.presentation.api.jpa.RecordEntity;
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
+import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
+import dk.dbc.search.work.presentation.worker.tree.ObjectTree;
 import dk.dbc.search.work.presentation.worker.tree.WorkTree;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -58,7 +64,7 @@ public class WorkConsolidator {
 
     /**
      * Save a work record to the database
-     *
+     * <p>
      * The work is represented by a {@link RecordEntity}
      *
      * @param corepoWorkId corepo-work-id of the work
@@ -96,15 +102,54 @@ public class WorkConsolidator {
     @Timed(reusable = true)
     public WorkInformation buildWorkInformation(WorkTree tree) {
         WorkInformation work = new WorkInformation();
-        ManifestationInformation primary = CacheEntity.from(em, tree.getPrimaryManifestationId())
-                .getContent();
+
+        work.workId = tree.getPersistentWorkId();
+
+        // Copy from owner
+        String ownerId = tree.getPrimaryManifestationId();
+        ManifestationInformation primary = getCacheContentFor(ownerId);
         work.creators = primary.creators;
         work.description = primary.description;
         work.fullTitle = primary.fullTitle;
-        work.subjects = primary.subjects; // TODO accumulate all menifestations subjects
         work.title = primary.title;
-        work.workId = tree.getPersistentWorkId();
+
+        // Map into unit->manifestations
+        work.dbUnitInformation = new HashMap<>();
+        tree.forEach((unitId, unit) -> {
+            Set<ManifestationInformation> manifestations = unit.values().stream() // All ObjectTree from a unit
+                    .map(ObjectTree::values) // Find manifestationIds
+                    .flatMap(Collection::stream) // as a stream of manifestations
+                    .filter(m -> !m.isDeleted()) // only those not deleted
+                    .map(CacheContentBuilder::getManifestationId)
+                    .map(this::getCacheContentFor) // Lookup manifestation data
+                    .collect(Collectors.toSet());
+            work.dbUnitInformation.put(unitId, manifestations);
+        });
+
+        // Collect all subjects
+        work.subjects = work.dbUnitInformation.values()
+                .stream() // Stream of Set<ManifestationInformation>
+                .filter(WorkConsolidator::notNull)
+                .flatMap(Collection::stream) // as a stream of ManifestationInformation
+                .filter(WorkConsolidator::notNull)
+                .map(m -> m.subjects) // as a stream of Set<String>
+                .filter(WorkConsolidator::notNull)
+                .flatMap(Collection::stream) // as a stream of String
+                .collect(Collectors.toSet());
         return work;
+    }
+
+    /**
+     * Cache fetching (mockable)
+     *
+     * @param id manifestation id, to fetch cached data for
+     * @return ManifestationInformation
+     */
+    ManifestationInformation getCacheContentFor(String id) {
+        ManifestationInformation content = CacheEntity.from(em, id).getContent();
+        if(content == null)
+            throw new IllegalStateException("Got null content for: " + id);
+        return content;
     }
 
     private static int instantCmp(Instant a, Instant b) {
@@ -120,5 +165,9 @@ public class WorkConsolidator {
         if (l > Integer.MAX_VALUE)
             return Integer.MAX_VALUE;
         return (int) l;
+    }
+
+    private static boolean notNull(Object o) {
+        return o != null;
     }
 }

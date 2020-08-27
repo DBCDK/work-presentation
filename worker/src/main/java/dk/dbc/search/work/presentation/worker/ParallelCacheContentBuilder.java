@@ -18,7 +18,7 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
-import dk.dbc.search.work.presentation.JavascriptCacheObjectBuilder;
+import dk.dbc.search.work.presentation.javascript.JavascriptCacheObjectBuilder;
 import dk.dbc.search.work.presentation.api.jpa.CacheEntity;
 import dk.dbc.search.work.presentation.api.jpa.WorkContainsEntity;
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
@@ -26,6 +26,7 @@ import dk.dbc.search.work.presentation.worker.pool.QuickPool;
 import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
 import dk.dbc.search.work.presentation.worker.tree.WorkTree;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -131,7 +132,9 @@ public class ParallelCacheContentBuilder {
                 CacheEntity cacheObj = CacheEntity.from(em, dataBuilder.getManifestationId());
                 if (cacheObj.getModified() == null ||
                     cacheObj.getModified().before(dataBuilder.getModified())) {
-                    parallelBuild.add(executor.submit(parallelJob(cacheObj, dataBuilder)));
+                    Callable<Runnable> buildJob = parallelJob(cacheObj, dataBuilder);
+                    Future<Runnable> jobExecution = executor.submit(buildJob);
+                    parallelBuild.add(jobExecution);
                 }
             }
         });
@@ -184,11 +187,7 @@ public class ParallelCacheContentBuilder {
         Map<String, String> mdc = MDC.getCopyOfContextMap();
         return () -> {
             try {
-                if (mdc == null) {
-                    MDC.clear();
-                } else {
-                    MDC.setContextMap(mdc);
-                }
+                MDC.setContextMap(mdc == null ? Collections.EMPTY_MAP : mdc);
                 log.info("Generating content for: {}", manifestationId);
                 ManifestationInformation mi = jsWorkers
                         .valueExec(js -> dataBuilder.generateContent(corepoContentService, js))

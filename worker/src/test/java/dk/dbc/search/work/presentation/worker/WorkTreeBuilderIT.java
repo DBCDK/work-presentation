@@ -44,7 +44,7 @@ public class WorkTreeBuilderIT extends JpaBase {
                     WorkTreeBuilder workTreeBuilder = bf.getWorkTreeBuilder();
                     WorkTree tree = workTreeBuilder.buildTree("work:62");
                     tree.prettyPrint(System.out::println);
-                    assertThat(tree.getPersistentWorkId(), is("work-of-870970-basis:00010529"));
+                    assertThat(tree.getPersistentWorkId(), is("work-of:870970-basis:00010529"));
                 });
     }
 
