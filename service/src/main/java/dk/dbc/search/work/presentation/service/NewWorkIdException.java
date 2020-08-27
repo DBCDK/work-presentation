@@ -18,33 +18,27 @@
  */
 package dk.dbc.search.work.presentation.service;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
 /**
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
-@ApplicationPath("api")
-public class ServiceApplication extends Application {
+public class NewWorkIdException extends RuntimeException {
 
-    private static final Set<Class<?>> CLASSES = new HashSet<Class<?>>(Arrays.asList(
-            WorkPresentationBean.class
-    ));
-    private static final Set<Object> SINGLETONS = new HashSet(Arrays.asList(
-            new JsonMapperProvider()
-    ));
+    static final long serialVersionUID = 0xEB7C38D58EB90E1AL;
 
-    @Override
-    public Set<Class<?>> getClasses() {
-        return CLASSES;
+    private final String workId;
+
+    public NewWorkIdException(String workId) {
+        super();
+        this.workId = workId;
+    }
+
+    public String getWorkId() {
+        return workId;
     }
 
     @Override
-    public Set<Object> getSingletons() {
-        return SINGLETONS;
+    public String getMessage() {
+        return "Redirect to work: " + workId;
     }
 }

@@ -28,6 +28,7 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -39,10 +40,16 @@ import javax.persistence.Version;
  */
 @Entity
 @Table(name = "workContains")
-@NamedQuery(
-        name = "allWithCorepoWorkId",
-        query = "SELECT w FROM WorkContainsEntity w WHERE w.corepoWorkId = :corepoWorkId"
-)
+@NamedQueries({
+    @NamedQuery(
+            name = "allWithCorepoWorkId",
+            query = "SELECT w FROM WorkContainsEntity w WHERE w.corepoWorkId = :corepoWorkId"
+    ),
+    @NamedQuery(
+            name = "withManifestationId",
+            query = "SELECT w FROM WorkContainsEntity w WHERE w.manifestationId = :manifestationId"
+    )
+})
 public class WorkContainsEntity implements Serializable {
 
     private static final long serialVersionUID = 0x1d74b2313c990594L;
@@ -75,6 +82,18 @@ public class WorkContainsEntity implements Serializable {
         }
         entity.em = em;
         return entity;
+    }
+
+    public static WorkContainsEntity readOnlyFrom(EntityManager em, String manifestationId) {
+        WorkContainsEntity wc = em.createNamedQuery("withManifestationId", WorkContainsEntity.class)
+                .setParameter("manifestationId", manifestationId)
+                .setLockMode(LockModeType.NONE)
+                .getResultStream()
+                .findAny()
+                .orElse(null);
+        if (wc != null)
+            em.detach(wc);
+        return wc;
     }
 
     /**
@@ -185,4 +204,5 @@ public class WorkContainsEntity implements Serializable {
     public String toString() {
         return "WorkContainsEntity{" + "version=" + version + ", corepoWorkId=" + corepoWorkId + ", manifestationId=" + manifestationId + '}';
     }
+
 }

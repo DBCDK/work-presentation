@@ -29,6 +29,12 @@
         </dependency>
 
         <dependency>
+            <groupId>dk.dbc</groupId>
+            <artifactId>dbc-commons-mdc</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>annotations</artifactId>
         </dependency>
