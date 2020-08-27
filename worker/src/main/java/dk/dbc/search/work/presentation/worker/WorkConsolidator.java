@@ -58,8 +58,9 @@ public class WorkConsolidator {
      */
     @Timed(reusable = true)
     public void deleteWork(String corepoWorkId) {
-        RecordEntity.fromCorepoWorkId(em, corepoWorkId)
-                .ifPresent(RecordEntity::delete);
+        RecordEntity entity = RecordEntity.fromCorepoWorkId(em, corepoWorkId);
+        if(entity != null)
+            entity.delete();
     }
 
     /**

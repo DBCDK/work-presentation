@@ -37,9 +37,7 @@ import javax.persistence.Version;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import javax.persistence.LockModeType;
 import javax.persistence.NamedQuery;
 
@@ -91,17 +89,39 @@ public class RecordEntity implements Serializable {
         return entity;
     }
 
-    public static Optional<RecordEntity> fromCorepoWorkId(EntityManager em, String corepoWorkId) {
-        List<RecordEntity> list = em.createNamedQuery("withCorepoWorkId", RecordEntity.class)
+    public static RecordEntity readOnlyFrom(EntityManager em, String persistentWorkId) {
+        RecordEntity entity = em.find(RecordEntity.class,
+                                      persistentWorkId,
+                                      LockModeType.NONE);
+        if (entity != null)
+            em.detach(entity);
+        return entity;
+    }
+
+    public static RecordEntity fromCorepoWorkId(EntityManager em, String corepoWorkId) {
+        RecordEntity entity = em.createNamedQuery("withCorepoWorkId", RecordEntity.class)
                 .setParameter("corepoWorkId", corepoWorkId)
                 .setLockMode(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
                 .setMaxResults(1)
-                .getResultList();
-        if(list.isEmpty())
-            return Optional.empty();
-        RecordEntity entity = list.get(0);
-        entity.em = em;
-        return Optional.of(entity);
+                .getResultStream()
+                .findAny()
+                .orElse(null);
+        if (entity != null)
+            entity.em = em;
+        return entity;
+    }
+
+    public static RecordEntity readOnlyFromCorepoWorkId(EntityManager em, String corepoWorkId) {
+        RecordEntity entity = em.createNamedQuery("withCorepoWorkId", RecordEntity.class)
+                .setParameter("corepoWorkId", corepoWorkId)
+                .setLockMode(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
+                .setMaxResults(1)
+                .getResultStream()
+                .findAny()
+                .orElse(null);
+        if (entity != null)
+            em.detach(entity);
+        return entity;
     }
 
     protected RecordEntity() {
