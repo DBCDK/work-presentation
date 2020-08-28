@@ -177,6 +177,17 @@ UnitTest.addFixture( "ManifestationInfo.getTitle", function() {
 
     Assert.equalValue( "get title from dc stream ", ManifestationInfo.getTitle( dcStream ), expected );
 
+    var dcStreamString =
+        '<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dc:title> værkstedstekniske beregninger </dc:title>' +
+        '</oai_dc:dc>';
+
+    var dcStream = XmlUtil.fromString( dcStreamString );
+
+    var expected = "værkstedstekniske beregninger";
+
+    Assert.equalValue( "get title from dc stream - with whitespace ", ManifestationInfo.getTitle( dcStream ), expected );
+
     dcStreamString =
         '<oai_dc:dc ' +
         'xmlns:dc="http://purl.org/dc/elements/1.1/" ' +
@@ -241,6 +252,40 @@ UnitTest.addFixture( "ManifestationInfo.getFullTitle", function() {
     var expected = "Værkstedstekniske beregninger. M2, Boring";
 
     Assert.equalValue( "get full title from common data", ManifestationInfo.getFullTitle( commonData, localData ), expected );
+
+    var commonDataString =
+        '<ting:container ' +
+        'xmlns:ac="http://biblstandard.dk/ac/namespace/" ' +
+        'xmlns:dc="http://purl.org/dc/elements/1.1/" ' +
+        'xmlns:dcterms="http://purl.org/dc/terms/" ' +
+        'xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/" ' +
+        'xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/" ' +
+        'xmlns:docbook="http://docbook.org/ns/docbook" ' +
+        'xmlns:oss="http://oss.dbc.dk/ns/osstypes" ' +
+        'xmlns:ting="http://www.dbc.dk/ting" ' +
+        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<dc:title xsi:type="dkdcplus:full"> Værkstedstekniske beregninger. M2, Boring </dc:title>' +
+        '</dkabm:record>' +
+        '</ting:container>';
+
+    var localDataString =
+        '<ting:localData ' +
+        'xmlns:marcx="info:lc/xmlns/marcxchange-v1" ' +
+        'xmlns:ting="http://www.dbc.dk/ting">' +
+        '<marcx:record format="danMARC2" type="BibliographicLocal">' +
+        '<marcx:datafield ind1="0" ind2="0" tag="d08">' +
+        '<marcx:subfield code="a">dj (lfu-post)</marcx:subfield>' +
+        '</marcx:datafield>' +
+        '</marcx:record>' +
+        '</ting:localData>';
+
+    var commonData = XmlUtil.fromString( commonDataString );
+    var localData = XmlUtil.fromString( localDataString );
+
+    var expected = "Værkstedstekniske beregninger. M2, Boring";
+
+    Assert.equalValue( "get full title from common data with whitespace ", ManifestationInfo.getFullTitle( commonData, localData ), expected );
 
     commonDataString =
         '<ting:container ' +
@@ -349,6 +394,111 @@ UnitTest.addFixture( "ManifestationInfo.getFullTitle", function() {
 
     commonDataString =
         '<ting:container ' +
+        'xmlns:ac="http://biblstandard.dk/ac/namespace/" ' +
+        'xmlns:dc="http://purl.org/dc/elements/1.1/" ' +
+        'xmlns:dcterms="http://purl.org/dc/terms/" ' +
+        'xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/" ' +
+        'xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/" ' +
+        'xmlns:docbook="http://docbook.org/ns/docbook" ' +
+        'xmlns:oss="http://oss.dbc.dk/ns/osstypes" ' +
+        'xmlns:ting="http://www.dbc.dk/ting" ' +
+        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<ac:identifier>52568765|870970</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Helt ude i HESTEN</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Helt ude i HESTEN : mails fra underklassen</dc:title>' +
+        '<dc:creator xsi:type="dkdcplus:aut">Karina Pedersen (f. 1976)</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Pedersen, Karina (f. 1976)</dc:creator>' +
+        '<dc:subject xsi:type="dkdcplus:DK5">30.1628</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCF">Karina Pedersen (f. 1976)</dc:subject>' +
+        '<dc:subject xsi:type="oss:sort">Pedersen, Karina (f. 1976)</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DK5-Text">Underklasser</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCO">barndomserindringer</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCO">breve</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCO">erindringer</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCF">familier</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCF">mor-datter forholdet</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCF">socialt udsatte</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCF">underklassen</dc:subject>' +
+        '<dcterms:abstract>I en række mails fortæller Karina Pedersen (f. 1976) historien om sin opvækst i Korskærparken i Fredericia. Med sin egen underklasse-familie som eksempel, tager hun et opgør med velfærdsdanmark og de sociale ydelser</dcterms:abstract>' +
+        '<dcterms:audience>alment niveau</dcterms:audience>' +
+        '<dcterms:audience>voksenmaterialer</dcterms:audience>' +
+        '<dkdcplus:version>1. udgave, 1. oplag (2016)</dkdcplus:version>' +
+        '<dc:publisher>Gyldendal</dc:publisher>' +
+        '<dc:date>2016</dc:date>' +
+        '<dc:type xsi:type="dkdcplus:BibDK-Type">Bog</dc:type>' +
+        '<dcterms:extent>195 sider</dcterms:extent>' +
+        '<dc:identifier xsi:type="dkdcplus:ISBN">9788702210170</dc:identifier>' +
+        '<dc:language xsi:type="dcterms:ISO639-2">dan</dc:language>' +
+        '<dc:language>Dansk</dc:language>' +
+        '<dcterms:spatial xsi:type="dkdcplus:DBCF">Danmark</dcterms:spatial>' +
+        '<dcterms:temporal xsi:type="dkdcplus:DBCP">1980-1989</dcterms:temporal>' +
+        '<dcterms:temporal xsi:type="dkdcplus:DBCP">1990-1999</dcterms:temporal>' +
+        '<dcterms:temporal xsi:type="dkdcplus:DBCP">2000-2009</dcterms:temporal>' +
+        '<dcterms:temporal xsi:type="dkdcplus:DBCP">2010-2019</dcterms:temporal>' +
+        '</dkabm:record>' +
+        '</ting:container>';
+
+
+    localDataString =
+        '<ting:localData ' +
+        'xmlns:ac="http://biblstandard.dk/ac/namespace/" ' +
+        'xmlns:dc="http://purl.org/dc/elements/1.1/" ' +
+        'xmlns:dcterms="http://purl.org/dc/terms/" ' +
+        'xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/" ' +
+        'xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/" ' +
+        'xmlns:docbook="http://docbook.org/ns/docbook" ' +
+        'xmlns:oss="http://oss.dbc.dk/ns/osstypes" ' +
+        'xmlns:ting="http://www.dbc.dk/ting" ' +
+        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> ' +
+        '<dkabm:record>' +
+        '<ac:identifier>52568765|761500</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Helt ude i hampen</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full"> Helt ude i hampen : mails fra underklassen </dc:title>' +
+        '<dc:creator xsi:type="dkdcplus:aut">Karina Pedersen (f. 1976)</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Pedersen, Karina (f. 1976)</dc:creator>' +
+        '<dc:subject xsi:type="dkdcplus:DK5">99.4 Pedersen, Karina, f. 1976</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DK5-Text">Biografier af enkelte personer</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCF">Karina Pedersen (f. 1976)</dc:subject>' +
+        '<dc:subject xsi:type="oss:sort">Pedersen, Karina (f. 1976)</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCO">barndomserindringer</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCO">breve</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCO">erindringer</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCF">familier</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCF">mor-datter forholdet</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCF">socialt udsatte</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCF">underklassen</dc:subject>' +
+        '<dcterms:abstract>I en række mails fortæller Karina Pedersen (f. 1976) historien om sin opvækst i Korskærparken i Fredericia. Med sin egen underklasse-familie som eksempel, tager hun et opgør med velfærdsdanmark og de sociale ydelser</dcterms:abstract>' +
+        '<dcterms:audience>alment niveau</dcterms:audience>' +
+        '<dcterms:audience>voksenmaterialer</dcterms:audience>' +
+        '<dkdcplus:version>1. udgave, 1. oplag (2016)</dkdcplus:version>' +
+        '<dc:publisher>Gyldendal</dc:publisher>' +
+        '<dc:date>2016</dc:date>' +
+        '<dc:type xsi:type="dkdcplus:BibDK-Type">Bog</dc:type>' +
+        '<dcterms:extent>195 sider</dcterms:extent>' +
+        '<dc:identifier xsi:type="dkdcplus:ISBN">9788702210170</dc:identifier>' +
+        '<dc:language xsi:type="dcterms:ISO639-2">dan</dc:language>' +
+        '<dc:language>Dansk</dc:language>' +
+        '<dcterms:spatial xsi:type="dkdcplus:DBCF">Danmark</dcterms:spatial>' +
+        '<dcterms:temporal xsi:type="dkdcplus:DBCP">1980-1989</dcterms:temporal>' +
+        '<dcterms:temporal xsi:type="dkdcplus:DBCP">1990-1999</dcterms:temporal>' +
+        '<dcterms:temporal xsi:type="dkdcplus:DBCP">2000-2009</dcterms:temporal>' +
+        '<dcterms:temporal xsi:type="dkdcplus:DBCP">2010-2019</dcterms:temporal>' +
+        '</dkabm:record>' +
+        '</ting:localData>';
+
+    commonData = XmlUtil.fromString( commonDataString );
+    localData = XmlUtil.fromString( localDataString );
+
+    expected = "Helt ude i hampen : mails fra underklassen";
+
+    Assert.equalValue( "get full title from common or local data with whitespace ", ManifestationInfo.getFullTitle( commonData, localData ), expected );
+
+
+    commonDataString =
+        '<ting:container ' +
         'xmlns:ting="http://www.dbc.dk/ting">' +
         '</ting:container>';
 
@@ -421,6 +571,37 @@ UnitTest.addFixture( "ManifestationInfo.getCreators", function() {
 
     Assert.equalValue( "get one creator from dc stream, no match-string or nobirth from creator ", ManifestationInfo.getCreators( dcStream ), expected );
 
+    dcStreamString =
+        '<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dc:title>vildheks</dc:title>' +
+        '<dc:title>MATCHSTRING:vildheksildproevenbind1oevenbind1</dc:title>' +
+        '<dc:title>MATCH:vildhe</dc:title>' +
+        '<dc:creator>  lene kꜳberbøl  </dc:creator>' +
+        '<dc:creator>NOBIRTH:lene kꜳberbøl</dc:creator>' +
+        '<dc:creator>MATCHSTRING:kꜳberbøll</dc:creator>' +
+        '<dc:creator>MATCHSTRING:kꜳberbøll</dc:creator>' +
+        '<dc:language>Dansk</dc:language>' +
+        '<dc:subject>dyr</dc:subject>' +
+        '<dc:subject>fantasy</dc:subject>' +
+        '<dc:subject>for 10 år</dc:subject>' +
+        '<dc:subject>for 11 år</dc:subject>' +
+        '<dc:subject>for 12 år</dc:subject>' +
+        '<dc:subject>for 13 år</dc:subject>' +
+        '<dc:subject>for 14 år</dc:subject>' +
+        '<dc:subject>hekse</dc:subject>' +
+        '<dc:subject>piger</dc:subject>' +
+        '<dc:type>Bog</dc:type>' +
+        '<dc:type>WORK:literature</dc:type>' +
+        '<dc:type>RECORD:multivolume</dc:type>' +
+        '<dc:type>RECORD:vol1</dc:type>' +
+        '</oai_dc:dc>';
+
+    dcStream = XmlUtil.fromString( dcStreamString );
+
+    expected = [ "lene kꜳberbøl" ];
+
+    Assert.equalValue( "get one creator from dc stream, no match-string or nobirth from creator with whitespace ", ManifestationInfo.getCreators( dcStream ), expected );
+
 } );
 
 
@@ -446,6 +627,27 @@ UnitTest.addFixture( "ManifestationInfo.getTypes", function() {
     var expected = [ "Bog" ];
 
     Assert.equalValue( "get one type from dc stream ", ManifestationInfo.getTypes( dcStream ), expected );
+
+    var dcStreamString =
+        '<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dc:title>værkstedstekniske beregninger</dc:title>' +
+        '<dc:language>Dansk</dc:language>' +
+        '<dc:type> Bog </dc:type>' +
+        '<dc:publisher>jernindustriensforlag</dc:publisher>' +
+        '<dc:date>1972</dc:date>' +
+        '<dc:identifier>870970-basis:08021473</dc:identifier>' +
+        '<dc:identifier>NUMBER:1020</dc:identifier>' +
+        '<dc:identifier>NUMBER:1022</dc:identifier>' +
+        '<dc:identifier>NUMBER:1020</dc:identifier>' +
+        '<dc:identifier>NUMBER:1022</dc:identifier>' +
+        '<dc:relation>50378705</dc:relation>' +
+        '</oai_dc:dc>';
+
+    var dcStream = XmlUtil.fromString( dcStreamString );
+
+    var expected = [ "Bog" ];
+
+    Assert.equalValue( "get one type from dc stream with whitespace ", ManifestationInfo.getTypes( dcStream ), expected );
 
     dcStreamString =
         '<oai_dc:dc ' +
@@ -675,7 +877,7 @@ UnitTest.addFixture( "ManifestationInfo.getAbstract", function() {
         '<dc:subject xsi:type="dkdcplus:DBCF">mor-datter forholdet</dc:subject>' +
         '<dc:subject xsi:type="dkdcplus:DBCF">socialt udsatte</dc:subject>' +
         '<dc:subject xsi:type="dkdcplus:DBCF">underklassen</dc:subject>' +
-        '<dcterms:abstract>I en række mails fortæller Karina Pedersen (f. 1976) historien om sin opvækst i Korskærparken i Fredericia. Med sin egen underklasse-familie som eksempel, tager hun et opgør med velfærdsdanmark og de sociale ydelser</dcterms:abstract>' +
+//        '<dcterms:abstract>I en række mails fortæller Karina Pedersen (f. 1976) historien om sin opvækst i Korskærparken i Fredericia. Med sin egen underklasse-familie som eksempel, tager hun et opgør med velfærdsdanmark og de sociale ydelser</dcterms:abstract>' +
         '<dcterms:audience>alment niveau</dcterms:audience>' +
         '<dcterms:audience>voksenmaterialer</dcterms:audience>' +
         '<dkdcplus:version>1. udgave, 1. oplag (2016)</dkdcplus:version>' +
@@ -700,6 +902,111 @@ UnitTest.addFixture( "ManifestationInfo.getAbstract", function() {
     expected = "I en række mails fortæller Karina Pedersen (f. 1976) historien om sin opvækst i Korskærparken i Fredericia. Med sin egen underklasse-familie som eksempel, tager hun et opgør med velfærdsdanmark og de sociale ydelser";
 
     Assert.equalValue( "get abstract from common data ", ManifestationInfo.getAbstract( commonData, localData ), expected );
+
+
+    commonDataString =
+        '<ting:container ' +
+        'xmlns:ac="http://biblstandard.dk/ac/namespace/" ' +
+        'xmlns:dc="http://purl.org/dc/elements/1.1/" ' +
+        'xmlns:dcterms="http://purl.org/dc/terms/" ' +
+        'xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/" ' +
+        'xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/" ' +
+        'xmlns:docbook="http://docbook.org/ns/docbook" ' +
+        'xmlns:oss="http://oss.dbc.dk/ns/osstypes" ' +
+        'xmlns:ting="http://www.dbc.dk/ting" ' +
+        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<ac:identifier>52568765|870970</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Helt ude i HESTEN</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Helt ude i hampen : mails fra underklassen</dc:title>' +
+        '<dc:creator xsi:type="dkdcplus:aut">Karina Pedersen (f. 1976)</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Pedersen, Karina (f. 1976)</dc:creator>' +
+        '<dc:subject xsi:type="dkdcplus:DK5">30.1628</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCF">Karina Pedersen (f. 1976)</dc:subject>' +
+        '<dc:subject xsi:type="oss:sort">Pedersen, Karina (f. 1976)</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DK5-Text">Underklasser</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCO">barndomserindringer</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCO">breve</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCO">erindringer</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCF">familier</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCF">mor-datter forholdet</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCF">socialt udsatte</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCF">underklassen</dc:subject>' +
+        '<dcterms:abstract>  I en række mails fortæller Karina Pedersen (f. 1976) historien om sin opvækst i Korskærparken i Fredericia. Med sin egen underklasse-familie som eksempel, tager hun et opgør med velfærdsdanmark og de sociale ydelser  </dcterms:abstract>' +
+        '<dcterms:audience>alment niveau</dcterms:audience>' +
+        '<dcterms:audience>voksenmaterialer</dcterms:audience>' +
+        '<dkdcplus:version>1. udgave, 1. oplag (2016)</dkdcplus:version>' +
+        '<dc:publisher>Gyldendal</dc:publisher>' +
+        '<dc:date>2016</dc:date>' +
+        '<dc:type xsi:type="dkdcplus:BibDK-Type">Bog</dc:type>' +
+        '<dcterms:extent>195 sider</dcterms:extent>' +
+        '<dc:identifier xsi:type="dkdcplus:ISBN">9788702210170</dc:identifier>' +
+        '<dc:language xsi:type="dcterms:ISO639-2">dan</dc:language>' +
+        '<dc:language>Dansk</dc:language>' +
+        '<dcterms:spatial xsi:type="dkdcplus:DBCF">Danmark</dcterms:spatial>' +
+        '<dcterms:temporal xsi:type="dkdcplus:DBCP">1980-1989</dcterms:temporal>' +
+        '<dcterms:temporal xsi:type="dkdcplus:DBCP">1990-1999</dcterms:temporal>' +
+        '<dcterms:temporal xsi:type="dkdcplus:DBCP">2000-2009</dcterms:temporal>' +
+        '<dcterms:temporal xsi:type="dkdcplus:DBCP">2010-2019</dcterms:temporal>' +
+        '</dkabm:record>' +
+        '</ting:container>';
+
+
+    localDataString =
+        '<ting:localData ' +
+        'xmlns:ac="http://biblstandard.dk/ac/namespace/" ' +
+        'xmlns:dc="http://purl.org/dc/elements/1.1/" ' +
+        'xmlns:dcterms="http://purl.org/dc/terms/" ' +
+        'xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/" ' +
+        'xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/" ' +
+        'xmlns:docbook="http://docbook.org/ns/docbook" ' +
+        'xmlns:oss="http://oss.dbc.dk/ns/osstypes" ' +
+        'xmlns:ting="http://www.dbc.dk/ting" ' +
+        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> ' +
+        '<dkabm:record>' +
+        '<ac:identifier>52568765|761500</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Helt ude i hampen</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Helt ude i hampen : mails fra underklassen</dc:title>' +
+        '<dc:creator xsi:type="dkdcplus:aut">Karina Pedersen (f. 1976)</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Pedersen, Karina (f. 1976)</dc:creator>' +
+        '<dc:subject xsi:type="dkdcplus:DK5">99.4 Pedersen, Karina, f. 1976</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DK5-Text">Biografier af enkelte personer</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCF">Karina Pedersen (f. 1976)</dc:subject>' +
+        '<dc:subject xsi:type="oss:sort">Pedersen, Karina (f. 1976)</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCO">barndomserindringer</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCO">breve</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCO">erindringer</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCF">familier</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCF">mor-datter forholdet</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCF">socialt udsatte</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCF">underklassen</dc:subject>' +
+//        '<dcterms:abstract>I en række mails fortæller Karina Pedersen (f. 1976) historien om sin opvækst i Korskærparken i Fredericia. Med sin egen underklasse-familie som eksempel, tager hun et opgør med velfærdsdanmark og de sociale ydelser</dcterms:abstract>' +
+        '<dcterms:audience>alment niveau</dcterms:audience>' +
+        '<dcterms:audience>voksenmaterialer</dcterms:audience>' +
+        '<dkdcplus:version>1. udgave, 1. oplag (2016)</dkdcplus:version>' +
+        '<dc:publisher>Gyldendal</dc:publisher>' +
+        '<dc:date>2016</dc:date>' +
+        '<dc:type xsi:type="dkdcplus:BibDK-Type">Bog</dc:type>' +
+        '<dcterms:extent>195 sider</dcterms:extent>' +
+        '<dc:identifier xsi:type="dkdcplus:ISBN">9788702210170</dc:identifier>' +
+        '<dc:language xsi:type="dcterms:ISO639-2">dan</dc:language>' +
+        '<dc:language>Dansk</dc:language>' +
+        '<dcterms:spatial xsi:type="dkdcplus:DBCF">Danmark</dcterms:spatial>' +
+        '<dcterms:temporal xsi:type="dkdcplus:DBCP">1980-1989</dcterms:temporal>' +
+        '<dcterms:temporal xsi:type="dkdcplus:DBCP">1990-1999</dcterms:temporal>' +
+        '<dcterms:temporal xsi:type="dkdcplus:DBCP">2000-2009</dcterms:temporal>' +
+        '<dcterms:temporal xsi:type="dkdcplus:DBCP">2010-2019</dcterms:temporal>' +
+        '</dkabm:record>' +
+        '</ting:localData>';
+
+    commonData = XmlUtil.fromString( commonDataString );
+    localData = XmlUtil.fromString( localDataString );
+
+    expected = "I en række mails fortæller Karina Pedersen (f. 1976) historien om sin opvækst i Korskærparken i Fredericia. Med sin egen underklasse-familie som eksempel, tager hun et opgør med velfærdsdanmark og de sociale ydelser";
+
+    Assert.equalValue( "get abstract from common data with whitespace ", ManifestationInfo.getAbstract( commonData, localData ), expected );
 
 
     commonDataString =
@@ -741,6 +1048,47 @@ UnitTest.addFixture( "ManifestationInfo.getAbstract", function() {
     expected = "Her står der en fin beskrivelse i local data";
 
     Assert.equalValue( "get abstract from local data ", ManifestationInfo.getAbstract( commonData, localData ), expected );
+
+
+    commonDataString =
+        '<ting:container ' +
+        'xmlns:ac="http://biblstandard.dk/ac/namespace/" ' +
+        'xmlns:dc="http://purl.org/dc/elements/1.1/" ' +
+        'xmlns:dcterms="http://purl.org/dc/terms/" ' +
+        'xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/" ' +
+        'xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/" ' +
+        'xmlns:docbook="http://docbook.org/ns/docbook" ' +
+        'xmlns:oss="http://oss.dbc.dk/ns/osstypes" ' +
+        'xmlns:ting="http://www.dbc.dk/ting" ' +
+        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<dcterms:abstract>I en række mails fortæller Karina Pedersen (f. 1976) historien om sin opvækst i Korskærparken i Fredericia. Med sin egen underklasse-familie som eksempel, tager hun et opgør med velfærdsdanmark og de sociale ydelser</dcterms:abstract>' +
+        '</dkabm:record>' +
+        '</ting:container>';
+
+    localDataString =
+        '<ting:localData ' +
+        'xmlns:ac="http://biblstandard.dk/ac/namespace/" ' +
+        'xmlns:dc="http://purl.org/dc/elements/1.1/" ' +
+        'xmlns:dcterms="http://purl.org/dc/terms/" ' +
+        'xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/" ' +
+        'xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/" ' +
+        'xmlns:docbook="http://docbook.org/ns/docbook" ' +
+        'xmlns:oss="http://oss.dbc.dk/ns/osstypes" ' +
+        'xmlns:ting="http://www.dbc.dk/ting" ' +
+        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> ' +
+        '<dkabm:record>' +
+        '<dcterms:abstract>  Her står der en fin beskrivelse i local data  </dcterms:abstract>' +
+        '</dkabm:record>' +
+
+        '</ting:localData>';
+
+    commonData = XmlUtil.fromString( commonDataString );
+    localData = XmlUtil.fromString( localDataString );
+
+    expected = "Her står der en fin beskrivelse i local data";
+
+    Assert.equalValue( "get abstract from local data with whitespace ", ManifestationInfo.getAbstract( commonData, localData ), expected );
 
 
 } );
@@ -794,5 +1142,32 @@ UnitTest.addFixture( "ManifestationInfo.getSubjects", function() {
     expected = [ "dyr", "fantasy", "for 10 år", "for 11 år", "for 12 år", "for 13 år", "for 14 år", "hekse", "piger" ];
 
     Assert.equalValue( "get subjects from dc stream", ManifestationInfo.getSubjects( dcStream ), expected );
+
+    dcStreamString =
+        '<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dc:title>vildheks</dc:title>' +
+        '<dc:title>MATCHSTRING:vildheksildproevenbind1oevenbind1</dc:title>' +
+        '<dc:title>MATCH:vildhe</dc:title>' +
+        '<dc:creator>lene kꜳberbøl</dc:creator>' +
+        '<dc:creator>NOBIRTH:lene kꜳberbøl</dc:creator>' +
+        '<dc:creator>MATCHSTRING:kꜳberbøll</dc:creator>' +
+        '<dc:creator>MATCHSTRING:kꜳberbøll</dc:creator>' +
+        '<dc:language>Dansk</dc:language>' +
+        '<dc:subject> dyr </dc:subject>' +
+        '<dc:subject> fantasy </dc:subject>' +
+        '<dc:subject> for 10 år </dc:subject>' +
+        '<dc:subject> for 11 år </dc:subject>' +
+        '<dc:subject> for 12 år </dc:subject>' +
+        '<dc:subject> for 13 år </dc:subject>' +
+        '<dc:subject> for 14 år </dc:subject>' +
+        '<dc:subject> hekse </dc:subject>' +
+        '<dc:subject> piger </dc:subject>' +
+        '</oai_dc:dc>';
+
+    dcStream = XmlUtil.fromString( dcStreamString );
+
+    expected = [ "dyr", "fantasy", "for 10 år", "for 11 år", "for 12 år", "for 13 år", "for 14 år", "hekse", "piger" ];
+
+    Assert.equalValue( "get subjects from dc stream with whitespace ", ManifestationInfo.getSubjects( dcStream ), expected );
 
 } );
