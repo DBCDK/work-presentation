@@ -159,8 +159,8 @@ public class WorkConsolidator {
             String normalized = Normalizer.normalize(subject, Normalizer.Form.NFC);
             String key = normalized.toLowerCase(Locale.ROOT);
             collector.compute(key, (k, v) ->
-                              ( v != null && // a value exists and
-                                !v.equals(k) ) ? // It is not lowercase (as the key is)
+                              v != null && // a value exists and
+                              !v.equals(k) ? // It is not lowercase (as the key is)
                               v : // use existing value
                               normalized); // use new value
         });
