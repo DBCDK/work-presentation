@@ -85,7 +85,7 @@ public class WorkPresentationBean {
             summary = "Retrieve a work structure",
             description = "This operation produces a work structure, for a given identifier." +
                           " The work structure contains metadata from a seleted manifestation," +
-                          " and all the manifestations, that this work covers." +
+                          " and all the manifestations that this work covers." +
                           " These are not ordered/grouped by anything.")
     @APIResponses({
         @APIResponse(name = "Success",
@@ -115,7 +115,7 @@ public class WorkPresentationBean {
             return Response.ok(resp, MediaType.APPLICATION_JSON)
                     .build();
         } catch (NewWorkIdException ex) {
-            log.info("Redirected");
+            log.info("Redirected: {} -> {}", workId, ex.getWorkId());
             UriBuilder ub = UriBuilder.fromUri(uriInfo.getAbsolutePath());
             uriInfo.getQueryParameters().forEach((key, values) -> {
                 if ("workId".equals(key))
@@ -124,7 +124,7 @@ public class WorkPresentationBean {
             });
             return Response.seeOther(ub.build()).build();
         } catch (NotFoundException ex) {
-            log.info("Not found");
+            log.info("Not found: {}", workId);
             return Response.status(Response.Status.NOT_FOUND).build();
         } catch (Exception ex) {
             log.error("Internal exception: {}", ex.getMessage());
