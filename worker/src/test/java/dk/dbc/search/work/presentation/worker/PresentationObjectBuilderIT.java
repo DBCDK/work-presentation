@@ -49,7 +49,7 @@ public class PresentationObjectBuilderIT extends JpaBase {
             assertThat(countCacheEntries(em), is(5));
             assertThat(countWorkContainsEntries(em), is(5));
 
-            RecordEntity record = RecordEntity.fromCorepoWorkId(em, "work:62").get();
+            RecordEntity record = RecordEntity.fromCorepoWorkId(em, "work:62");
             System.out.println("record = " + record);
             System.out.println("record = " + record.getContent());
             assertThat(record.getModified(), not(nullValue()));

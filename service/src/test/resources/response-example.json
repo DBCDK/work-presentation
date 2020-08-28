@@ -1,0 +1,25 @@
+{
+    "workId": "work-of:something",
+    "title": "The Full Story",
+    "fullTitle": "The Full Story, and all the detours.",
+    "creators": [ "Her", "Him" ],
+    "subjects": [ "travel" ],
+    "records": [
+        {
+            "title": "The Full Story",
+            "fullTitle": "The Full Story, and all the detours.",
+            "creators": [ "Her", "Him" ],
+            "pid": "xxx",
+            "subjects": [ "travel" ],
+            "types": [ "Book" ]
+        },
+        {
+            "title": "The Full Story",
+            "fullTitle": "The Full Story, and all the detours.",
+            "creators": [ "Her", "Him", "The-Reader" ],
+            "pid": "yyy",
+            "subjects": [ "travel" ],
+            "types": [ "Audio-Book" ]
+        }
+    ]
+}

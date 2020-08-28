@@ -1,0 +1,4 @@
+{
+    "exception": "dk.dbc.search.work.presentation.service.NewWorkIdException",
+    "regexp": ".*: work-of:870970-basis:00010529"
+}

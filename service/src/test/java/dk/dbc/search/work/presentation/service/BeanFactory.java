@@ -38,6 +38,7 @@ public class BeanFactory {
     private final DataSource dataSource;
     private final Config config;
 
+    private final Bean<WorkPresentationBean> wpb = new Bean<>(new WorkPresentationBean(), this::setupWorkPresentationBean);
 
     public BeanFactory(Map<String, String> envs, EntityManager em, DataSource dataSource) {
         this.em = em;
@@ -63,6 +64,14 @@ public class BeanFactory {
 
     public Config getConfig() {
         return config;
+    }
+
+    public WorkPresentationBean getWorkPresentationBean() {
+        return wpb.get();
+    }
+
+    private void setupWorkPresentationBean(WorkPresentationBean bean) {
+        bean.em = em;
     }
 
     private static Map<String, String> config(String... envs) {
