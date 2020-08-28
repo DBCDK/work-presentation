@@ -31,10 +31,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -50,6 +52,15 @@ public class WorkConsolidatorTest {
 
     private static final ObjectMapper O = new ObjectMapper()
             .configure(SerializationFeature.INDENT_OUTPUT, true);
+
+    @Test
+    public void testNoCaseSet() throws Exception {
+        System.out.println("testNoCaseSet");
+        assertThat(WorkConsolidator.noCaseSet(Arrays.asList("abc", "def")), contains("abc", "def"));
+        assertThat(WorkConsolidator.noCaseSet(Arrays.asList("abc", "Abc")), contains("Abc"));
+        assertThat(WorkConsolidator.noCaseSet(Arrays.asList("Abc", "ABC")), contains("Abc"));
+        assertThat(WorkConsolidator.noCaseSet(Arrays.asList("abc", "Abc", "ABC")), contains("Abc"));
+    }
 
     @ParameterizedTest
     @MethodSource("tests")
@@ -107,7 +118,7 @@ public class WorkConsolidatorTest {
 
         source.units.forEach((unitId, unit) -> {
             boolean primaryUnit = unit.entrySet().stream()
-                    .anyMatch(e  -> objectHasPrimary(e.getValue(), e.getKey(), source.primary));
+                    .anyMatch(e -> objectHasPrimary(e.getValue(), e.getKey(), source.primary));
             UnitTree unitTree = new UnitTree(primaryUnit, Instant.now());
             workTree.put(unitId, unitTree);
             unit.forEach((objId, obj) -> {

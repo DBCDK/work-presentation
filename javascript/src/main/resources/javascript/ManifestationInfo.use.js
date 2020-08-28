@@ -78,13 +78,13 @@ var ManifestationInfo = (function() {
         Log.trace( "Entering: ManifestationInfo.getTitle function" );
 
         var title = XPath.selectText( "/oai_dc:dc/dc:title", dcStreamXml );
+        title = title.trim();
         Log.debug( "ManifestationInfo.getTitle title found=", title );
 
         if ( "" === title ) {
             RecordProcessing.terminateProcessingAndFailRecord(
                 "ManifestationInfo.getTitle no title was found in dc stream\n" + dcStreamXml );
         }
-
 
         Log.trace( "Leaving: ManifestationInfo.getTitle function" );
 
@@ -110,9 +110,11 @@ var ManifestationInfo = (function() {
 
         //first check if localData has a full title
         var titleFull = XPath.selectText( '/ting:localData/dkabm:record/dc:title[@xsi:type="dkdcplus:full"]', localData );
+        titleFull = titleFull.trim()
 
         if ( "" === titleFull ) {
             titleFull = XPath.selectText( '/ting:container/dkabm:record/dc:title[@xsi:type="dkdcplus:full"]', commonData );
+            titleFull = titleFull.trim()
         }
 
         if ( "" === titleFull ) {
@@ -146,13 +148,13 @@ var ManifestationInfo = (function() {
         var allCreators = XPath.selectMultipleText( "/oai_dc:dc/dc:creator", dcStreamXml );
         for ( var i = 0; i < allCreators.length; i++ ) {
             var creator = allCreators[ i ];
+            creator = creator.trim();
             //dont add match strings or nobirth versions
             if ( !creator.match( /MATCHSTRING:|NOBIRTH:/ ) ) {
                 creators.push( creator );
             }
         }
         Log.debug( "ManifestationInfo.getCreators creators found=", creators );
-
 
         Log.trace( "Leaving: ManifestationInfo.getCreators function" );
 
@@ -180,6 +182,7 @@ var ManifestationInfo = (function() {
         var foundSammensat = false;
         for ( var i = 0; i < allTypes.length; i++ ) {
             var type = allTypes[ i ];
+            type = type.trim();
             //set sammensat boolean for now, we might have to add it if its the only one
             if ( "Sammensat materiale" === type ) {
                 foundSammensat = true;
@@ -197,7 +200,6 @@ var ManifestationInfo = (function() {
                 "ManifestationInfo.getTypes no type was found in dc stream\n" + dcStreamXml );
         }
         Log.debug( "ManifestationInfo.getTypes types found=", types );
-
 
         Log.trace( "Leaving: ManifestationInfo.getTypes function" );
 
@@ -223,16 +225,17 @@ var ManifestationInfo = (function() {
 
         //first check if localData has an abstract
         var abstract = XPath.selectText( '/ting:localData/dkabm:record/dcterms:abstract', localData );
+        abstract = abstract.trim();
 
         if ( "" === abstract ) {
             abstract = XPath.selectText( '/ting:container/dkabm:record/dcterms:abstract', commonData );
+            abstract = abstract.trim();
         }
 
 
         abstract = ("" === abstract) ? null : abstract;
 
         Log.debug( "ManifestationInfo.getAbstract abstract found=", String( abstract ) );
-
 
         Log.trace( "Leaving: ManifestationInfo.getAbstract function" );
 
@@ -256,9 +259,11 @@ var ManifestationInfo = (function() {
         Log.trace( "Entering: ManifestationInfo.getSubjects function" );
 
         var subjects = XPath.selectMultipleText( "/oai_dc:dc/dc:subject", dcStreamXml );
+        for ( var i in subjects ) {
+            subjects[i] = subjects[i].trim();
+        }
 
         Log.debug( "ManifestationInfo.getSubjects subjects found=", subjects );
-
 
         Log.trace( "Leaving: ManifestationInfo.getSubjects function" );
 
@@ -274,6 +279,5 @@ var ManifestationInfo = (function() {
         getTypes: getTypes,
         getAbstract: getAbstract,
         getSubjects: getSubjects
-
     };
 })();
