@@ -26,9 +26,12 @@ import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
 import dk.dbc.search.work.presentation.worker.tree.ObjectTree;
 import dk.dbc.search.work.presentation.worker.tree.WorkTree;
 import java.sql.Timestamp;
+import java.text.Normalizer;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -59,7 +62,7 @@ public class WorkConsolidator {
     @Timed(reusable = true)
     public void deleteWork(String corepoWorkId) {
         RecordEntity entity = RecordEntity.fromCorepoWorkId(em, corepoWorkId);
-        if(entity != null)
+        if (entity != null)
             entity.delete();
     }
 
@@ -137,7 +140,31 @@ public class WorkConsolidator {
                 .filter(WorkConsolidator::notNull)
                 .flatMap(Collection::stream) // as a stream of String
                 .collect(Collectors.toSet());
+        // Make them distinct (ignoring case)
+        work.subjects = noCaseSet(work.subjects);
         return work;
+    }
+
+    /**
+     * Convert a collection into a set
+     * <p>
+     * Prefer the 1st value that is not lowercase
+     *
+     * @param subjects collection of strings
+     * @return set of strings (case insensitive compare)
+     */
+    static Set<String> noCaseSet(Collection<String> subjects) {
+        HashMap<String, String> collector = new HashMap<>();
+        subjects.forEach(subject -> {
+            String normalized = Normalizer.normalize(subject, Normalizer.Form.NFC);
+            String key = normalized.toLowerCase(Locale.ROOT);
+            collector.compute(key, (k, v) ->
+                              ( v != null && // a value exists and
+                                !v.equals(k) ) ? // It is not lowercase (as the key is)
+                              v : // use existing value
+                              normalized); // use new value
+        });
+        return new HashSet<>(collector.values());
     }
 
     /**
@@ -148,7 +175,7 @@ public class WorkConsolidator {
      */
     ManifestationInformation getCacheContentFor(String id) {
         ManifestationInformation content = CacheEntity.from(em, id).getContent();
-        if(content == null)
+        if (content == null)
             throw new IllegalStateException("Got null content for: " + id);
         return content;
     }
