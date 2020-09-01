@@ -41,7 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Get metadata about objexts in records or cache table
+ * Get metadata about objects in records or cache table
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
@@ -82,7 +82,7 @@ public class ObjectTimestamp {
                             @ExampleObject(
                                     name = "modification time",
                                     summary = "timestamp",
-                                    description = "last time the object was modified according to the datanas as an ISO instant",
+                                    description = "last time the object was modified according to the database as an ISO instant text",
                                     value = "2020-01-01T12:34:56.789Z"
                             )})),
         @APIResponse(
