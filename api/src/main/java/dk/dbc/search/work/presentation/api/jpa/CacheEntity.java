@@ -79,7 +79,7 @@ public class CacheEntity implements Serializable {
     }
 
     public static CacheEntity detachedFrom(EntityManager em, String manifestationId) {
-        CacheEntity entity = em.find(CacheEntity.class, em, LockModeType.NONE);
+        CacheEntity entity = em.find(CacheEntity.class, manifestationId, LockModeType.NONE);
         if (entity != null) {
             em.detach(entity);
             entity.em = null;

@@ -40,6 +40,7 @@ public class BeanFactory {
     private final Config config;
     private final Bean<ParallelCacheContentBuilder> parallelCacheContentBuilder = new Bean<>(new ParallelCacheContentBuilder(), this::setupParallelCacheContentBuilder);
     private final Bean<CorepoContentServiceConnector> corepoContentService = new Bean<>(new CorepoContentServiceConnector(), this::setupCorepoContentService);
+    private final Bean<ObjectTimestamp> objectTimestamp = new Bean<>(new ObjectTimestamp(), this::setupObjectTimestamp);
     private final Bean<PresentationObjectBuilder> presentationObjectBuilder = new Bean<>(new PresentationObjectBuilder(), this::setupPresentationObjectBuilder);
     private final Bean<WorkConsolidator> workConsolidator = new Bean<>(new WorkConsolidator(), this::setupWorkConsolidator);
     private final Bean<Worker> worker = new Bean<>(new Worker(), this::setupWorker);
@@ -104,6 +105,15 @@ public class BeanFactory {
     private void setupCorepoContentService(CorepoContentServiceConnector bean) {
         bean.config = config;
     }
+
+    public ObjectTimestamp getObjectTimestamp() {
+        return objectTimestamp.get();
+    }
+
+    public void setupObjectTimestamp(ObjectTimestamp bean) {
+        bean.em = entityManager;
+    }
+
 
     public PresentationObjectBuilder getPresentationObjectBuilder() {
         return presentationObjectBuilder.get();

@@ -32,6 +32,7 @@ import javax.ws.rs.core.Application;
 public class ServiceApplication extends Application {
 
     private static final Set<Class<?>> CLASSES = new HashSet<Class<?>>(Arrays.asList(
+            ObjectTimestamp.class
     ));
 
     @Override
