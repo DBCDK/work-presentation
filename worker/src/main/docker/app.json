@@ -1,6 +1,6 @@
 {
     "appName": "${project.artifactId}",
-    "profiles": [ ],
+    "profiles": [ "nashorn" ],
     "jdbc": {
         "jdbc/work-presentation": {
             "url": "${WORK_PRESENTATION_POSTGRES_URL}",
