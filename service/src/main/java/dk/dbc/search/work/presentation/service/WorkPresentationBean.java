@@ -122,7 +122,8 @@ public class WorkPresentationBean {
                     values = Collections.singletonList(ex.getWorkId());
                 ub.queryParam(key, values.toArray());
             });
-            return Response.seeOther(ub.build()).build();
+            return Response.status(Response.Status.MOVED_PERMANENTLY)
+                    .location(ub.build()).build();
         } catch (NotFoundException ex) {
             log.info("Not found: {}", workId);
             return Response.status(Response.Status.NOT_FOUND).build();
