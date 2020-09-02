@@ -51,6 +51,7 @@ public class DataStreamMetaData {
         return id;
     }
 
+    // This is name created for legacy reasons, but is modified
     public Instant getCreated() {
         return created;
     }

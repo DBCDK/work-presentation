@@ -26,6 +26,9 @@ import dk.dbc.search.work.presentation.worker.corepo.DataStreamMetaData;
 import dk.dbc.search.work.presentation.worker.corepo.ObjectMetaData;
 import dk.dbc.search.work.presentation.worker.corepo.RelsSys;
 import java.time.Instant;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -95,15 +98,37 @@ public class WorkTreeBuilder {
         }
         RelsSys objectRelsSys = contentService.relsSys(object);
         ObjectTree objectTree = new ObjectTree(objectRelsSys.isPrimary(), objectMetaData.getModified());
-        Instant modified = objectMetaData.getModified();
+
+        Map<String, DataStreamMetaData> streamMetaDatas = contentService.datastreams(object).getStreams()
+                .stream()
+                .collect(Collectors.toMap(stream -> stream,
+                                          stream -> contentService.datastreamMetaData(object, stream)));
+
+        Stream.Builder<Instant> timestamps = Stream.builder();
+        timestamps.accept(objectMetaData.getModified());
+        DataStreamMetaData dc = streamMetaDatas.get("DC");
+        if (dc != null) {
+            timestamps.accept(dc.getCreated());
+        }
+        DataStreamMetaData commonData = streamMetaDatas.get("commonData");
+        if (commonData != null) {
+            timestamps.accept(commonData.getCreated());
+        }
+        Instant sharedDataModified = timestamps.build()
+                .reduce(WorkTreeBuilder::latestOf)
+                .orElse(Instant.MIN);
 
         contentService.datastreams(object).getStreams().forEach(stream -> {
             if (stream.startsWith(CacheContentBuilder.LOCAL_DATA)) {
-                DataStreamMetaData streamMetaData = contentService.datastreamMetaData(object, stream);
-                objectTree.put(stream, new CacheContentBuilder(object, stream, modified, !streamMetaData.isActive()));
+                DataStreamMetaData streamMetaData = streamMetaDatas.get(stream);
+                Instant streamModified = latestOf(sharedDataModified, streamMetaData.getCreated());
+                objectTree.put(stream, new CacheContentBuilder(object, stream, streamModified, !streamMetaData.isActive()));
             }
         });
         return objectTree;
     }
 
+    private static Instant latestOf(Instant first, Instant second) {
+        return first.isAfter(second) ? first : second;
+    }
 }
