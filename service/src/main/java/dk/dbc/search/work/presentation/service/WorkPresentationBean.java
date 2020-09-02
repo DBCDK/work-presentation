@@ -40,6 +40,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import org.eclipse.microprofile.metrics.annotation.Timed;
+import org.eclipse.microprofile.openapi.annotations.Components;
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.info.Contact;
@@ -111,7 +112,10 @@ public class WorkPresentationBean {
                         @LogAs("trackingId") @GenerateTrackingId @QueryParam("trackingId") String trackingId,
                         @Context UriInfo uriInfo) {
         try {
-            WorkInformation resp = processRequest(workId);
+            WorkPresentationResponse resp = new WorkPresentationResponse();
+            resp.trackingId = trackingId;
+            resp.workId = workId;
+            resp.work = processRequest(workId);
             return Response.ok(resp, MediaType.APPLICATION_JSON)
                     .build();
         } catch (NewWorkIdException ex) {
@@ -187,29 +191,31 @@ public class WorkPresentationBean {
     // This needs to be defined at compile time, hence the copy and not a loaded resource
     private static final String RESPONSE_EXAMPLE =
             "{\n" +
-            "    \"workId\": \"work-of:something\",\n" +
-            "    \"title\": \"The Full Story\",\n" +
-            "    \"fullTitle\": \"The Full Story, and all the detours.\",\n" +
-            "    \"creators\": [ \"Her\", \"Him\" ],\n" +
-            "    \"subjects\": [ \"travel\" ],\n" +
-            "    \"records\": [\n" +
-            "        {\n" +
-            "            \"title\": \"The Full Story\",\n" +
-            "            \"fullTitle\": \"The Full Story, and all the detours.\",\n" +
-            "            \"creators\": [ \"Her\", \"Him\" ],\n" +
-            "            \"pid\": \"xxx\",\n" +
-            "            \"subjects\": [ \"travel\" ],\n" +
-            "            \"types\": [ \"Book\" ]\n" +
-            "        },\n" +
-            "        {\n" +
-            "            \"title\": \"The Full Story\",\n" +
-            "            \"fullTitle\": \"The Full Story, and all the detours.\",\n" +
-            "            \"creators\": [ \"Her\", \"Him\", \"The-Reader\" ],\n" +
-            "            \"pid\": \"yyy\",\n" +
-            "            \"subjects\": [ \"travel\" ],\n" +
-            "            \"types\": [ \"Audio-Book\" ]\n" +
-            "        }\n" +
-            "    ]\n" +
+            "    \"trackingId\": \"...\",\n" +
+            "    \"work\": {\n" +
+            "        \"workId\": \"work-of:something\",\n" +
+            "        \"title\": \"The Full Story\",\n" +
+            "        \"fullTitle\": \"The Full Story, and all the detours.\",\n" +
+            "        \"creators\": [ \"Her\", \"Him\" ],\n" +
+            "        \"subjects\": [ \"travel\" ],\n" +
+            "        \"records\": [\n" +
+            "            {\n" +
+            "                \"title\": \"The Full Story\",\n" +
+            "                \"fullTitle\": \"The Full Story, and all the detours.\",\n" +
+            "                \"creators\": [ \"Her\", \"Him\" ],\n" +
+            "                \"pid\": \"xxx\",\n" +
+            "                \"subjects\": [ \"travel\" ],\n" +
+            "                \"types\": [ \"Book\" ]\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"title\": \"The Full Story\",\n" +
+            "                \"fullTitle\": \"The Full Story, and all the detours.\",\n" +
+            "                \"creators\": [ \"Her\", \"Him\", \"The-Reader\" ],\n" +
+            "                \"pid\": \"yyy\",\n" +
+            "                \"subjects\": [ \"travel\" ],\n" +
+            "                \"types\": [ \"Audio-Book\" ]\n" +
+            "            }\n" +
+            "        ]\n" +
+            "    }\n" +
             "}";
-
 }
