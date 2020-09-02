@@ -743,9 +743,9 @@ UnitTest.addFixture( "ManifestationInfo.getTypes", function() {
 
     dcStream = XmlUtil.fromString( dcStreamString );
 
-    Assert.exception( "Stop processing if dc has no type", function() {
-        ManifestationInfo.getTypes( dcStream );
-    }, Packages.dk.dbc.javascript.recordprocessing.FailRecord );
+    expected = [ ];
+
+    Assert.equalValue( "accept no types ", ManifestationInfo.getTypes( dcStream ), expected );
 
 } );
 

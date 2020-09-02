@@ -192,13 +192,9 @@ var ManifestationInfo = (function() {
             }
         } //end for loop
         if ( 0 === types.length && foundSammensat ) {
-            types.push( "Sammensat materiale" )
+            types.push( "Sammensat materiale" );
         }
 
-        if ( 0 === types.length ) {
-            RecordProcessing.terminateProcessingAndFailRecord(
-                "ManifestationInfo.getTypes no type was found in dc stream\n" + dcStreamXml );
-        }
         Log.debug( "ManifestationInfo.getTypes types found=", types );
 
         Log.trace( "Leaving: ManifestationInfo.getTypes function" );
