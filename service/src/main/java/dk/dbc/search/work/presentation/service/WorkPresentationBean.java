@@ -113,7 +113,6 @@ public class WorkPresentationBean {
         try {
             WorkPresentationResponse resp = new WorkPresentationResponse();
             resp.trackingId = trackingId;
-            resp.workId = workId;
             resp.work = processRequest(workId);
             return Response.ok(resp, MediaType.APPLICATION_JSON)
                     .build();

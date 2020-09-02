@@ -3,7 +3,6 @@
     <head>
         <title>Work Presentation Service</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <base href="http://work-presentation-service.cisterne.svc.cloud.dbc.dk">
         <script type="text/javascript">
             window.addEventListener("load", function () {
                 window.document.querySelectorAll("input").forEach(that => {
@@ -47,6 +46,12 @@
                 background-color: lightgray;
                 padding: .7em;
             }
+            a:link, a:visited, a:active {
+                color: inherit
+            }
+            a:link:hover, a:visited:hover, a:active:hover {
+                text-decoration: underline;
+            }
         </style>
     </head>
     <body>
@@ -57,16 +62,16 @@
 
         <dl>
             <dt>workId</dt>
-            <dd>The identifier of the work. the format is <em>work-of:owner-id</em>, where owner-id is the primary object in the work.
+            <dd>The identifier of the work. The format is <em>work-of:owner-id</em>, where owner-id is the primary object in the work.
                 <p>
                     If a new object is elevated to primary for this work, an <code>HTTP 301 - Permanent Redirect</code> is returned,
-                    with the new id referring the new owner
+                    with the new id referring the new owner.
                 </p>
             </dd>
             <dt>trackingId</dt>
             <dd>Used for debugging, to track a request that has failed or is slow. Very useful for reporting issues. If one is not supplied one is generated.</dd>
         </dl>
-        <h2>OpenAPI:</h2>
+        <h2><a href="openapi">OpenAPI</a>:</h2>
         <pre id="openapi">[loading]</pre>
         <hr>
         ©DBC

@@ -30,6 +30,5 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 public class WorkPresentationResponse {
 
     public WorkInformation work;
-    public String workId;
     public String trackingId;
 }
