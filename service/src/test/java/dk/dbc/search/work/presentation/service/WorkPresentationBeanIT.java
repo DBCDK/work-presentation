@@ -22,14 +22,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import dk.dbc.search.work.presentation.api.jpa.RecordEntity;
 import dk.dbc.search.work.presentation.api.jpa.WorkContainsEntity;
-import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
+import dk.dbc.search.work.presentation.service.response.WorkInformationResponse;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.sql.Timestamp;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.stream.Stream;
@@ -41,7 +40,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -63,8 +61,9 @@ public class WorkPresentationBeanIT extends JpaBase {
         withConfigEnv().jpaWithBeans(bf -> {
             WorkPresentationBean wpb = bf.getWorkPresentationBean();
             try {
-                WorkInformation actual = wpb.processRequest(args.workId);
-                WorkInformation expected = O.readValue(dir.resolve("expected.json").toFile(), WorkInformation.class);
+                WorkInformationResponse actual = wpb.processRequest(args.workId);
+                System.out.println("actual = " + actual);
+                WorkInformationResponse expected = O.readValue(dir.resolve("expected.json").toFile(), WorkInformationResponse.class);
                 O.writeValue(dir.resolve("actual.json").toFile(), actual);
                 if (!expected.equals(actual)) {
                     System.out.println("Actual:");
