@@ -27,7 +27,6 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -59,7 +58,6 @@ public class RecordEntityIT extends JpaBase<Object> {
         wi.creators = Arrays.asList("hans andersen");
         wi.subjects = Collections.singleton("emne");
         wi.description = "beskrivelse";
-        wi.manifestationInformationList = ml;
         Map<String, Set<ManifestationInformation>> unitInfo = new HashMap<>();
         unitInfo.put("unitId", ml);
         wi.dbUnitInformation = unitInfo;
