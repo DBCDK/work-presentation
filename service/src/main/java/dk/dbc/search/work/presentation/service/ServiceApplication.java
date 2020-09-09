@@ -34,17 +34,9 @@ public class ServiceApplication extends Application {
     private static final Set<Class<?>> CLASSES = new HashSet<Class<?>>(Arrays.asList(
             WorkPresentationBean.class
     ));
-    private static final Set<Object> SINGLETONS = new HashSet(Arrays.asList(
-            new JsonMapperProvider()
-    ));
 
     @Override
     public Set<Class<?>> getClasses() {
         return CLASSES;
-    }
-
-    @Override
-    public Set<Object> getSingletons() {
-        return SINGLETONS;
     }
 }
