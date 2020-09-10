@@ -29,14 +29,6 @@ public class WorkInformation implements Serializable {
     @JsonProperty("dbUnits")
     public Map<String, Set<ManifestationInformation>> dbUnitInformation;
 
-    public WorkInformation() {
-    }
-
-    // used for integration test
-    public WorkInformation(String workId) {
-        this.workId = workId;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

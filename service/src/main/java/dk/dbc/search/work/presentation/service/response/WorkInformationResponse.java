@@ -66,7 +66,7 @@ public class WorkInformationResponse {
         wir.creators = wi.creators;
         wir.description = wi.description;
         wir.subjects = wi.subjects;
-        // wir.records is computed elsewhere
+        // wir.records is computed in FilterResult.processWork()
         return wir;
     }
 

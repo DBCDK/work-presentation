@@ -39,6 +39,7 @@ public class BeanFactory {
     private final Config config;
 
     private final Bean<WorkPresentationBean> wpb = new Bean<>(new WorkPresentationBean(), this::setupWorkPresentationBean);
+    private final Bean<FilterResult> fr = new Bean<>(new FilterResult(), this::setupFilterResult);
 
     public BeanFactory(Map<String, String> envs, EntityManager em, DataSource dataSource) {
         this.em = em;
@@ -66,12 +67,20 @@ public class BeanFactory {
         return config;
     }
 
+    public FilterResult getFilterResult() {
+        return fr.get();
+    }
+
+    private void setupFilterResult(FilterResult bean) {
+    }
+
     public WorkPresentationBean getWorkPresentationBean() {
         return wpb.get();
     }
 
     private void setupWorkPresentationBean(WorkPresentationBean bean) {
         bean.em = em;
+        bean.filterResult = fr.get();
     }
 
     private static Map<String, String> config(String... envs) {

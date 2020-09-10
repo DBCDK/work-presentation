@@ -24,12 +24,10 @@ import dk.dbc.commons.mdc.LogAs;
 import dk.dbc.search.work.presentation.api.jpa.RecordEntity;
 import dk.dbc.search.work.presentation.api.jpa.WorkContainsEntity;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
-import dk.dbc.search.work.presentation.service.response.ManifestationInformationResponse;
 import dk.dbc.search.work.presentation.service.response.WorkInformationResponse;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.stream.Collectors;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.GET;
@@ -81,13 +79,16 @@ public class WorkPresentationBean {
     @PersistenceContext(unitName = "workPresentation_PU")
     public EntityManager em;
 
+    @Inject
+    public FilterResult filterResult;
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Timed(reusable = true)
     @Operation(
             summary = "Retrieve a work structure",
             description = "This operation produces a work structure, for a given identifier." +
-                          " The work structure contains metadata from a seleted manifestation," +
+                          " The work structure contains metadata from a selected manifestation," +
                           " and all the manifestations that this work covers." +
                           " These are not ordered/grouped by anything.")
     @APIResponses({
@@ -109,7 +110,8 @@ public class WorkPresentationBean {
                    description = "The identifier for the requested work. Typically 'work-of:...'",
                    required = true),
         @Parameter(name = "trackingId",
-                   description = "Useful for tracking a request in log files"),})
+                   description = "Useful for tracking a request in log files")
+    })
     public Response get(@LogAs("workId") @QueryParam("workId") String workId,
                         @LogAs("trackingId") @GenerateTrackingId @QueryParam("trackingId") String trackingId,
                         @Context UriInfo uriInfo) {
@@ -150,7 +152,7 @@ public class WorkPresentationBean {
     WorkInformationResponse processRequest(String workId) {
         RecordEntity work = RecordEntity.readOnlyFrom(em, workId);
         if (work != null) {
-            return prepareWork(work.getContent());
+            return filterResult.processWork(work.getContent());
         }
         if (workId.startsWith(WORK_OF)) {
             WorkContainsEntity wc = WorkContainsEntity.readOnlyFrom(em, workId.substring(WORK_OF_LEN));
@@ -162,30 +164,5 @@ public class WorkPresentationBean {
             throw new NewWorkIdException(work.getPersistentWorkId());
         }
         throw new NotFoundException();
-    }
-
-    /**
-     * Prepare/rewrite work information to presentation format
-     * <p>
-     * Tasks:
-     * <p>
-     * Filter what is visible to the user (TODO)
-     * <p>
-     * Flatten the unit to manifestation tree
-     *
-     * @param work the work as stored in the database
-     * @return the work as presented to the user
-     */
-    private WorkInformationResponse prepareWork(WorkInformation work) {
-        log.debug("work = {}", work);
-        WorkInformationResponse wir = WorkInformationResponse.from(work);
-
-        // Flatten the manifestations
-        wir.records = work.dbUnitInformation.values()
-                .stream()
-                .flatMap(Collection::stream)
-                .map(ManifestationInformationResponse::from)
-                .collect(Collectors.toSet());
-        return wir;
     }
 }
