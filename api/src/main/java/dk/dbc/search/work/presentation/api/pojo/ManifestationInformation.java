@@ -25,7 +25,6 @@ public class ManifestationInformation implements Serializable {
 
     public String description;
 
-    @JsonProperty("subjects")
     public List<String> subjects;
 
     @JsonProperty("types")

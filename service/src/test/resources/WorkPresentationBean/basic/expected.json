@@ -9,7 +9,7 @@
             "title": "fjeldsange",
             "fullTitle": "Fjeldsange : for 1 stemme og klaver",
             "creators": [ "yrjö kilpinen" ],
-            "pid": "870970-basis:00010529",
+            "id": "870970-basis:00010529",
             "subjects": [ ],
             "types": [ "Node" ]
         },
@@ -17,7 +17,7 @@
             "title": "fjeldsange",
             "fullTitle": "Fjeldsange : for 1 stemme og klaver",
             "creators": [ ],
-            "pid": "800010-katalog:99122054413305763",
+            "id": "800010-katalog:99122054413305763",
             "subjects": [ ],
             "types": [ "Node" ]
         },
@@ -25,7 +25,7 @@
             "title": "fjeldsange",
             "fullTitle": "Fjeldsange : opus 52-54",
             "creators": [ "yrjö kilpinen" ],
-            "pid": "830520-katalog:000025251",
+            "id": "830520-katalog:000025251",
             "subjects": [ ],
             "types": [ "Node" ]
         },
@@ -33,7 +33,7 @@
             "title": "fjeldsange",
             "fullTitle": "Fjeldsange : for 1 stemme og klaver",
             "creators": [ "yrjö kilpinen" ],
-            "pid": "710100-katalog:00010529",
+            "id": "710100-katalog:00010529",
             "subjects": [ ],
             "types": [ "Node" ]
         },
@@ -41,7 +41,7 @@
             "title": "fjeldsange",
             "fullTitle": "Fjeldsange : for 1 stemme og klaver",
             "creators": [ "yrjö kilpinen" ],
-            "pid": "763000-katalog:00010529",
+            "id": "763000-katalog:00010529",
             "subjects": [ ],
             "types": [ "Node" ]
         }

@@ -20,27 +20,14 @@ public class WorkInformation implements Serializable {
 
     public String fullTitle;
 
-    @JsonProperty("creators")
     public List<String> creators;
 
     public String description;
 
-    @JsonProperty("subjects")
     public Set<String> subjects;
 
     @JsonProperty("dbUnits")
     public Map<String, Set<ManifestationInformation>> dbUnitInformation;
-
-    @JsonProperty("records")
-    public Set<ManifestationInformation> manifestationInformationList;
-
-    public WorkInformation() {
-    }
-
-    // used for integration test
-    public WorkInformation(String workId) {
-        this.workId = workId;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -53,13 +40,12 @@ public class WorkInformation implements Serializable {
                 Objects.equals(creators, that.creators) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(subjects, that.subjects) &&
-                Objects.equals(dbUnitInformation, that.dbUnitInformation) &&
-                Objects.equals(manifestationInformationList, that.manifestationInformationList);
+                Objects.equals(dbUnitInformation, that.dbUnitInformation);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(workId, title, fullTitle, creators, description, subjects, dbUnitInformation, manifestationInformationList);
+        return Objects.hash(workId, title, fullTitle, creators, description, subjects, dbUnitInformation);
     }
 
     @Override
@@ -72,18 +58,6 @@ public class WorkInformation implements Serializable {
                 ", description='" + description + '\'' +
                 ", subjects='" + subjects + '\'' +
                 ", dbUnitInformation=" + dbUnitInformation +
-                ", manifestationInformationList=" + manifestationInformationList +
                 '}';
-    }
-
-    /**
-     * We do not want to expose the unit information in the service, so this method should
-     * be called before sending WorkInformation objects as responses in a service.
-     * @param workInformation the work information we wish to return
-     * @return the input object, but with the unit information set to null.
-     */
-    public static WorkInformation prepareResponse(WorkInformation workInformation) {
-        workInformation.dbUnitInformation = null;
-        return workInformation;
     }
 }

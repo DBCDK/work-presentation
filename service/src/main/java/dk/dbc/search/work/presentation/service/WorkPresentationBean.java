@@ -18,15 +18,16 @@
  */
 package dk.dbc.search.work.presentation.service;
 
+import dk.dbc.search.work.presentation.service.response.WorkPresentationResponse;
 import dk.dbc.commons.mdc.GenerateTrackingId;
 import dk.dbc.commons.mdc.LogAs;
 import dk.dbc.search.work.presentation.api.jpa.RecordEntity;
 import dk.dbc.search.work.presentation.api.jpa.WorkContainsEntity;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
-import java.util.Collection;
+import dk.dbc.search.work.presentation.service.response.WorkInformationResponse;
 import java.util.Collections;
-import java.util.stream.Collectors;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.GET;
@@ -45,6 +46,7 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.info.Contact;
 import org.eclipse.microprofile.openapi.annotations.info.Info;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameters;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -66,8 +68,7 @@ import org.slf4j.LoggerFactory;
                 title = "Work Presentation Service",
                 version = "1.0",
                 description = "This service allows for fetching of entire work structures.",
-                contact = @Contact(url = "mailto:dbc@dbc.dk")
-        ))
+                contact = @Contact(url = "mailto:dbc@dbc.dk")))
 public class WorkPresentationBean {
 
     private static final Logger log = LoggerFactory.getLogger(WorkPresentationBean.class);
@@ -78,13 +79,16 @@ public class WorkPresentationBean {
     @PersistenceContext(unitName = "workPresentation_PU")
     public EntityManager em;
 
+    @Inject
+    public FilterResult filterResult;
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Timed(reusable = true)
     @Operation(
             summary = "Retrieve a work structure",
             description = "This operation produces a work structure, for a given identifier." +
-                          " The work structure contains metadata from a seleted manifestation," +
+                          " The work structure contains metadata from a selected manifestation," +
                           " and all the manifestations that this work covers." +
                           " These are not ordered/grouped by anything.")
     @APIResponses({
@@ -93,7 +97,7 @@ public class WorkPresentationBean {
                      description = "A work with the given workId has been located",
                      content = @Content(
                              mediaType = MediaType.APPLICATION_JSON,
-                             example = RESPONSE_EXAMPLE)),
+                             schema = @Schema(ref = WorkPresentationResponse.NAME))),
         @APIResponse(name = "Content Moved",
                      responseCode = "301",
                      description = "If a workId has been updated this will redirect to the correct workId"),
@@ -106,7 +110,8 @@ public class WorkPresentationBean {
                    description = "The identifier for the requested work. Typically 'work-of:...'",
                    required = true),
         @Parameter(name = "trackingId",
-                   description = "Useful for tracking a request in log files"),})
+                   description = "Useful for tracking a request in log files")
+    })
     public Response get(@LogAs("workId") @QueryParam("workId") String workId,
                         @LogAs("trackingId") @GenerateTrackingId @QueryParam("trackingId") String trackingId,
                         @Context UriInfo uriInfo) {
@@ -144,10 +149,10 @@ public class WorkPresentationBean {
      * @throws NewWorkIdException if the work had become part of another
      * @throws NotFoundException  if the work couldn't be found
      */
-    WorkInformation processRequest(String workId) {
+    WorkInformationResponse processRequest(String workId) {
         RecordEntity work = RecordEntity.readOnlyFrom(em, workId);
         if (work != null) {
-            return prepareWork(work.getContent());
+            return filterResult.processWork(work.getContent());
         }
         if (workId.startsWith(WORK_OF)) {
             WorkContainsEntity wc = WorkContainsEntity.readOnlyFrom(em, workId.substring(WORK_OF_LEN));
@@ -160,60 +165,4 @@ public class WorkPresentationBean {
         }
         throw new NotFoundException();
     }
-
-    /**
-     * Prepare/rewrite work information to presentation format
-     * <p>
-     * Tasks:
-     * <p>
-     * Filter what is visible to the user (TODO)
-     * <p>
-     * Flatten the unit to manifestation tree
-     *
-     * @param work the work as stored in the database
-     * @return the work as presented to the user
-     */
-    private WorkInformation prepareWork(WorkInformation work) {
-        log.debug("work = {}", work);
-
-        // Flatten the manifestations
-        work.manifestationInformationList = work.dbUnitInformation.values()
-                .stream()
-                .flatMap(Collection::stream)
-                .collect(Collectors.toSet());
-        work.dbUnitInformation = null;
-        return work;
-    }
-
-    // This is the content of src/test/resources/response_example.json
-    // This needs to be defined at compile time, hence the copy and not a loaded resource
-    private static final String RESPONSE_EXAMPLE =
-            "{\n" +
-            "    \"trackingId\": \"...\",\n" +
-            "    \"work\": {\n" +
-            "        \"workId\": \"work-of:something\",\n" +
-            "        \"title\": \"The Full Story\",\n" +
-            "        \"fullTitle\": \"The Full Story, and all the detours.\",\n" +
-            "        \"creators\": [ \"Her\", \"Him\" ],\n" +
-            "        \"subjects\": [ \"travel\" ],\n" +
-            "        \"records\": [\n" +
-            "            {\n" +
-            "                \"title\": \"The Full Story\",\n" +
-            "                \"fullTitle\": \"The Full Story, and all the detours.\",\n" +
-            "                \"creators\": [ \"Her\", \"Him\" ],\n" +
-            "                \"pid\": \"xxx\",\n" +
-            "                \"subjects\": [ \"travel\" ],\n" +
-            "                \"types\": [ \"Book\" ]\n" +
-            "            },\n" +
-            "            {\n" +
-            "                \"title\": \"The Full Story\",\n" +
-            "                \"fullTitle\": \"The Full Story, and all the detours.\",\n" +
-            "                \"creators\": [ \"Her\", \"Him\", \"The-Reader\" ],\n" +
-            "                \"pid\": \"yyy\",\n" +
-            "                \"subjects\": [ \"travel\" ],\n" +
-            "                \"types\": [ \"Audio-Book\" ]\n" +
-            "            }\n" +
-            "        ]\n" +
-            "    }\n" +
-            "}";
 }
