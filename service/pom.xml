@@ -30,6 +30,13 @@
 
         <dependency>
             <groupId>dk.dbc</groupId>
+            <artifactId>vipcore</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>vipcore-client</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dk.dbc</groupId>
             <artifactId>dbc-commons-mdc</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>

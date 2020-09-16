@@ -73,6 +73,12 @@ public class Config {
         return httpClient;
     }
 
+    public Client getVipCoreHttpClient(String trackingId) {
+        return getHttpClient()
+                .register((ClientRequestFilter) (ClientRequestContext context) ->
+                        context.getHeaders().putSingle("X-DBCTrackingId", trackingId));
+    }
+
     public UriBuilder getVipCore() {
         return vipCore.clone();
     }
