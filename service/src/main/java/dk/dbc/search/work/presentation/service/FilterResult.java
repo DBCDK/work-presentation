@@ -21,9 +21,14 @@ package dk.dbc.search.work.presentation.service;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.service.response.ManifestationInformationResponse;
 import dk.dbc.search.work.presentation.service.response.WorkInformationResponse;
+import dk.dbc.search.work.presentation.service.solr.Solr;
+import java.util.AbstractMap;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,10 +50,13 @@ public class FilterResult {
      * <p>
      * Flatten the unit to manifestation tree
      *
-     * @param work the work as stored in the database
+     * @param work       the work as stored in the database
+     * @param agencyId   the 1st part of the filter specification
+     * @param profile    The 2nd part of the filter specification
+     * @param trackingId The tracking id for the request
      * @return the work as presented to the user
      */
-    public WorkInformationResponse processWork(WorkInformation work) {
+    public WorkInformationResponse processWork(WorkInformation work, String agencyId, String profile, String trackingId) {
         log.debug("work = {}", work);
         WorkInformationResponse wir = WorkInformationResponse.from(work);
         // Flatten the manifestations

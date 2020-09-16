@@ -22,24 +22,28 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
- * Data structure for returning a response to the user
+ * Error response
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
 @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-@Schema(name = WorkPresentationResponse.NAME)
-public class WorkPresentationResponse {
+@Schema(name = ErrorResponse.NAME)
+public class ErrorResponse {
 
-    public static final String NAME = "answer";
+    public static final String NAME = "error";
 
-    @Schema(required = true, ref = WorkInformationResponse.NAME)
-    public WorkInformationResponse work;
+    @Schema(ref = ErrorCode.NAME)
+    public ErrorCode errorCode;
+
+    @Schema(example = "? is not allowed")
+    public String message;
 
     @Schema(example = "some-uuid")
     public String trackingId;
 
-    @Override
-    public String toString() {
-        return "WorkPresentationResponse{" + work + '}';
+    public ErrorResponse(ErrorCode errorCode, String message, String trackingId) {
+        this.errorCode = errorCode;
+        this.message = message;
+        this.trackingId = trackingId;
     }
 }
