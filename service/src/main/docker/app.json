@@ -8,8 +8,20 @@
         }
     },
     "hazelcast": {
-        "clusterName": "${project.artifactId}-${SYSTEM_NAME}",
+        "clusterName": "${project.parent.artifactId}-${SYSTEM_NAME}",
         "cacheConfig": {
+            "*": {
+                "timeout": "10",
+                "timeUnit": "Minutes"
+            },
+            "vip-core": {
+                "timeout": "3",
+                "timeUnit": "Hours"
+            },
+            "vip-core-error": {
+                "timeout": "3",
+                "timeUnit": "Minutes"
+            }
         }
     }
 }
