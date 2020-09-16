@@ -1,0 +1,17 @@
+{
+  "id": "c84b1dc4-3195-36da-afd1-3a063d94bced",
+  "request": {
+    "url": "/vip-core/api/profileservice/search/100200/not-really-a-profile",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "body-profileservice_no-such-profile.json",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/json",
+      "X-Frame-Options": "SAMEORIGIN"
+    }
+  },
+  "uuid": "c84b1dc4-3195-36da-afd1-3a063d94bced"
+}

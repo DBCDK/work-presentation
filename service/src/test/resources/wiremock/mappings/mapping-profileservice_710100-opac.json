@@ -1,0 +1,17 @@
+{
+  "id": "b0144bca-6341-3e2e-a666-48b8a7992da5",
+  "request": {
+    "url": "/vip-core/api/profileservice/search/710100/opac",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "body-profileservice_710100-opac.json",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/json",
+      "X-Frame-Options": "SAMEORIGIN"
+    }
+  },
+  "uuid": "b0144bca-6341-3e2e-a666-48b8a7992da5"
+}

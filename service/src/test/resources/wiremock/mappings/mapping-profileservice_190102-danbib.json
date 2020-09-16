@@ -1,0 +1,17 @@
+{
+  "id": "dbaae670-80e8-3e65-aa66-b7707a4ead0f",
+  "request": {
+    "url": "/vip-core/api/profileservice/search/190102/danbib",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "body-profileservice_190102-danbib.json",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/json",
+      "X-Frame-Options": "SAMEORIGIN"
+    }
+  },
+  "uuid": "dbaae670-80e8-3e65-aa66-b7707a4ead0f"
+}

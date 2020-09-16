@@ -18,6 +18,7 @@
  */
 package dk.dbc.search.work.presentation.service;
 
+import dk.dbc.search.work.presentation.service.solr.Solr;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJBException;
@@ -30,6 +31,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.UriBuilder;
+import org.apache.solr.client.solrj.SolrClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,8 +47,10 @@ public class Config {
     private static final Logger log = LoggerFactory.getLogger(Config.class);
 
     private final Map<String, String> env;
+    private String appId;
     private Client httpClient;
     private UriBuilder vipCore;
+    private SolrClient solrClient;
 
     public Config() {
         this(System.getenv());
@@ -66,7 +70,13 @@ public class Config {
                         context.getHeaders().putSingle("User-Agent", userAgent)
                 )
                 .build();
+        this.appId = getOrFail("SOLR_APPID");
         this.vipCore = UriBuilder.fromPath(getOrFail("VIP_CORE_URL"));
+        this.solrClient = Solr.makeSolrClient(getOrFail("COREPO_SOLR_URL"));
+    }
+
+    public String getAppId() {
+        return appId;
     }
 
     public Client getHttpClient() {
@@ -81,6 +91,10 @@ public class Config {
 
     public UriBuilder getVipCore() {
         return vipCore.clone();
+    }
+
+    public SolrClient getSolrClient() {
+        return solrClient;
     }
 
     private String getOrFail(String var) {

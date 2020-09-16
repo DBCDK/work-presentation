@@ -1,0 +1,17 @@
+{
+  "id": "e86a2864-5659-39fc-9246-bdd42ba43100",
+  "request": {
+    "url": "/vip-core/api/profileservice/search/000000/test",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "body-profileservice_not-such-agency.json",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/json",
+      "X-Frame-Options": "SAMEORIGIN"
+    }
+  },
+  "uuid": "e86a2864-5659-39fc-9246-bdd42ba43100"
+}

@@ -1,0 +1,25 @@
+{
+    "id": "370fd8c6-7575-3536-9218-7d378da59db5",
+    "request": {
+        "urlPath": "/corepo-solr/select",
+        "method": "GET",
+        "queryParameters": {
+            "fq": {
+                "contains": "800000-danbib",
+                "doesNotContain": "710100-katalog"
+            }
+        }
+    },
+    "response": {
+        "status": 200,
+        "bodyFileName": "body-solr-190102.bin",
+        "headers": {
+            "Content-Security-Policy": "default-src 'none'; base-uri 'none'; connect-src 'self'; form-action 'self'; font-src 'self'; frame-ancestors 'none'; img-src 'self'; media-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; worker-src 'self';",
+            "X-Content-Type-Options": "nosniff",
+            "X-Frame-Options": "SAMEORIGIN",
+            "X-XSS-Protection": "1; mode=block",
+            "Content-Type": "application/octet-stream"
+        }
+    },
+    "uuid": "370fd8c6-7575-3536-9218-7d378da59db5"
+}

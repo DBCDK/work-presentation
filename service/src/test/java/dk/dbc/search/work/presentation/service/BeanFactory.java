@@ -18,6 +18,8 @@
  */
 package dk.dbc.search.work.presentation.service;
 
+import dk.dbc.search.work.presentation.service.solr.Solr;
+import dk.dbc.search.work.presentation.service.vipcore.ProfileService;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +42,8 @@ public class BeanFactory {
 
     private final Bean<WorkPresentationBean> wpb = new Bean<>(new WorkPresentationBean(), this::setupWorkPresentationBean);
     private final Bean<FilterResult> fr = new Bean<>(new FilterResult(), this::setupFilterResult);
+    private final Bean<ProfileService> ps = new Bean<>(new ProfileService(), this::setupProfileService);
+    private final Bean<Solr> solr = new Bean<>(new Solr(), this::setupSolr);
 
     public BeanFactory(Map<String, String> envs, EntityManager em, DataSource dataSource) {
         this.em = em;
@@ -51,6 +55,7 @@ public class BeanFactory {
         Map<String, String> env = new HashMap<>();
         env.putAll(config("COREPO_SOLR_URL=" + System.getenv("COREPO_SOLR_URL"),
                           "VIP_CORE_URL=" + System.getenv("VIP_CORE_URL"),
+                          "SOLR_APPID=" + "WorkPresentationIntegrationTest",
                           "SYSTEM_NAME=test")); // Default settings
         env.putAll(envs);
         Config config = new Config(env) {
@@ -74,16 +79,38 @@ public class BeanFactory {
     private void setupFilterResult(FilterResult bean) {
     }
 
+    public ProfileService getProfileService() {
+        return ps.get();
+    }
+
+    private void setupProfileService(ProfileService bean) {
+        bean.config = config;
+    }
+
+    public Solr getSolr() {
+        return solr.get();
+    }
+
+    public BeanFactory setSolr(Solr solr) {
+        this.solr.set(solr);
+        return this;
+    }
+
+    private void setupSolr(Solr bean) {
+        bean.config = config;
+        bean.profileService = getProfileService();
+    }
+
     public WorkPresentationBean getWorkPresentationBean() {
         return wpb.get();
     }
 
     private void setupWorkPresentationBean(WorkPresentationBean bean) {
         bean.em = em;
-        bean.filterResult = fr.get();
+        bean.filterResult = getFilterResult();
     }
 
-    private static Map<String, String> config(String... envs) {
+    public static Map<String, String> config(String... envs) {
         return Arrays.stream(envs)
                 .map(s -> s.split("=", 2))
                 .collect(Collectors.toMap(a -> a[0], a -> a[1]));
