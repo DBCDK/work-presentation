@@ -137,6 +137,7 @@ public class WorkPresentationBean {
             WorkPresentationResponse resp = new WorkPresentationResponse();
             resp.trackingId = trackingId;
             resp.work = processRequest(workId, agencyId, profile, trackingId);
+            log.info("WorkId: {} for: {}/{}", workId, agencyId, profile);
             return Response.ok(resp, MediaType.APPLICATION_JSON)
                     .build();
         } catch (NewWorkIdException ex) {

@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 
 /**
  * Caching interface to vip-cores profileservice endpoint
@@ -58,6 +59,7 @@ public class ProfileService {
      */
     @CacheResult(cacheName = "vip-core",
                  exceptionCacheName = "vip-core-error")
+    @Timed(reusable = true)
     public String filterQueryFor(@CacheKey String agencyId, @CacheKey String profile, String trackingId) {
         URI uri = config.getVipCore()
                 .path("api/profileservice/search/{agencyId}/{profile}")

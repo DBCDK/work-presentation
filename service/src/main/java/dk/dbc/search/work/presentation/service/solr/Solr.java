@@ -38,6 +38,7 @@ import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocument;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +72,7 @@ public class Solr {
      * @param trackingId                Tracking
      * @return collection of visible manifestations
      */
+    @Timed(reusable = true)
     public Set<String> getAccessibleManifestations(String workId, String agencyId, String profile, int maxExpectedManifestations, String trackingId) {
         String fileterQuery = profileService.filterQueryFor(agencyId, profile, trackingId);
         SolrClient solrClient = config.getSolrClient();
