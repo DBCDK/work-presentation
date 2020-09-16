@@ -61,6 +61,12 @@ public class WorkPresentationBeanIT extends JpaBase {
         setupTestData(dir);
         CallArguments args = O.readValue(dir.resolve("arguments.json").toFile(), CallArguments.class);
         withConfigEnv().jpaWithBeans(bf -> {
+            bf.setSolr(new Solr() {
+                @Override
+                public Set<String> getAccessibleManifestations(String workId, String agencyId, String profile, int maxExpectedManifestations, String trackingId) {
+                    return args.accessibleManifestations;
+                }
+            });
             WorkPresentationBean wpb = bf.getWorkPresentationBean();
             try {
                 WorkInformationResponse actual = wpb.processRequest(args.workId, "190102", "danbib", "track-me");

@@ -41,6 +41,9 @@ public class FilterResult {
 
     private static final Logger log = LoggerFactory.getLogger(FilterResult.class);
 
+    @Inject
+    public Solr solr;
+
     /**
      * Prepare/rewrite work information to presentation format
      * <p>
@@ -58,11 +61,30 @@ public class FilterResult {
      */
     public WorkInformationResponse processWork(WorkInformation work, String agencyId, String profile, String trackingId) {
         log.debug("work = {}", work);
+        int manifestationCount = work.dbUnitInformation.values()
+                .stream()
+                .mapToInt(Set::size)
+                .sum();
+        Set<String> visibleManifestations = solr.getAccessibleManifestations(work.workId, agencyId, profile, manifestationCount, trackingId);
+
+        // Filtered manifests
+        Map<String, Set<ManifestationInformationResponse>> dbUnitInformation =
+                work.dbUnitInformation.entrySet().stream()
+                        .map(e -> new AbstractMap.SimpleEntry<>(
+                                e.getKey(),
+                                e.getValue().stream()
+                                        .filter(m -> visibleManifestations.contains(m.manifestationId))
+                                        .map(ManifestationInformationResponse::from)
+                                        .collect(Collectors.toSet())))
+                        .filter(e -> !e.getValue().isEmpty())
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        log.debug("dbUnitInformation = {}", dbUnitInformation);
+
         WorkInformationResponse wir = WorkInformationResponse.from(work);
         // Flatten the manifestations
-        wir.records = work.dbUnitInformation.values().stream()
+        wir.records = dbUnitInformation.values().stream()
                 .flatMap(Collection::stream)
-                .map(ManifestationInformationResponse::from)
                 .collect(Collectors.toSet());
         return wir;
     }

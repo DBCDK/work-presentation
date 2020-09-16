@@ -77,6 +77,7 @@ public class BeanFactory {
     }
 
     private void setupFilterResult(FilterResult bean) {
+        bean.solr = getSolr();
     }
 
     public ProfileService getProfileService() {
