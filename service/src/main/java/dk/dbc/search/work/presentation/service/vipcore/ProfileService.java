@@ -32,6 +32,8 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import org.eclipse.microprofile.metrics.annotation.Timed;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Caching interface to vip-cores profileservice endpoint
@@ -39,6 +41,8 @@ import org.eclipse.microprofile.metrics.annotation.Timed;
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
 public class ProfileService {
+
+    private static final Logger log = LoggerFactory.getLogger(ProfileService.class);
 
     private static final ObjectMapper O = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
@@ -73,13 +77,16 @@ public class ProfileService {
                 switch (resp.getError()) {
                     case AGENCY_NOT_FOUND:
                     case PROFILE_NOT_FOUND:
+                        log.info("Failed vip-core request: {}, error: {}", uri, resp.getError());
                         throw new NoSuchProfileException(agencyId, profile);
                     default:
+                        log.warn("Failed vip-core request: {}, error: {}", uri, resp.getError());
                         throw new BadRequestException("Error: " + resp.getError().value());
                 }
             }
             return resp.getFilterQuery();
         } catch (IOException ex) {
+            log.warn("Failed vip-core request: {}, error: {}", uri, ex.getMessage());
             throw new BadRequestException(ex);
         }
     }
