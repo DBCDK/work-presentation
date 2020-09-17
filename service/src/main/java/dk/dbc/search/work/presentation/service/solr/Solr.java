@@ -74,14 +74,14 @@ public class Solr {
      */
     @Timed(reusable = true)
     public Set<String> getAccessibleManifestations(String workId, String agencyId, String profile, int maxExpectedManifestations, String trackingId) {
-        String fileterQuery = profileService.filterQueryFor(agencyId, profile, trackingId);
+        String filterQuery = profileService.filterQueryFor(agencyId, profile, trackingId);
         SolrClient solrClient = config.getSolrClient();
         int requestedRows = 16 + maxExpectedManifestations + maxExpectedManifestations / 16;  // Room in resultset for unexpected manifestations
         try {
             HashSet<String> manifestationIds = new HashSet<>();
             SolrCallback callback = new SolrCallback(manifestationIds);
             SolrQuery query = new SolrQuery(WORK_ID_FIELD + ":" + ClientUtils.escapeQueryChars(workId));
-            query.addFilterQuery(fileterQuery);
+            query.addFilterQuery(filterQuery);
             query.add("appId", config.getAppId());
             query.setFields(MANIFESTATION_ID);
             int start = 0;
@@ -97,7 +97,7 @@ public class Solr {
                     log.debug("manifestationIds.size() = {}", manifestationIds.size());
                     return manifestationIds;
                 }
-                log.warn("Got: {} more rows than expected for request starting at: {} expteced no more that: {}", extraRows, start, requestedRows);
+                log.warn("Got: {} more rows than expected for request starting at: {} expected no more than: {}", extraRows, start, requestedRows);
                 log.debug("manifestationIds.size() = {}", manifestationIds.size());
                 start += requestedRows; // Move starting point in resultset beyond those seen
                 requestedRows = extraRows + 16; // Estimate how many rows to fetch in next loop

@@ -150,6 +150,11 @@ public class WorkPresentationBean {
             });
             return Response.status(Response.Status.MOVED_PERMANENTLY)
                     .location(ub.build()).build();
+        } catch (NotFoundException ex) {
+            log.info("Not found: {}", workId);
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new ErrorResponse(ErrorCode.NOT_FOUND_ERROR, ex.getMessage(), trackingId))
+                    .build();
         } catch (NoSuchProfileException ex) {
             log.warn("Profile not found: {}", ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST)
@@ -181,12 +186,12 @@ public class WorkPresentationBean {
         if (workId.startsWith(WORK_OF)) {
             WorkContainsEntity wc = WorkContainsEntity.readOnlyFrom(em, workId.substring(WORK_OF_LEN));
             if (wc == null)
-                throw new NotFoundException();
+                throw new NotFoundException("No Such Work");
             work = RecordEntity.readOnlyFromCorepoWorkId(em, wc.getCorepoWorkId());
             if (work == null)
                 throw new NotFoundException();
             throw new NewWorkIdException(work.getPersistentWorkId());
         }
-        throw new NotFoundException();
+        throw new NotFoundException("No Such Work");
     }
 }

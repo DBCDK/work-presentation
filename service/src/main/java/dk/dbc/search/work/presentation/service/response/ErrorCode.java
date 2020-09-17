@@ -31,7 +31,10 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 public enum ErrorCode {
 
     @Schema(description = "Profile name supplied was invalid for that agency")
-    PROFILE_ERROR;
+    PROFILE_ERROR,
+
+    @Schema(description = "Requested work doesn't match a known work")
+    NOT_FOUND_ERROR;
 
     public static final String NAME = "errorcode";
 }
