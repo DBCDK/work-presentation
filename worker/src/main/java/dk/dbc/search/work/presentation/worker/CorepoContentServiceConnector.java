@@ -110,7 +110,7 @@ public class CorepoContentServiceConnector {
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{id}/datastreams/{stream}")
                 .build(id, stream);
-        log.debug("Fetching {} to DataStreamMetaData object", id);
+        log.debug("Fetching {}/{} to DataStreamMetaData object", id, stream);
         return callUrl(uri, DataStreamMetaData::new);
     }
 
@@ -142,7 +142,7 @@ public class CorepoContentServiceConnector {
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{id}/datastreams/{stream}/content")
                 .build(id, stream);
-        log.debug("Fetching {} to String", id);
+        log.debug("Fetching {}/{} to String", id, stream);
         return callUrl(uri, is -> IOUtils.toString(is, UTF_8));
     }
 
