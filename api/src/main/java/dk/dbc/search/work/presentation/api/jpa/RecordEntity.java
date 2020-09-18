@@ -155,6 +155,7 @@ public class RecordEntity implements Serializable {
     public void delete() {
         if (!persist) {
             em.remove(this);
+            em.flush();
         }
         persist = true;
     }
