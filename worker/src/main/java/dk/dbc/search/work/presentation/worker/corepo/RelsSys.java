@@ -43,6 +43,13 @@ public class RelsSys {
     private final boolean primary;
     private final String id;
 
+    public RelsSys(String parent, List<String> children, boolean primary, String id) {
+        this.parent = parent;
+        this.children = children;
+        this.primary = primary;
+        this.id = id;
+    }
+
     public RelsSys(InputStream is) {
         SimpleFieldsWithId fields = new SimpleFieldsWithId(is);
         this.id = fields.getId();
