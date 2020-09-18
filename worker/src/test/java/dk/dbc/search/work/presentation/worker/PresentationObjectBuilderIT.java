@@ -19,8 +19,14 @@
 package dk.dbc.search.work.presentation.worker;
 
 import dk.dbc.search.work.presentation.api.jpa.RecordEntity;
+import dk.dbc.search.work.presentation.worker.corepo.DataStreamMetaData;
+import dk.dbc.search.work.presentation.worker.corepo.DataStreams;
+import dk.dbc.search.work.presentation.worker.corepo.ObjectMetaData;
+import dk.dbc.search.work.presentation.worker.corepo.RelsExt;
+import dk.dbc.search.work.presentation.worker.corepo.RelsSys;
 import dk.dbc.search.work.presentation.worker.tree.WorkTree;
 import java.time.Instant;
+import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.Matchers.*;
@@ -101,4 +107,77 @@ public class PresentationObjectBuilderIT extends JpaBase {
             assertThat(countWorkContainsEntries(em), is(0));
         });
     }
+
+    @Test
+    public void testNewOwner() throws Exception {
+        System.out.println("testNewOwner");
+
+        // work:62 limited to one unit
+        withConfigEnv()
+                .jpaWithBeans(beanFactory -> {
+                    CorepoContentServiceConnector real = beanFactory.getCorepoContentService();
+                    CorepoContentServiceConnector mock = new CorepoContentServiceConnector() {
+
+                        @Override
+                        public RelsSys relsSys(String id) {
+                            switch (id) {
+                                case "work:62":
+                                    return new RelsSys(null, Arrays.asList("unit:2"), true, id);
+                                case "unit:2":
+                                    return new RelsSys("work:62", Arrays.asList("830520-katalog:000025251"), true, id);
+                                case "830520-katalog:000025251":
+                                    return new RelsSys("unit:2", Arrays.asList(), true, id);
+                                default:
+                                    throw new AssertionError();
+                            }
+                        }
+
+                        @Override
+                        public String datastreamContent(String id, String stream) {
+                            return real.datastreamContent(id, stream);
+                        }
+
+                        @Override
+                        public DataStreams datastreams(String id) {
+                            return real.datastreams(id);
+                        }
+
+                        @Override
+                        public DataStreamMetaData datastreamMetaData(String id, String stream) {
+                            return real.datastreamMetaData(id, stream);
+                        }
+
+                        @Override
+                        public ObjectMetaData objectMetaData(String id) {
+                            return real.objectMetaData(id);
+                        }
+
+                        @Override
+                        public RelsExt relsExt(String id) {
+                            return real.relsExt(id);
+                        }
+                    };
+                    beanFactory.withCorepoContentServiceConnector(mock);
+
+                    PresentationObjectBuilder bean = beanFactory.getPresentationObjectBuilder();
+                    bean.process("work:62");
+                });
+
+        jpa(em -> {
+            assertThat(RecordEntity.readOnlyFrom(em, "work-of:830520-katalog:000025251"), notNullValue());
+
+        });
+
+        // Full work:62
+        withConfigEnv()
+                .jpaWithBeans(beanFactory -> {
+                    PresentationObjectBuilder bean = beanFactory.getPresentationObjectBuilder();
+                    bean.process("work:62");
+                });
+        jpa(em -> {
+            assertThat(RecordEntity.readOnlyFrom(em, "work-of:830520-katalog:000025251"), nullValue());
+            assertThat(RecordEntity.readOnlyFrom(em, "work-of:870970-basis:00010529"), notNullValue());
+        });
+    }
+
 }
