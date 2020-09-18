@@ -24,6 +24,7 @@ import dk.dbc.search.work.presentation.api.jpa.RecordEntity;
 import dk.dbc.search.work.presentation.api.jpa.WorkContainsEntity;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.service.response.WorkInformationResponse;
+import dk.dbc.search.work.presentation.service.solr.Solr;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -31,6 +32,7 @@ import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -59,9 +61,15 @@ public class WorkPresentationBeanIT extends JpaBase {
         setupTestData(dir);
         CallArguments args = O.readValue(dir.resolve("arguments.json").toFile(), CallArguments.class);
         withConfigEnv().jpaWithBeans(bf -> {
+            bf.setSolr(new Solr() {
+                @Override
+                public Set<String> getAccessibleManifestations(String workId, String agencyId, String profile, int maxExpectedManifestations, String trackingId) {
+                    return args.accessibleManifestations;
+                }
+            });
             WorkPresentationBean wpb = bf.getWorkPresentationBean();
             try {
-                WorkInformationResponse actual = wpb.processRequest(args.workId);
+                WorkInformationResponse actual = wpb.processRequest(args.workId, "190102", "danbib", "track-me");
                 System.out.println("actual = " + actual);
                 WorkInformationResponse expected = O.readValue(dir.resolve("expected.json").toFile(), WorkInformationResponse.class);
                 O.writeValue(dir.resolve("actual.json").toFile(), actual);
@@ -116,6 +124,7 @@ public class WorkPresentationBeanIT extends JpaBase {
     public static class CallArguments {
 
         public String workId;
+        public Set<String> accessibleManifestations;
     }
 
     public static class ExpectedError {

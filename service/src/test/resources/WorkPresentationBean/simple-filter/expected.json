@@ -1,0 +1,33 @@
+{
+    "workId": "work-of:870970-basis:00010529",
+    "title": "fjeldsange",
+    "fullTitle": "Fjeldsange : for 1 stemme og klaver",
+    "creators": [ "yrjö kilpinen" ],
+    "subjects": [ ],
+    "records": [
+        {
+            "title": "fjeldsange",
+            "fullTitle": "Fjeldsange : for 1 stemme og klaver",
+            "creators": [ "yrjö kilpinen" ],
+            "id": "870970-basis:00010529",
+            "subjects": [ ],
+            "types": [ "Node" ]
+        },
+        {
+            "title": "fjeldsange",
+            "fullTitle": "Fjeldsange : for 1 stemme og klaver",
+            "creators": [ ],
+            "id": "800010-katalog:99122054413305763",
+            "subjects": [ ],
+            "types": [ "Node" ]
+        },
+        {
+            "title": "fjeldsange",
+            "fullTitle": "Fjeldsange : for 1 stemme og klaver",
+            "creators": [ "yrjö kilpinen" ],
+            "id": "763000-katalog:00010529",
+            "subjects": [ ],
+            "types": [ "Node" ]
+        }
+    ]
+}

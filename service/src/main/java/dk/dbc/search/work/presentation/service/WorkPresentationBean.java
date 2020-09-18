@@ -24,7 +24,10 @@ import dk.dbc.commons.mdc.LogAs;
 import dk.dbc.search.work.presentation.api.jpa.RecordEntity;
 import dk.dbc.search.work.presentation.api.jpa.WorkContainsEntity;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
+import dk.dbc.search.work.presentation.service.response.ErrorCode;
+import dk.dbc.search.work.presentation.service.response.ErrorResponse;
 import dk.dbc.search.work.presentation.service.response.WorkInformationResponse;
+import dk.dbc.search.work.presentation.service.vipcore.NoSuchProfileException;
 import java.util.Collections;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -98,6 +101,13 @@ public class WorkPresentationBean {
                      content = @Content(
                              mediaType = MediaType.APPLICATION_JSON,
                              schema = @Schema(ref = WorkPresentationResponse.NAME))),
+        @APIResponse(name = "Bad Request",
+                     responseCode = "400",
+                     description = "If a request has parameters that are somehow invalid",
+                     content = @Content(
+                             mediaType = MediaType.APPLICATION_JSON,
+                             schema = @Schema(ref = ErrorResponse.NAME)
+                     )),
         @APIResponse(name = "Content Moved",
                      responseCode = "301",
                      description = "If a workId has been updated this will redirect to the correct workId"),
@@ -109,16 +119,25 @@ public class WorkPresentationBean {
         @Parameter(name = "workId",
                    description = "The identifier for the requested work. Typically 'work-of:...'",
                    required = true),
+        @Parameter(name = "agencyId",
+                   description = "The agency that requested work. 6 digits",
+                   required = true),
+        @Parameter(name = "profile",
+                   description = "The name of the search profile the agency uses",
+                   required = true),
         @Parameter(name = "trackingId",
                    description = "Useful for tracking a request in log files")
     })
     public Response get(@LogAs("workId") @QueryParam("workId") String workId,
+                        @QueryParam("agencyId") String agencyId,
+                        @QueryParam("profile") String profile,
                         @LogAs("trackingId") @GenerateTrackingId @QueryParam("trackingId") String trackingId,
                         @Context UriInfo uriInfo) {
         try {
             WorkPresentationResponse resp = new WorkPresentationResponse();
             resp.trackingId = trackingId;
-            resp.work = processRequest(workId);
+            resp.work = processRequest(workId, agencyId, profile, trackingId);
+            log.info("WorkId: {} for: {}/{}", workId, agencyId, profile);
             return Response.ok(resp, MediaType.APPLICATION_JSON)
                     .build();
         } catch (NewWorkIdException ex) {
@@ -133,7 +152,14 @@ public class WorkPresentationBean {
                     .location(ub.build()).build();
         } catch (NotFoundException ex) {
             log.info("Not found: {}", workId);
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new ErrorResponse(ErrorCode.NOT_FOUND_ERROR, ex.getMessage(), trackingId))
+                    .build();
+        } catch (NoSuchProfileException ex) {
+            log.warn("Profile not found: {}", ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ErrorResponse(ErrorCode.PROFILE_ERROR, ex.getMessage(), trackingId))
+                    .build();
         } catch (Exception ex) {
             log.error("Internal exception: {}", ex.getMessage());
             log.debug("Internal exception: ", ex);
@@ -142,27 +168,30 @@ public class WorkPresentationBean {
     }
 
     /**
-     * Find a work
+     * Find a work and filter it
      *
-     * @param workId which identified to get from the database
+     * @param workId     which identified to get from the database
+     * @param agencyId   the 1st part of the filter specification
+     * @param profile    The 2nd part of the filter specification
+     * @param trackingId The tracking id for the request
      * @return WorkInformation for the work
      * @throws NewWorkIdException if the work had become part of another
      * @throws NotFoundException  if the work couldn't be found
      */
-    WorkInformationResponse processRequest(String workId) {
+    WorkInformationResponse processRequest(String workId, String agencyId, String profile, String trackingId) {
         RecordEntity work = RecordEntity.readOnlyFrom(em, workId);
         if (work != null) {
-            return filterResult.processWork(work.getContent());
+            return filterResult.processWork(work.getContent(), agencyId, profile, trackingId);
         }
         if (workId.startsWith(WORK_OF)) {
             WorkContainsEntity wc = WorkContainsEntity.readOnlyFrom(em, workId.substring(WORK_OF_LEN));
             if (wc == null)
-                throw new NotFoundException();
+                throw new NotFoundException("No Such Work");
             work = RecordEntity.readOnlyFromCorepoWorkId(em, wc.getCorepoWorkId());
             if (work == null)
                 throw new NotFoundException();
             throw new NewWorkIdException(work.getPersistentWorkId());
         }
-        throw new NotFoundException();
+        throw new NotFoundException("No Such Work");
     }
 }

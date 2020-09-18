@@ -21,9 +21,14 @@ package dk.dbc.search.work.presentation.service;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.service.response.ManifestationInformationResponse;
 import dk.dbc.search.work.presentation.service.response.WorkInformationResponse;
+import dk.dbc.search.work.presentation.service.solr.Solr;
+import java.util.AbstractMap;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +41,9 @@ public class FilterResult {
 
     private static final Logger log = LoggerFactory.getLogger(FilterResult.class);
 
+    @Inject
+    public Solr solr;
+
     /**
      * Prepare/rewrite work information to presentation format
      * <p>
@@ -45,16 +53,38 @@ public class FilterResult {
      * <p>
      * Flatten the unit to manifestation tree
      *
-     * @param work the work as stored in the database
+     * @param work       the work as stored in the database
+     * @param agencyId   the 1st part of the filter specification
+     * @param profile    The 2nd part of the filter specification
+     * @param trackingId The tracking id for the request
      * @return the work as presented to the user
      */
-    public WorkInformationResponse processWork(WorkInformation work) {
+    public WorkInformationResponse processWork(WorkInformation work, String agencyId, String profile, String trackingId) {
         log.debug("work = {}", work);
+        int manifestationCount = work.dbUnitInformation.values()
+                .stream()
+                .mapToInt(Set::size)
+                .sum();
+        Set<String> visibleManifestations = solr.getAccessibleManifestations(work.workId, agencyId, profile, manifestationCount, trackingId);
+
+        // Filtered manifests
+        Map<String, Set<ManifestationInformationResponse>> dbUnitInformation =
+                work.dbUnitInformation.entrySet().stream()
+                        .map(e -> new AbstractMap.SimpleEntry<>(
+                                e.getKey(),
+                                e.getValue().stream()
+                                        .filter(m -> visibleManifestations.contains(m.manifestationId))
+                                        .map(ManifestationInformationResponse::from)
+                                        .collect(Collectors.toSet())))
+                        .filter(e -> !e.getValue().isEmpty())
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        log.debug("dbUnitInformation = {}", dbUnitInformation);
+
         WorkInformationResponse wir = WorkInformationResponse.from(work);
         // Flatten the manifestations
-        wir.records = work.dbUnitInformation.values().stream()
+        wir.records = dbUnitInformation.values().stream()
                 .flatMap(Collection::stream)
-                .map(ManifestationInformationResponse::from)
                 .collect(Collectors.toSet());
         return wir;
     }

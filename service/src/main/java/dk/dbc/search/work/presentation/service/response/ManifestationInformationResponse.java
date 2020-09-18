@@ -96,4 +96,8 @@ public class ManifestationInformationResponse {
         return Objects.hash(id, title, fullTitle, creators, description, subjects, types);
     }
 
+    @Override
+    public String toString() {
+        return "ManifestationInformationResponse{" + "id=" + id + '}';
+    }
 }

@@ -7,6 +7,7 @@ ENV \
 LABEL \
       SYSTEM_NAME="environment in which it runs for hazelcast naming (required)" \
       COREPO_SOLR_URL="Solr searcher url (http://host:port/solr/searcher | zk://cluster/[chroot/]collection) (required)" \
+      SOLR_APPID="Application ID pass to SOLR, for logging in SOLR (required)" \
       VIP_CORE_URL="Vip-Core rest url (http) (required)" \
       WORK_PRESENTATION_POSTGRES_URL="database url (required: user:pass@host:port/database)" \
       \

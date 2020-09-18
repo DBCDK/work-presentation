@@ -16,30 +16,27 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package dk.dbc.search.work.presentation.service.response;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
+package dk.dbc.search.work.presentation.service.vipcore;
 
 /**
- * Data structure for returning a response to the user
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
-@SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-@Schema(name = WorkPresentationResponse.NAME)
-public class WorkPresentationResponse {
+public class NoSuchProfileException extends RuntimeException {
 
-    public static final String NAME = "answer";
+    private static final long serialVersionUID = 0x7150682462BBF30EL;
 
-    @Schema(required = true, ref = WorkInformationResponse.NAME)
-    public WorkInformationResponse work;
+    private final String agencyId;
+    private final String profileName;
 
-    @Schema(example = "some-uuid")
-    public String trackingId;
+    public NoSuchProfileException(String agencyId, String profileName) {
+        this.agencyId = agencyId;
+        this.profileName = profileName;
+    }
 
     @Override
-    public String toString() {
-        return "WorkPresentationResponse{" + work + '}';
+    public String getMessage() {
+        return "No such profile: " + agencyId + "/" + profileName;
     }
+
 }

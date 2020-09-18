@@ -90,4 +90,9 @@ public class WorkInformationResponse {
     public int hashCode() {
         return Objects.hash(workId, title, fullTitle, creators, description, subjects, records);
     }
+
+    @Override
+    public String toString() {
+        return "WorkInformationResponse{" + "workId=" + workId + '}';
+    }
 }
