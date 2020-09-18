@@ -122,11 +122,11 @@ public class PresentationObjectBuilderIT extends JpaBase {
                         public RelsSys relsSys(String id) {
                             switch (id) {
                                 case "work:62":
-                                    return new RelsSys(null, Arrays.asList("unit:2"), true, id);
-                                case "unit:2":
+                                    return new RelsSys(null, Arrays.asList("unit:7892641"), true, id);
+                                case "unit:7892641":
                                     return new RelsSys("work:62", Arrays.asList("830520-katalog:000025251"), true, id);
                                 case "830520-katalog:000025251":
-                                    return new RelsSys("unit:2", Arrays.asList(), true, id);
+                                    return new RelsSys("unit:7892641", Arrays.asList(), true, id);
                                 default:
                                     throw new AssertionError();
                             }
