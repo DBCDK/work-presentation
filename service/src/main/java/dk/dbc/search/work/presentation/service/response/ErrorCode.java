@@ -33,6 +33,9 @@ public enum ErrorCode {
     @Schema(description = "Profile name supplied was invalid for that agency")
     PROFILE_ERROR,
 
+    @Schema(description = "A required request parameter is missing or empty")
+    MISSING_PARAMETERS,
+
     @Schema(description = "Requested work doesn't match a known work")
     NOT_FOUND_ERROR;
 

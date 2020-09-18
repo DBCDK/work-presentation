@@ -29,6 +29,8 @@ import dk.dbc.search.work.presentation.service.response.ErrorResponse;
 import dk.dbc.search.work.presentation.service.response.WorkInformationResponse;
 import dk.dbc.search.work.presentation.service.vipcore.NoSuchProfileException;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.Locale;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -133,7 +135,28 @@ public class WorkPresentationBean {
                         @QueryParam("profile") String profile,
                         @LogAs("trackingId") @GenerateTrackingId @QueryParam("trackingId") String trackingId,
                         @Context UriInfo uriInfo) {
+        LinkedList<String> missing = new LinkedList<>();
+        if (workId == null || workId.isEmpty())
+            missing.add(workId);
+        if (agencyId == null || agencyId.isEmpty())
+            missing.add(agencyId);
+        if (profile == null || profile.isEmpty())
+            missing.add(profile);
+
+        if (!missing.isEmpty()) {
+            String variables = missing.removeLast();
+            if (missing.isEmpty()) {
+                variables = String.format(Locale.ROOT, "Required parameter %s is missing", variables);
+            } else {
+                variables = String.format(Locale.ROOT, "Required parameters %s and %s are missing", String.join(", ", missing), variables);
+            }
+            log.info("Bad request: {}", variables);
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new ErrorResponse(ErrorCode.MISSING_PARAMETERS, variables, trackingId))
+                    .build();
+        }
         try {
+
             WorkPresentationResponse resp = new WorkPresentationResponse();
             resp.trackingId = trackingId;
             resp.work = processRequest(workId, agencyId, profile, trackingId);
