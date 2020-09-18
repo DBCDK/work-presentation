@@ -137,11 +137,11 @@ public class WorkPresentationBean {
                         @Context UriInfo uriInfo) {
         LinkedList<String> missing = new LinkedList<>();
         if (workId == null || workId.isEmpty())
-            missing.add(workId);
+            missing.add("workId");
         if (agencyId == null || agencyId.isEmpty())
-            missing.add(agencyId);
+            missing.add("agencyId");
         if (profile == null || profile.isEmpty())
-            missing.add(profile);
+            missing.add("profile");
 
         if (!missing.isEmpty()) {
             String variables = missing.removeLast();
