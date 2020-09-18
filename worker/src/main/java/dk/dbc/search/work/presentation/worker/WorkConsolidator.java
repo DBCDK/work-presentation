@@ -40,6 +40,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.InternalServerErrorException;
 import org.eclipse.microprofile.metrics.annotation.Timed;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -50,6 +52,8 @@ import org.eclipse.microprofile.metrics.annotation.Timed;
  */
 @Stateless
 public class WorkConsolidator {
+
+    private static final Logger log = LoggerFactory.getLogger(WorkConsolidator.class);
 
     @PersistenceContext(unitName = "workPresentation_PU")
     public EntityManager em;
@@ -77,7 +81,14 @@ public class WorkConsolidator {
      */
     @Timed(reusable = true)
     public void saveWork(String corepoWorkId, WorkTree tree, WorkInformation content) {
-        RecordEntity record = RecordEntity.from(em, tree.getPersistentWorkId());
+        String persistentWorkId = tree.getPersistentWorkId();
+        RecordEntity record = RecordEntity.from(em, persistentWorkId);
+        RecordEntity recordByWorkId = RecordEntity.fromCorepoWorkId(em, corepoWorkId);
+        log.debug("record = {}, recordByWorkId = {}", record, recordByWorkId);
+        if (recordByWorkId != null && !recordByWorkId.getPersistentWorkId().equals(persistentWorkId)) {
+            log.info("Moved from persistent-work-id: {} to {}", recordByWorkId.getPersistentWorkId(), persistentWorkId);
+            recordByWorkId.delete();
+        }
         record.setCorepoWorkId(corepoWorkId);
         Stream.Builder<Instant> builder = Stream.builder();
         builder.accept(tree.getModified());

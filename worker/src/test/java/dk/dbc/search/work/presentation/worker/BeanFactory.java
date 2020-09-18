@@ -98,6 +98,11 @@ public class BeanFactory {
         bean.init();
     }
 
+    public BeanFactory withCorepoContentServiceConnector(CorepoContentServiceConnector ccsc) {
+        corepoContentService.set(ccsc);
+        return this;
+    }
+
     public CorepoContentServiceConnector getCorepoContentService() {
         return corepoContentService.get();
     }
