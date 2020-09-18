@@ -58,7 +58,7 @@
         <h1>Work Presentation Service</h1>
         <hr>
         <h2>Rest interface:</h2>
-        <form target="_blank" action="api/work-presentation"><label>workId=<input name="workId" placeholder="work-of:..."></label>&<label>trackingId=<input name="trackingId" placeholder="..."></label></form>
+        <form target="_blank" action="api/work-presentation"><label>workId=<input name="workId" placeholder="work-of:..."></label>&<label>agencyId=<input name="agencyId" placeholder="(required)"></label>&<label>profile=<input name="profile" placeholder="(required)"></label>&<label>trackingId=<input name="trackingId" placeholder="..."></label></form>
 
         <dl>
             <dt>workId</dt>
@@ -68,6 +68,10 @@
                     with the new id referring the new owner.
                 </p>
             </dd>
+            <dt>agencyId</dt>
+            <dd>The agency that you perform the request as.</dd>
+            <dt>profile</dt>
+            <dd>The the profile your agency has defined.</dd>
             <dt>trackingId</dt>
             <dd>Used for debugging, to track a request that has failed or is slow. Very useful for reporting issues. If one is not supplied one is generated.</dd>
         </dl>
