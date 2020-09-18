@@ -40,6 +40,7 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -156,10 +157,14 @@ public class WorkPresentationBean {
                     .build();
         }
         try {
-
             WorkPresentationResponse resp = new WorkPresentationResponse();
             resp.trackingId = trackingId;
-            resp.work = processRequest(workId, agencyId, profile, trackingId);
+            resp.work = ExceptionSafe.wrap(() -> processRequest(workId, agencyId, profile, trackingId))
+                    .raise(NewWorkIdException.class)
+                    .raise(NotFoundException.class)
+                    .raise(NoSuchProfileException.class)
+                    .raise(WebApplicationException.class)
+                    .get();
             log.info("WorkId: {} for: {}/{}", workId, agencyId, profile);
             return Response.ok(resp, MediaType.APPLICATION_JSON)
                     .build();
@@ -183,7 +188,7 @@ public class WorkPresentationBean {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new ErrorResponse(ErrorCode.PROFILE_ERROR, ex.getMessage(), trackingId))
                     .build();
-        } catch (Exception ex) {
+        } catch (RuntimeException ex) {
             log.error("Internal exception: {}", ex.getMessage());
             log.debug("Internal exception: ", ex);
             return Response.serverError().build();
