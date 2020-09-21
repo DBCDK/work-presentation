@@ -21,6 +21,7 @@ package dk.dbc.search.work.presentation.worker;
 import dk.dbc.search.work.presentation.api.jpa.CacheEntity;
 import dk.dbc.search.work.presentation.api.jpa.RecordEntity;
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
+import dk.dbc.search.work.presentation.api.pojo.TypedValue;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
 import dk.dbc.search.work.presentation.worker.tree.ObjectTree;
@@ -34,12 +35,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.InternalServerErrorException;
 import java.sql.Timestamp;
-import java.text.Normalizer;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -152,8 +150,7 @@ public class WorkConsolidator {
                 .filter(WorkConsolidator::notNull)
                 .flatMap(Collection::stream) // as a stream of String
                 .collect(Collectors.toSet());
-        // Make them distinct (ignoring case)
-        work.subjects = noCaseSet(work.subjects);
+        work.subjects = TypedValue.distinctSet(work.subjects);
 
         tree.forEach((unitId, unit) -> {
             Set<ManifestationInformation> manifestations = work.dbUnitInformation.get(unitId)
@@ -164,28 +161,6 @@ public class WorkConsolidator {
         });
 
         return work;
-    }
-
-    /**
-     * Convert a collection into a set
-     * <p>
-     * Prefer the 1st value that is not lowercase
-     *
-     * @param subjects collection of strings
-     * @return set of strings (case insensitive compare)
-     */
-    static Set<String> noCaseSet(Collection<String> subjects) {
-        HashMap<String, String> collector = new HashMap<>();
-        subjects.forEach(subject -> {
-            String normalized = Normalizer.normalize(subject, Normalizer.Form.NFC);
-            String key = normalized.toLowerCase(Locale.ROOT);
-            collector.compute(key, (k, v) ->
-                              v != null && // a value exists and
-                              !v.equals(k) ? // It is not lowercase (as the key is)
-                              v : // use existing value
-                              normalized); // use new value
-        });
-        return new HashSet<>(collector.values());
     }
 
     /**

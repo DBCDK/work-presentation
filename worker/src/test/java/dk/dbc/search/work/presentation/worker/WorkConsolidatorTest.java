@@ -53,15 +53,6 @@ public class WorkConsolidatorTest {
     private static final ObjectMapper O = new ObjectMapper()
             .configure(SerializationFeature.INDENT_OUTPUT, true);
 
-    @Test
-    public void testNoCaseSet() throws Exception {
-        System.out.println("testNoCaseSet");
-        assertThat(WorkConsolidator.noCaseSet(Arrays.asList("abc", "def")), contains("abc", "def"));
-        assertThat(WorkConsolidator.noCaseSet(Arrays.asList("abc", "Abc")), contains("Abc"));
-        assertThat(WorkConsolidator.noCaseSet(Arrays.asList("Abc", "ABC")), contains("Abc"));
-        assertThat(WorkConsolidator.noCaseSet(Arrays.asList("abc", "Abc", "ABC")), contains("Abc"));
-    }
-
     @ParameterizedTest
     @MethodSource("tests")
     public void testBuildWorkInformation(File directory) throws Exception {
