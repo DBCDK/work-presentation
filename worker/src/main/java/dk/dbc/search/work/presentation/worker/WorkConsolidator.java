@@ -158,7 +158,7 @@ public class WorkConsolidator {
         tree.forEach((unitId, unit) -> {
             Set<ManifestationInformation> manifestations = work.dbUnitInformation.get(unitId)
                 .stream()
-                .peek(ManifestationInformation::OnlyPresentationFields)
+                .map(ManifestationInformation::onlyPresentationFields)
                 .collect(Collectors.toSet());
             work.dbUnitInformation.put(unitId, manifestations);
         });

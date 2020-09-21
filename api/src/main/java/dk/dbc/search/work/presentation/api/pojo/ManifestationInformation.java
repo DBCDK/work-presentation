@@ -64,11 +64,10 @@ public class ManifestationInformation implements Serializable {
                '}';
     }
 
-    public void OnlyPresentationFields() {
-        this.title = null;
-        this.fullTitle = null;
-        this.creators = null;
-        this.description = null;
-        this.subjects = null;
+    public ManifestationInformation onlyPresentationFields() {
+        ManifestationInformation res = new ManifestationInformation();
+        res.manifestationId = this.manifestationId;
+        res.materialTypes = this.materialTypes;
+        return res;
     }
 }
