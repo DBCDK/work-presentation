@@ -6,12 +6,12 @@
                 "localData.870970-basis": {
                     "title": "Two Things",
                     "creators": [ "Me" ],
-                    "subjects": [ "mice", "men" ]
+                    "subjects": [ { "type": "KW", "value": "mice"}, { "type": "KW", "value": "men"} ]
                 },
                 "localData.710100-katalog": {
                     "title": "Two Things",
                     "creators": [ "Me", "You" ],
-                    "subjects": [ "mice", "elephants" ]
+                    "subjects": [ { "type": "KW", "value": "mice"}, { "type": "KW", "value": "elephants"} ]
                 }
             }
         }
