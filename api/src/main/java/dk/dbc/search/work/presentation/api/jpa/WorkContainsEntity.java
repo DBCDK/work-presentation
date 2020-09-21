@@ -151,7 +151,7 @@ public class WorkContainsEntity implements Serializable {
         if (persist) {
             em.persist(this);
         } else {
-            em.refresh(this);
+            em.merge(this);
         }
         persist = false;
     }

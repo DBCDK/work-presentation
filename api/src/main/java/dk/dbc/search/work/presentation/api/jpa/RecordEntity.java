@@ -40,6 +40,8 @@ import java.sql.Timestamp;
 import java.util.Objects;
 import javax.persistence.LockModeType;
 import javax.persistence.NamedQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -143,12 +145,18 @@ public class RecordEntity implements Serializable {
         this.persist = true;
     }
 
+    private static final Logger log = LoggerFactory.getLogger(RecordEntity.class);
+
     public void save() {
         if (persist) {
+            log.info("persist()");
             em.persist(this);
         } else {
-            em.refresh(this);
+            log.info("merge()");
+            em.merge(this);
         }
+        log.info("flush()");
+        em.flush();
         persist = false;
     }
 
