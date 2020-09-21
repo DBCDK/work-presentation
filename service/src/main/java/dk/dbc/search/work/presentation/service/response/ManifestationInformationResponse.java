@@ -20,10 +20,11 @@ package dk.dbc.search.work.presentation.service.response;
 
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.util.List;
-import java.util.Objects;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -45,32 +46,12 @@ public class ManifestationInformationResponse {
     @Schema(example = "id-enti:fier")
     public String id;
 
-    @Schema(example = "Necronomicon")
-    public String title;
-
-    @Schema(example = "Necronomicon: Book of the Dead")
-    public String fullTitle;
-
-    @Schema(example = "H. P. Lovecraft", implementation = String.class)
-    public List<String> creators;
-
-    @Schema(example = "Fictional book")
-    public String description;
-
-    @Schema(example = "grimoire", implementation = String.class)
-    public List<String> subjects;
-
     @Schema(example = "ether", implementation = String.class)
     public List<String> types;
 
     public static ManifestationInformationResponse from(ManifestationInformation mi) {
         ManifestationInformationResponse mir = new ManifestationInformationResponse();
         mir.id = mi.manifestationId;
-        mir.title = mi.title;
-        mir.fullTitle = mi.fullTitle;
-        mir.creators = mi.creators;
-        mir.description = mi.description;
-        mir.subjects = mi.subjects;
         mir.types = mi.materialTypes;
         return mir;
     }
@@ -83,17 +64,12 @@ public class ManifestationInformationResponse {
             return false;
         ManifestationInformationResponse that = (ManifestationInformationResponse) o;
         return Objects.equals(id, that.id) &&
-               Objects.equals(title, that.title) &&
-               Objects.equals(fullTitle, that.fullTitle) &&
-               Objects.equals(creators, that.creators) &&
-               Objects.equals(description, that.description) &&
-               Objects.equals(subjects, that.subjects) &&
                Objects.equals(types, that.types);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, fullTitle, creators, description, subjects, types);
+        return Objects.hash(id, types);
     }
 
     @Override
