@@ -25,6 +25,14 @@ import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
 import dk.dbc.search.work.presentation.worker.tree.ObjectTree;
 import dk.dbc.search.work.presentation.worker.tree.WorkTree;
+import org.eclipse.microprofile.metrics.annotation.Timed;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.ws.rs.InternalServerErrorException;
 import java.sql.Timestamp;
 import java.text.Normalizer;
 import java.time.Instant;
@@ -35,13 +43,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.ws.rs.InternalServerErrorException;
-import org.eclipse.microprofile.metrics.annotation.Timed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -99,7 +100,7 @@ public class WorkConsolidator {
             });
         });
         Instant modified = builder.build().max(WorkConsolidator::instantCmp)
-                .orElseThrow(() -> new InternalServerErrorException("Cound not extract modified from tree of " + corepoWorkId));
+                .orElseThrow(() -> new InternalServerErrorException("Could not extract modified from tree of " + corepoWorkId));
         record.setModified(Timestamp.from(modified));
         record.setContent(content);
         record.save();
@@ -153,6 +154,15 @@ public class WorkConsolidator {
                 .collect(Collectors.toSet());
         // Make them distinct (ignoring case)
         work.subjects = noCaseSet(work.subjects);
+
+        tree.forEach((unitId, unit) -> {
+            Set<ManifestationInformation> manifestations = work.dbUnitInformation.get(unitId)
+                .stream()
+                .map(this::onlyIdAndType)
+                .collect(Collectors.toSet());
+            work.dbUnitInformation.put(unitId, manifestations);
+        });
+
         return work;
     }
 
@@ -189,6 +199,13 @@ public class WorkConsolidator {
         if (content == null)
             throw new IllegalStateException("Got null content for: " + id);
         return content;
+    }
+
+    ManifestationInformation onlyIdAndType(ManifestationInformation mi) {
+        ManifestationInformation res = new ManifestationInformation();
+        res.manifestationId = mi.manifestationId;
+        res.materialTypes = mi.materialTypes;
+        return res;
     }
 
     private static int instantCmp(Instant a, Instant b) {

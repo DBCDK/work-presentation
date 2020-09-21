@@ -6,16 +6,10 @@
     "dbUnits": {
         "unit:1": [
             {
-                "pid": "870970-basis:0",
-                "title": "Two Things",
-                "creators": [ "Me" ],
-                "subjects": [ "mice", "men" ]
+                "pid": "870970-basis:0"
             },
             {
-                "pid": "710100-katalog:0",
-                "title": "Two Things",
-                "creators": [ "Me", "You" ],
-                "subjects": [ "mice", "elephants" ]
+                "pid": "710100-katalog:0"
             }
         ]
     }
