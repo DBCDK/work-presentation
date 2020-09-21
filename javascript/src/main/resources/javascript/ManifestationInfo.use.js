@@ -31,8 +31,8 @@ var ManifestationInfo = (function() {
                 "fullTitle": null, //from commonData stream or localData stream if title element present, string, must be present
                 "creators": [], //from commonData stream creator - array, empty array if no data
                 "description": null, //from commonData stream dcterms:abstract - string, null if no data
-                "subjects": [], //from dc stream if subject element present, array, empty array if no data
-                "types": [] //from DC stream, array, most be present
+                "subjects": [], //from common and local stream if subject element present, array, empty array if no data
+                "types": [] //from DC stream, array, must be present
             };
 
         //check that we have necessary data streams
@@ -53,7 +53,7 @@ var ManifestationInfo = (function() {
         manifestationObject.fullTitle = getFullTitle( commonDataXml, localDataXml );
         manifestationObject.creators = getCreators( dcStreamXml );
         manifestationObject.description = getAbstract( commonDataXml, localDataXml );
-        manifestationObject.subjects = getSubjects( dcStreamXml );
+        manifestationObject.subjects = getSubjects( commonDataXml, localDataXml );
         manifestationObject.types = getTypes( dcStreamXml );
 
         Log.trace( "Leaving: ManifestationInfo.getManifestationInfoFromXmlObjects function" );
@@ -110,11 +110,11 @@ var ManifestationInfo = (function() {
 
         //first check if localData has a full title
         var titleFull = XPath.selectText( '/ting:localData/dkabm:record/dc:title[@xsi:type="dkdcplus:full"]', localData );
-        titleFull = titleFull.trim()
+        titleFull = titleFull.trim();
 
         if ( "" === titleFull ) {
             titleFull = XPath.selectText( '/ting:container/dkabm:record/dc:title[@xsi:type="dkdcplus:full"]', commonData );
-            titleFull = titleFull.trim()
+            titleFull = titleFull.trim();
         }
 
         if ( "" === titleFull ) {
@@ -243,20 +243,43 @@ var ManifestationInfo = (function() {
      * Function that extracts subjects from the provided DC stream
      *
      * @type {function}
-     * @syntax ManifestationInfo.getSubjects( dcStreamXml )
-     * @param {Document} dcStreamXml the dc stream as xml
+     * @syntax ManifestationInfo.getSubjects( tingStreamXml )
+     * @param {Document} commonData the common stream as xml
+     * @param {Document} localData the local stream as xml
      * @return {Array} the extracted subjects
      * @function
      * @name ManifestationInfo.getSubjects
      */
 
-    function getSubjects( dcStreamXml ) {
+    function getSubjects( commonData, localData ) {
 
         Log.trace( "Entering: ManifestationInfo.getSubjects function" );
 
-        var subjects = XPath.selectMultipleText( "/oai_dc:dc/dc:subject", dcStreamXml );
+        var subjects = XPath.select( "/ting:localData/dkabm:record/dc:subject", localData );
+        if ( subjects.length === 0 ) {
+            subjects = XPath.select( "/ting:container/dkabm:record/dc:subject", commonData );
+        }
         for ( var i in subjects ) {
-            subjects[i] = subjects[i].trim();
+
+            var type = XmlUtil.getAttribute( subjects[i], "type", XmlNamespaces.xsi );
+            var value = XmlUtil.getText( subjects[i] ).trim();
+
+            if ( type === undefined ) {
+                type = null;
+            } else if ( type === '' ) {
+                type = null;
+            } else if ( type.startsWith( "dkdcplus:" ) ) {
+                Log.trace( "ManifestationInfo.getSubjects type is: dkdcplus" );
+                type = type.substr( 9 );
+            } else {
+                Log.warn( "ManifestationInfo.getSubjects type is: " + type );
+            }
+
+            subjects[i] = {
+                "type": type,
+                "value": value
+            };
+
         }
 
         Log.debug( "ManifestationInfo.getSubjects subjects found=", subjects );
