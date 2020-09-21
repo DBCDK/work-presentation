@@ -158,7 +158,7 @@ public class WorkConsolidator {
         tree.forEach((unitId, unit) -> {
             Set<ManifestationInformation> manifestations = work.dbUnitInformation.get(unitId)
                 .stream()
-                .map(this::onlyIdAndType)
+                .peek(ManifestationInformation::OnlyPresentationFields)
                 .collect(Collectors.toSet());
             work.dbUnitInformation.put(unitId, manifestations);
         });
@@ -199,13 +199,6 @@ public class WorkConsolidator {
         if (content == null)
             throw new IllegalStateException("Got null content for: " + id);
         return content;
-    }
-
-    ManifestationInformation onlyIdAndType(ManifestationInformation mi) {
-        ManifestationInformation res = new ManifestationInformation();
-        res.manifestationId = mi.manifestationId;
-        res.materialTypes = mi.materialTypes;
-        return res;
     }
 
     private static int instantCmp(Instant a, Instant b) {

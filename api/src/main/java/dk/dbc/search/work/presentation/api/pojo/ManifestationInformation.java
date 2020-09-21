@@ -63,4 +63,12 @@ public class ManifestationInformation implements Serializable {
                ", types=" + materialTypes +
                '}';
     }
+
+    public void OnlyPresentationFields() {
+        this.title = null;
+        this.fullTitle = null;
+        this.creators = null;
+        this.description = null;
+        this.subjects = null;
+    }
 }
