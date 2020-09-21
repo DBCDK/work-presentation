@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package dk.dbc.search.work.presentation.postgresql;
+
 import dk.dbc.search.work.presentation.database.DatabaseMigrator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,9 +56,9 @@ public class MigrateMain {
             ds.setUser(username);
         if (password != null)
             ds.setPassword(password);
-        ds.setServerName(hostname);
+        ds.setServerNames(new String[] {hostname});
         if (port != null)
-            ds.setPortNumber(Integer.parseUnsignedInt(port));
+            ds.setPortNumbers(new int[] {Integer.parseUnsignedInt(port)});
         ds.setDatabaseName(database);
         DatabaseMigrator.migrate(ds);
     }
