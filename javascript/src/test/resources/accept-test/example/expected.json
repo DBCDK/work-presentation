@@ -1,9 +1,18 @@
 {
-  "title" : "værkstedstekniske beregninger",
-  "fullTitle" : "Værkstedstekniske beregninger. M2, Boring",
-  "description" : null,
-  "pid" : "example",
-  "creators" : [ ],
-  "subjects" : [ ],
-  "types" : [ "Bog" ]
+    "title": "værkstedstekniske beregninger",
+    "fullTitle": "Værkstedstekniske beregninger. M2, Boring",
+    "description": null,
+    "pid": "example",
+    "creators": [ ],
+    "subjects": [
+        {
+            "type": "DK5",
+            "value": "51.8"
+        },
+        {
+            "type": "DK5-Text",
+            "value": "Regning"
+        }
+    ],
+    "types": [ "Bog" ]
 }
