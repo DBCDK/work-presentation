@@ -63,4 +63,11 @@ public class ManifestationInformation implements Serializable {
                ", types=" + materialTypes +
                '}';
     }
+
+    public ManifestationInformation onlyPresentationFields() {
+        ManifestationInformation res = new ManifestationInformation();
+        res.manifestationId = this.manifestationId;
+        res.materialTypes = this.materialTypes;
+        return res;
+    }
 }
