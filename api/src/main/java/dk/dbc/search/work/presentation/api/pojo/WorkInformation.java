@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -20,7 +19,7 @@ public class WorkInformation implements Serializable {
 
     public String fullTitle;
 
-    public List<String> creators;
+    public Set<TypedValue> creators;
 
     public String description;
 

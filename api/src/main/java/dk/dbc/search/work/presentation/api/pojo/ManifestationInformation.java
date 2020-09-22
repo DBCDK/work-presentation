@@ -21,7 +21,7 @@ public class ManifestationInformation implements Serializable {
 
     public String fullTitle;
 
-    public List<String> creators;
+    public List<TypedValue> creators;
 
     public String description;
 

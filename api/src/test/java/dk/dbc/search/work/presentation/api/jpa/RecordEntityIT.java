@@ -57,7 +57,10 @@ public class RecordEntityIT extends JpaBase<Object> {
         WorkInformation wi = new WorkInformation();
         wi.workId = "a";
         wi.title = "title";
-        wi.creators = Arrays.asList("hans andersen");
+        TypedValue creator = new TypedValue();
+        creator.type = "aut";
+        creator.value = "hans andersen";
+        wi.creators = Collections.singleton(creator);
         TypedValue typedValue = new TypedValue();
         typedValue.type = null;
         typedValue.value = "emne";
