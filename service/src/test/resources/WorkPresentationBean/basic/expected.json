@@ -2,7 +2,12 @@
     "workId": "work-of:870970-basis:00010529",
     "title": "fjeldsange",
     "fullTitle": "Fjeldsange : for 1 stemme og klaver",
-    "creators": [ "yrjö kilpinen" ],
+    "creators": [
+        {
+            "type": "aut",
+            "value": "yrjö kilpinen"
+        }
+    ],
     "subjects": [ ],
     "records": [
         {
