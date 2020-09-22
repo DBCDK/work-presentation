@@ -49,7 +49,7 @@ var ManifestationInfo = (function() {
         } else {
             localDataXml = XmlUtil.fromString( "<empty/>" );
         }
-        manifestationObject.title = getTitle( dcStreamXml );
+        manifestationObject.title = getTitle( commonDataXml, localDataXml );
         manifestationObject.fullTitle = getFullTitle( commonDataXml, localDataXml );
         manifestationObject.creators = getCreators( dcStreamXml );
         manifestationObject.description = getAbstract( commonDataXml, localDataXml );
@@ -63,27 +63,34 @@ var ManifestationInfo = (function() {
 
 
     /**
-     * Function that extracts title from the provided DC stream
+     * Function that extracts title from either the local data stream
+     * or if not present there the common data stream
      *
      * @type {function}
      * @syntax ManifestationInfo.getTitle( dcStreamXml )
-     * @param {Document} dcStreamXml the dc stream as xml
+     * @param {Document} commonData the common stream as xml
+     * @param {Document} localData the local stream as xml
      * @return {String} the extracted title
      * @function
      * @name ManifestationInfo.getTitle
      */
 
-    function getTitle( dcStreamXml ) {
+    function getTitle( commonData, localData ) {
 
         Log.trace( "Entering: ManifestationInfo.getTitle function" );
 
-        var title = XPath.selectText( "/oai_dc:dc/dc:title", dcStreamXml );
+        //first check if localData has a full title
+        var title = XPath.selectText( '/ting:localData/dkabm:record/dc:title[not(@xsi:type="dkdcplus:full")]', localData );
         title = title.trim();
-        Log.debug( "ManifestationInfo.getTitle title found=", title );
+
+        if ( "" === title ) {
+            title = XPath.selectText( '/ting:container/dkabm:record/dc:title[not(@xsi:type="dkdcplus:full")]', commonData );
+            title = title.trim();
+        }
 
         if ( "" === title ) {
             RecordProcessing.terminateProcessingAndFailRecord(
-                "ManifestationInfo.getTitle no title was found in dc stream\n" + dcStreamXml );
+                "ManifestationInfo.getFullTitle no full title was found in local or common stream" );
         }
 
         Log.trace( "Leaving: ManifestationInfo.getTitle function" );
@@ -92,7 +99,7 @@ var ManifestationInfo = (function() {
     }
 
     /**
-     * Function that extracts the full title from the either the local data stream
+     * Function that extracts the full title from either the local data stream
      * or if not present there the common data stream
      *
      * @type {function}
@@ -130,7 +137,8 @@ var ManifestationInfo = (function() {
     }
 
     /**
-     * Function that extracts creators from the provided DC stream
+     * Function that extracts creators from either the local data stream
+     * or if not present there the common data stream
      *
      * @type {function}
      * @syntax ManifestationInfo.getCreators( dcStreamXml )
@@ -240,7 +248,8 @@ var ManifestationInfo = (function() {
 
 
     /**
-     * Function that extracts subjects from the provided DC stream
+     * Function that extracts subjects from either the local data stream
+     * or if not present there the common data stream
      *
      * @type {function}
      * @syntax ManifestationInfo.getSubjects( tingStreamXml )
