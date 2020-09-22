@@ -73,8 +73,8 @@ public class TypedValue implements Serializable {
      * The set is case insensitive, prioritizing words with capitalization over
      * lowercase.
      *
-     * @param typedValues collection of values with duplicated
-     * @return collection of values without duplicated
+     * @param typedValues collection of values with duplicates
+     * @return collection of values without duplicates
      */
     public static Set<TypedValue> distinctSet(Collection<TypedValue> typedValues) {
         HashMap<String, HashMap<String, String>> completeCollection = new HashMap<>();

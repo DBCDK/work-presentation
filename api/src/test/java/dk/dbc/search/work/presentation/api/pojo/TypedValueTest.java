@@ -18,18 +18,12 @@
  */
 package dk.dbc.search.work.presentation.api.pojo;
 
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.Set;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -52,7 +46,7 @@ public class TypedValueTest {
                 TypedValue.with("", "abc"),
                 TypedValue.with("", "def")
         ));
-        assertThat(set, contains(
+        assertThat(set, containsInAnyOrder(
                    TypedValue.with("", "abc"),
                    TypedValue.with("", "def")));
     }
@@ -64,7 +58,7 @@ public class TypedValueTest {
                 TypedValue.with("1", "abc"),
                 TypedValue.with("a", "def")
         ));
-        assertThat(set, contains(
+        assertThat(set, containsInAnyOrder(
                    TypedValue.with("1", "abc"),
                    TypedValue.with("a", "def")));
     }
