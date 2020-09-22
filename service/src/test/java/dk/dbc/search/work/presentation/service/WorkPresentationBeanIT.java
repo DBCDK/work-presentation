@@ -20,7 +20,7 @@ package dk.dbc.search.work.presentation.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import dk.dbc.search.work.presentation.api.jpa.RecordEntity;
+import dk.dbc.search.work.presentation.api.jpa.WorkObjectEntity;
 import dk.dbc.search.work.presentation.api.jpa.WorkContainsEntity;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.service.response.WorkInformationResponse;
@@ -95,17 +95,17 @@ public class WorkPresentationBeanIT extends JpaBase {
     }
 
     private void setupTestData(Path dir) throws IOException {
-        WorkInformation work = O.readValue(dir.resolve("source.json").toFile(), WorkInformation.class);
-        System.out.println("work = " + work);
+        WorkInformation workInformation = O.readValue(dir.resolve("source.json").toFile(), WorkInformation.class);
+        System.out.println("workInformation = " + workInformation);
 
         jpa(em -> {
-            RecordEntity record = RecordEntity.from(em, work.workId);
-            record.setContent(work);
-            record.setCorepoWorkId("work:0");
-            record.setModified(Timestamp.from(Instant.now()));
-            record.save();
+            WorkObjectEntity work = WorkObjectEntity.from(em, workInformation.workId);
+            work.setContent(workInformation);
+            work.setCorepoWorkId("work:0");
+            work.setModified(Timestamp.from(Instant.now()));
+            work.save();
 
-            work.dbUnitInformation.values()
+            workInformation.dbUnitInformation.values()
                     .stream()
                     .flatMap(Collection::stream)
                     .map(m -> m.manifestationId)

@@ -19,7 +19,7 @@
 package dk.dbc.search.work.presentation.worker;
 
 import dk.dbc.search.work.presentation.api.jpa.CacheEntity;
-import dk.dbc.search.work.presentation.api.jpa.RecordEntity;
+import dk.dbc.search.work.presentation.api.jpa.WorkObjectEntity;
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import dk.dbc.search.work.presentation.api.pojo.TypedValue;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
@@ -64,15 +64,15 @@ public class WorkConsolidator {
      */
     @Timed(reusable = true)
     public void deleteWork(String corepoWorkId) {
-        RecordEntity entity = RecordEntity.fromCorepoWorkId(em, corepoWorkId);
-        if (entity != null)
-            entity.delete();
+        WorkObjectEntity work = WorkObjectEntity.fromCorepoWorkId(em, corepoWorkId);
+        if (work != null)
+            work.delete();
     }
 
     /**
      * Save a work record to the database
      * <p>
-     * The work is represented by a {@link RecordEntity}
+     * The work is represented by a {@link WorkObjectEntity}
      *
      * @param corepoWorkId corepo-work-id of the work
      * @param tree         The structure of the entire work
@@ -81,14 +81,14 @@ public class WorkConsolidator {
     @Timed(reusable = true)
     public void saveWork(String corepoWorkId, WorkTree tree, WorkInformation content) {
         String persistentWorkId = tree.getPersistentWorkId();
-        RecordEntity record = RecordEntity.from(em, persistentWorkId);
-        RecordEntity recordByWorkId = RecordEntity.fromCorepoWorkId(em, corepoWorkId);
-        log.debug("record = {}, recordByWorkId = {}", record, recordByWorkId);
-        if (recordByWorkId != null && !recordByWorkId.getPersistentWorkId().equals(persistentWorkId)) {
-            log.info("Moved from persistent-work-id: {} to {}", recordByWorkId.getPersistentWorkId(), persistentWorkId);
-            recordByWorkId.delete();
+        WorkObjectEntity work = WorkObjectEntity.from(em, persistentWorkId);
+        WorkObjectEntity workByWorkId = WorkObjectEntity.fromCorepoWorkId(em, corepoWorkId);
+        log.debug("record = {}, recordByWorkId = {}", work, workByWorkId);
+        if (workByWorkId != null && !workByWorkId.getPersistentWorkId().equals(persistentWorkId)) {
+            log.info("Moved from persistent-work-id: {} to {}", workByWorkId.getPersistentWorkId(), persistentWorkId);
+            workByWorkId.delete();
         }
-        record.setCorepoWorkId(corepoWorkId);
+        work.setCorepoWorkId(corepoWorkId);
         Stream.Builder<Instant> builder = Stream.builder();
         builder.accept(tree.getModified());
         tree.values().forEach(unitTree -> {
@@ -99,9 +99,9 @@ public class WorkConsolidator {
         });
         Instant modified = builder.build().max(WorkConsolidator::instantCmp)
                 .orElseThrow(() -> new InternalServerErrorException("Could not extract modified from tree of " + corepoWorkId));
-        record.setModified(Timestamp.from(modified));
-        record.setContent(content);
-        record.save();
+        work.setModified(Timestamp.from(modified));
+        work.setContent(content);
+        work.save();
     }
 
     /**
@@ -154,9 +154,9 @@ public class WorkConsolidator {
 
         tree.forEach((unitId, unit) -> {
             Set<ManifestationInformation> manifestations = work.dbUnitInformation.get(unitId)
-                .stream()
-                .map(ManifestationInformation::onlyPresentationFields)
-                .collect(Collectors.toSet());
+                    .stream()
+                    .map(ManifestationInformation::onlyPresentationFields)
+                    .collect(Collectors.toSet());
             work.dbUnitInformation.put(unitId, manifestations);
         });
 

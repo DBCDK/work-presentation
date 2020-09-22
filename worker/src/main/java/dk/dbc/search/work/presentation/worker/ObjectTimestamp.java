@@ -19,7 +19,7 @@
 package dk.dbc.search.work.presentation.worker;
 
 import dk.dbc.search.work.presentation.api.jpa.CacheEntity;
-import dk.dbc.search.work.presentation.api.jpa.RecordEntity;
+import dk.dbc.search.work.presentation.api.jpa.WorkObjectEntity;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -93,9 +93,9 @@ public class ObjectTimestamp {
     })
     public String getTimestamp(@PathParam("id") String id) {
         log.info("Checking timestamp of: {}", id);
-        RecordEntity record = RecordEntity.readOnlyFrom(em, id);
-        if (record != null) {
-            return record.getModified().toInstant().toString();
+        WorkObjectEntity work = WorkObjectEntity.readOnlyFrom(em, id);
+        if (work != null) {
+            return work.getModified().toInstant().toString();
         }
         CacheEntity cache = CacheEntity.detachedFrom(em, id);
         if (cache != null) {
