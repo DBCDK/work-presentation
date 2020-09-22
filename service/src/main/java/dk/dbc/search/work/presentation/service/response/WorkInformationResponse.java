@@ -20,7 +20,6 @@ package dk.dbc.search.work.presentation.service.response;
 
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -47,8 +46,8 @@ public class WorkInformationResponse {
     @Schema(example = "Necronomicon: Book of the Dead")
     public String fullTitle;
 
-    @Schema(example = "H. P. Lovecraft", implementation = String.class)
-    public List<String> creators;
+    @Schema(implementation = TypedValueResponse.Array.class)
+    public Set<TypedValueResponse> creators;
 
     @Schema(example = "Fictional book")
     public String description;
@@ -64,7 +63,9 @@ public class WorkInformationResponse {
         wir.workId = wi.workId;
         wir.title = wi.title;
         wir.fullTitle = wi.fullTitle;
-        wir.creators = wi.creators;
+        wir.creators = wi.creators.stream()
+                .map(TypedValueResponse::from)
+                .collect(Collectors.toSet());
         wir.description = wi.description;
         wir.subjects = wi.subjects.stream()
                 .map(TypedValueResponse::from)
