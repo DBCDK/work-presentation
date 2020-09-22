@@ -21,6 +21,9 @@ package dk.dbc.search.work.presentation.worker;
 import dk.dbc.corepo.queue.QueueJob;
 import dk.dbc.pgqueue.PreparedQueueSupplier;
 import dk.dbc.pgqueue.QueueSupplier;
+import dk.dbc.search.work.presentation.api.jpa.CacheEntity;
+import dk.dbc.search.work.presentation.api.jpa.WorkObjectEntity;
+import dk.dbc.search.work.presentation.api.jpa.WorkContainsEntity;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,6 +32,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
 import javax.persistence.EntityManager;
+import javax.persistence.Table;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -103,18 +107,6 @@ public class JpaBase extends dk.dbc.search.work.presentation.api.jpa.JpaBase<Bea
                 Thread.sleep(100L);
             }
         }
-    }
-
-    protected int countRecordEntries(EntityManager em) {
-        return (int) (long) (Long) em.createNativeQuery("SELECT COUNT(1) FROM records").getSingleResult();
-    }
-
-    protected int countCacheEntries(EntityManager em) {
-        return (int) (long) (Long) em.createNativeQuery("SELECT COUNT(1) FROM cache").getSingleResult();
-    }
-
-    protected int countWorkContainsEntries(EntityManager em) {
-        return (int) (long) (Long) em.createNativeQuery("SELECT COUNT(1) FROM workcontains").getSingleResult();
     }
 
 }

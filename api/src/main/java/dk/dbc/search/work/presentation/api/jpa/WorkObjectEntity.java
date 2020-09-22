@@ -48,12 +48,12 @@ import org.slf4j.LoggerFactory;
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
 @Entity
-@Table(name = "records")
+@Table(name = "workObjectV" + JsonSchemaVersion.VERSION)
 @NamedQuery(
         name = "withCorepoWorkId",
-        query = "SELECT r FROM RecordEntity r WHERE r.corepoWorkId = :corepoWorkId"
+        query = "SELECT r FROM WorkObjectEntity r WHERE r.corepoWorkId = :corepoWorkId"
 )
-public class RecordEntity implements Serializable {
+public class WorkObjectEntity implements Serializable {
 
     private static final long serialVersionUID = 0x6d07e1639b2ced36L;
 
@@ -71,7 +71,7 @@ public class RecordEntity implements Serializable {
     private Timestamp modified;
 
     @Column(nullable = false)
-    @Convert(converter = RecordEntity.JsonConverter.class)
+    @Convert(converter = WorkObjectEntity.JsonConverter.class)
     private WorkInformation content;
 
     @Transient
@@ -80,28 +80,28 @@ public class RecordEntity implements Serializable {
     @Transient
     transient EntityManager em;
 
-    public static RecordEntity from(EntityManager em, String persistentWorkId) {
-        RecordEntity entity = em.find(RecordEntity.class,
-                                      persistentWorkId,
-                                      LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+    public static WorkObjectEntity from(EntityManager em, String persistentWorkId) {
+        WorkObjectEntity entity = em.find(WorkObjectEntity.class,
+                                          persistentWorkId,
+                                          LockModeType.OPTIMISTIC_FORCE_INCREMENT);
         if (entity == null) {
-            entity = new RecordEntity(persistentWorkId);
+            entity = new WorkObjectEntity(persistentWorkId);
         }
         entity.em = em;
         return entity;
     }
 
-    public static RecordEntity readOnlyFrom(EntityManager em, String persistentWorkId) {
-        RecordEntity entity = em.find(RecordEntity.class,
-                                      persistentWorkId,
-                                      LockModeType.NONE);
+    public static WorkObjectEntity readOnlyFrom(EntityManager em, String persistentWorkId) {
+        WorkObjectEntity entity = em.find(WorkObjectEntity.class,
+                                          persistentWorkId,
+                                          LockModeType.NONE);
         if (entity != null)
             em.detach(entity);
         return entity;
     }
 
-    public static RecordEntity fromCorepoWorkId(EntityManager em, String corepoWorkId) {
-        RecordEntity entity = em.createNamedQuery("withCorepoWorkId", RecordEntity.class)
+    public static WorkObjectEntity fromCorepoWorkId(EntityManager em, String corepoWorkId) {
+        WorkObjectEntity entity = em.createNamedQuery("withCorepoWorkId", WorkObjectEntity.class)
                 .setParameter("corepoWorkId", corepoWorkId)
                 .setLockMode(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
                 .setMaxResults(1)
@@ -113,8 +113,8 @@ public class RecordEntity implements Serializable {
         return entity;
     }
 
-    public static RecordEntity readOnlyFromCorepoWorkId(EntityManager em, String corepoWorkId) {
-        RecordEntity entity = em.createNamedQuery("withCorepoWorkId", RecordEntity.class)
+    public static WorkObjectEntity readOnlyFromCorepoWorkId(EntityManager em, String corepoWorkId) {
+        WorkObjectEntity entity = em.createNamedQuery("withCorepoWorkId", WorkObjectEntity.class)
                 .setParameter("corepoWorkId", corepoWorkId)
                 .setLockMode(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
                 .setMaxResults(1)
@@ -126,12 +126,12 @@ public class RecordEntity implements Serializable {
         return entity;
     }
 
-    protected RecordEntity() {
+    protected WorkObjectEntity() {
         this.persist = false;
     }
 
     @SuppressFBWarnings("EI_EXPOSE_REP2")
-    public RecordEntity(String persistentWorkId, String corepoWorkId, Timestamp modified, WorkInformation content) {
+    public WorkObjectEntity(String persistentWorkId, String corepoWorkId, Timestamp modified, WorkInformation content) {
         this.persistentWorkId = persistentWorkId;
         this.corepoWorkId = corepoWorkId;
         this.modified = modified;
@@ -140,12 +140,12 @@ public class RecordEntity implements Serializable {
         this.persist = true;
     }
 
-    private RecordEntity(String persistentWorkId) {
+    private WorkObjectEntity(String persistentWorkId) {
         this.persistentWorkId = persistentWorkId;
         this.persist = true;
     }
 
-    private static final Logger log = LoggerFactory.getLogger(RecordEntity.class);
+    private static final Logger log = LoggerFactory.getLogger(WorkObjectEntity.class);
 
     public void save() {
         if (persist) {
@@ -219,7 +219,7 @@ public class RecordEntity implements Serializable {
             return true;
         if (obj == null || getClass() != obj.getClass())
             return false;
-        final RecordEntity other = (RecordEntity) obj;
+        final WorkObjectEntity other = (WorkObjectEntity) obj;
         return this.version == other.version &&
                Objects.equals(this.persistentWorkId, other.persistentWorkId) &&
                Objects.equals(this.corepoWorkId, other.corepoWorkId) &&

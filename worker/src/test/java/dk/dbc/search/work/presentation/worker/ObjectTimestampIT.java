@@ -19,7 +19,7 @@
 package dk.dbc.search.work.presentation.worker;
 
 import dk.dbc.search.work.presentation.api.jpa.CacheEntity;
-import dk.dbc.search.work.presentation.api.jpa.RecordEntity;
+import dk.dbc.search.work.presentation.api.jpa.WorkObjectEntity;
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import java.sql.Timestamp;
@@ -42,11 +42,11 @@ public class ObjectTimestampIT extends JpaBase {
         System.out.println("testRecordModificationTime");
 
         jpa(em -> {
-            RecordEntity rec = RecordEntity.from(em, "work-of:1");
-            rec.setContent(new WorkInformation());
-            rec.setCorepoWorkId("work:1");
-            rec.setModified(Timestamp.from(Instant.parse("2020-01-02T12:34:56.789Z")));
-            rec.save();
+            WorkObjectEntity work = WorkObjectEntity.from(em, "work-of:1");
+            work.setContent(new WorkInformation());
+            work.setCorepoWorkId("work:1");
+            work.setModified(Timestamp.from(Instant.parse("2020-01-02T12:34:56.789Z")));
+            work.save();
         });
 
         withConfigEnv()
@@ -62,11 +62,11 @@ public class ObjectTimestampIT extends JpaBase {
         System.out.println("testCacheModificationTime");
 
         jpa(em -> {
-            RecordEntity rec = RecordEntity.from(em, "work-of:1");
-            rec.setContent(new WorkInformation());
-            rec.setCorepoWorkId("work:1");
-            rec.setModified(Timestamp.from(Instant.parse("2020-01-02T12:34:56.789Z")));
-            rec.save();
+            WorkObjectEntity work = WorkObjectEntity.from(em, "work-of:1");
+            work.setContent(new WorkInformation());
+            work.setCorepoWorkId("work:1");
+            work.setModified(Timestamp.from(Instant.parse("2020-01-02T12:34:56.789Z")));
+            work.save();
 
             CacheEntity cache = CacheEntity.from(em, "1");
             cache.setContent(new ManifestationInformation());

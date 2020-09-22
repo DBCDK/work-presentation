@@ -18,7 +18,7 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
-import dk.dbc.search.work.presentation.api.jpa.RecordEntity;
+import dk.dbc.search.work.presentation.api.jpa.WorkObjectEntity;
 import dk.dbc.search.work.presentation.worker.corepo.DataStreamMetaData;
 import dk.dbc.search.work.presentation.worker.corepo.DataStreams;
 import dk.dbc.search.work.presentation.worker.corepo.ObjectMetaData;
@@ -50,16 +50,15 @@ public class PresentationObjectBuilderIT extends JpaBase {
                 });
 
         System.out.println("  Verify that the parts are in the database");
+        assertThat(countWorkObjectEntries(), is(1));
+        assertThat(countCacheEntries(), is(5));
+        assertThat(countWorkContainsEntries(), is(5));
         jpa(em -> {
-            assertThat(countRecordEntries(em), is(1));
-            assertThat(countCacheEntries(em), is(5));
-            assertThat(countWorkContainsEntries(em), is(5));
-
-            RecordEntity record = RecordEntity.fromCorepoWorkId(em, "work:62");
-            System.out.println("record = " + record);
-            System.out.println("record = " + record.getContent());
-            assertThat(record.getModified(), not(nullValue()));
-            assertThat(record.getModified().toInstant().toString(), is("2020-06-17T19:32:07.853Z"));
+            WorkObjectEntity work = WorkObjectEntity.fromCorepoWorkId(em, "work:62");
+            System.out.println("work = " + work);
+            System.out.println("work = " + work.getContent());
+            assertThat(work.getModified(), not(nullValue()));
+            assertThat(work.getModified().toInstant().toString(), is("2020-06-17T19:32:07.853Z"));
         });
 
         System.out.println("  Process same work with a fake deleted record");
@@ -76,11 +75,9 @@ public class PresentationObjectBuilderIT extends JpaBase {
                 });
 
         System.out.println("  Verify that the parts are purged from the database");
-        jpa(em -> {
-            assertThat(countRecordEntries(em), is(0));
-            assertThat(countCacheEntries(em), is(0));
-            assertThat(countWorkContainsEntries(em), is(0));
-        });
+        assertThat(countWorkObjectEntries(), is(0));
+        assertThat(countCacheEntries(), is(0));
+        assertThat(countWorkContainsEntries(), is(0));
     }
 
     @Test
@@ -101,11 +98,9 @@ public class PresentationObjectBuilderIT extends JpaBase {
                 });
 
         System.out.println("  Verify that nothing has appeared in the database");
-        jpa(em -> {
-            assertThat(countRecordEntries(em), is(0));
-            assertThat(countCacheEntries(em), is(0));
-            assertThat(countWorkContainsEntries(em), is(0));
-        });
+        assertThat(countWorkObjectEntries(), is(0));
+        assertThat(countCacheEntries(), is(0));
+        assertThat(countWorkContainsEntries(), is(0));
     }
 
     @Test
@@ -164,7 +159,7 @@ public class PresentationObjectBuilderIT extends JpaBase {
                 });
 
         jpa(em -> {
-            assertThat(RecordEntity.readOnlyFrom(em, "work-of:830520-katalog:000025251"), notNullValue());
+            assertThat(WorkObjectEntity.readOnlyFrom(em, "work-of:830520-katalog:000025251"), notNullValue());
 
         });
 
@@ -175,8 +170,8 @@ public class PresentationObjectBuilderIT extends JpaBase {
                     bean.process("work:62");
                 });
         jpa(em -> {
-            assertThat(RecordEntity.readOnlyFrom(em, "work-of:830520-katalog:000025251"), nullValue());
-            assertThat(RecordEntity.readOnlyFrom(em, "work-of:870970-basis:00010529"), notNullValue());
+            assertThat(WorkObjectEntity.readOnlyFrom(em, "work-of:830520-katalog:000025251"), nullValue());
+            assertThat(WorkObjectEntity.readOnlyFrom(em, "work-of:870970-basis:00010529"), notNullValue());
         });
     }
 

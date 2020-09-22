@@ -44,7 +44,7 @@ import org.postgresql.util.PGobject;
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
 @Entity
-@Table(name = "cache")
+@Table(name = "cacheV" + JsonSchemaVersion.VERSION)
 public class CacheEntity implements Serializable {
 
     private static final long serialVersionUID = 0x8b861b42b964b770L;

@@ -5,8 +5,8 @@
   <persistence-unit name="workPresentationTest_PU" transaction-type="RESOURCE_LOCAL">
     <class>dk.dbc.search.work.presentation.api.jpa.CacheEntity</class>
     <class>dk.dbc.search.work.presentation.api.jpa.CacheEntity$JsonConverter</class>
-    <class>dk.dbc.search.work.presentation.api.jpa.RecordEntity</class>
-    <class>dk.dbc.search.work.presentation.api.jpa.RecordEntity$JsonConverter</class>
+    <class>dk.dbc.search.work.presentation.api.jpa.WorkObjectEntity</class>
+    <class>dk.dbc.search.work.presentation.api.jpa.WorkObjectEntity$JsonConverter</class>
     <class>dk.dbc.search.work.presentation.api.jpa.WorkContainsEntity</class>
     <shared-cache-mode>NONE</shared-cache-mode> <!-- required by commandline tools that change the database directly -->
     <properties>
