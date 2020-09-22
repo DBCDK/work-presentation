@@ -51,7 +51,7 @@ var ManifestationInfo = (function() {
         }
         manifestationObject.title = getTitle( dcStreamXml );
         manifestationObject.fullTitle = getFullTitle( commonDataXml, localDataXml );
-        manifestationObject.creators = getCreators( dcStreamXml );
+        manifestationObject.creators = getCreators( commonDataXml, localDataXml );
         manifestationObject.description = getAbstract( commonDataXml, localDataXml );
         manifestationObject.subjects = getSubjects( commonDataXml, localDataXml );
         manifestationObject.types = getTypes( dcStreamXml );
@@ -134,26 +134,45 @@ var ManifestationInfo = (function() {
      *
      * @type {function}
      * @syntax ManifestationInfo.getCreators( dcStreamXml )
-     * @param {Document} dcStreamXml the dc stream as xml
+     * @param {Document} commonData the common stream as xml
+     * @param {Document} localData the local stream as xml
      * @return {Array} the extracted creators
      * @function
      * @name ManifestationInfo.getCreators
      */
 
-    function getCreators( dcStreamXml ) {
+    function getCreators( commonData, localData ) {
 
         Log.trace( "Entering: ManifestationInfo.getCreators function" );
 
-        var creators = [];
-        var allCreators = XPath.selectMultipleText( "/oai_dc:dc/dc:creator", dcStreamXml );
-        for ( var i = 0; i < allCreators.length; i++ ) {
-            var creator = allCreators[ i ];
-            creator = creator.trim();
-            //dont add match strings or nobirth versions
-            if ( !creator.match( /MATCHSTRING:|NOBIRTH:/ ) ) {
-                creators.push( creator );
-            }
+        var creators = XPath.select( "/ting:localData/dkabm:record/dc:creator[not(@xsi:type = 'oss:sort')]", localData );
+        if ( creators.length === 0 ) {
+            creators = XPath.select( "/ting:container/dkabm:record/dc:creator[not(@xsi:type = 'oss:sort')]", commonData );
         }
+
+        for ( var i in creators ) {
+
+            var type = XmlUtil.getAttribute( creators[i], "type", XmlNamespaces.xsi );
+            var value = XmlUtil.getText( creators[i] ).trim();
+
+            if ( type === undefined ) {
+                type = null;
+            } else if ( type === '' ) {
+                type = null;
+            } else if ( type.startsWith( "dkdcplus:" ) ) {
+                Log.trace( "ManifestationInfo.getSubjects type is: dkdcplus" );
+                type = type.substr( 9 );
+            } else {
+                Log.warn( "ManifestationInfo.getSubjects type is: " + type );
+            }
+
+            creators[i] = {
+                "type": type,
+                "value": value
+            };
+
+        }
+
         Log.debug( "ManifestationInfo.getCreators creators found=", creators );
 
         Log.trace( "Leaving: ManifestationInfo.getCreators function" );
