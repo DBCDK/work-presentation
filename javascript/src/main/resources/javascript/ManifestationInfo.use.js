@@ -79,12 +79,12 @@ var ManifestationInfo = (function() {
 
         Log.trace( "Entering: ManifestationInfo.getTitle function" );
 
-        //first check if localData has a full title
-        var title = XPath.selectText( '/ting:localData/dkabm:record/dc:title[not(@xsi:type="dkdcplus:full")]', localData );
+        //first check if localData has a basic title (unclassified)
+        var title = XPath.selectText( '/ting:localData/dkabm:record/dc:title[not(@xsi:type)]', localData );
         title = title.trim();
 
         if ( "" === title ) {
-            title = XPath.selectText( '/ting:container/dkabm:record/dc:title[not(@xsi:type="dkdcplus:full")]', commonData );
+            title = XPath.selectText( '/ting:container/dkabm:record/dc:title[not(@xsi:type)]', commonData );
             title = title.trim();
         }
 
