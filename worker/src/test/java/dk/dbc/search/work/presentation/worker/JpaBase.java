@@ -105,16 +105,4 @@ public class JpaBase extends dk.dbc.search.work.presentation.api.jpa.JpaBase<Bea
         }
     }
 
-    protected int countRecordEntries(EntityManager em) {
-        return (int) (long) (Long) em.createNativeQuery("SELECT COUNT(1) FROM records").getSingleResult();
-    }
-
-    protected int countCacheEntries(EntityManager em) {
-        return (int) (long) (Long) em.createNativeQuery("SELECT COUNT(1) FROM cache").getSingleResult();
-    }
-
-    protected int countWorkContainsEntries(EntityManager em) {
-        return (int) (long) (Long) em.createNativeQuery("SELECT COUNT(1) FROM workcontains").getSingleResult();
-    }
-
 }

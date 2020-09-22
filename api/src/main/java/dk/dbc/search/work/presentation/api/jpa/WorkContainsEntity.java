@@ -39,7 +39,7 @@ import javax.persistence.Version;
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
 @Entity
-@Table(name = "workContains")
+@Table(name = "workContainsV" + JsonSchemaVersion.VERSION)
 @NamedQueries({
     @NamedQuery(
             name = "allWithCorepoWorkId",

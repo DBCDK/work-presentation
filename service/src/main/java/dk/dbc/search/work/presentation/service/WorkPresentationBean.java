@@ -21,7 +21,7 @@ package dk.dbc.search.work.presentation.service;
 import dk.dbc.search.work.presentation.service.response.WorkPresentationResponse;
 import dk.dbc.commons.mdc.GenerateTrackingId;
 import dk.dbc.commons.mdc.LogAs;
-import dk.dbc.search.work.presentation.api.jpa.RecordEntity;
+import dk.dbc.search.work.presentation.api.jpa.WorkObjectEntity;
 import dk.dbc.search.work.presentation.api.jpa.WorkContainsEntity;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.service.response.ErrorCode;
@@ -207,7 +207,7 @@ public class WorkPresentationBean {
      * @throws NotFoundException  if the work couldn't be found
      */
     WorkInformationResponse processRequest(String workId, String agencyId, String profile, String trackingId) {
-        RecordEntity work = RecordEntity.readOnlyFrom(em, workId);
+        WorkObjectEntity work = WorkObjectEntity.readOnlyFrom(em, workId);
         if (work != null) {
             return filterResult.processWork(work.getContent(), agencyId, profile, trackingId);
         }
@@ -215,7 +215,7 @@ public class WorkPresentationBean {
             WorkContainsEntity wc = WorkContainsEntity.readOnlyFrom(em, workId.substring(WORK_OF_LEN));
             if (wc == null)
                 throw new NotFoundException("No Such Work");
-            work = RecordEntity.readOnlyFromCorepoWorkId(em, wc.getCorepoWorkId());
+            work = WorkObjectEntity.readOnlyFromCorepoWorkId(em, wc.getCorepoWorkId());
             if (work == null)
                 throw new NotFoundException();
             throw new NewWorkIdException(work.getPersistentWorkId());

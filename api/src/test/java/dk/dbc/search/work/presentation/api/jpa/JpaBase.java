@@ -26,11 +26,13 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.persistence.Table;
 import org.junit.jupiter.api.BeforeAll;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
@@ -44,16 +46,21 @@ import static org.eclipse.persistence.config.PersistenceUnitProperties.JDBC_USER
 /**
  * Transaction oriented helper for integration-tests
  * <p>
- * Override the method
+ * Implement the method
  * {@link #createBeanFactory(java.util.Map, javax.persistence.EntityManager)} to
  * make beans for calls to .withConfigEnv(...).jpaWithBeans(beanFactory -> {})
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
- * @param <BF> a beanFactory
+ * @param <BF> a beanFactory as produced by
+ *             {@link #createBeanFactory(java.util.Map, javax.persistence.EntityManager)}
  */
-public class JpaBase<BF> {
+public abstract class JpaBase<BF> {
 
     private static final Logger log = LoggerFactory.getLogger(JpaBase.class);
+
+    public static final String CACHE_TABLE_NAME = CacheEntity.class.getAnnotation(Table.class).name();
+    public static final String WORK_CONTAINS_TABLE_NAME = WorkContainsEntity.class.getAnnotation(Table.class).name();
+    public static final String WORK_OBJECT_TABLE_NAME = WorkObjectEntity.class.getAnnotation(Table.class).name();
 
     protected static PGSimpleDataSource dataSource;
     private static HashMap<String, String> entityManagerProperties;
@@ -108,9 +115,9 @@ public class JpaBase<BF> {
 
         try (Connection connection = dataSource.getConnection() ;
              Statement stmt = connection.createStatement()) {
-            stmt.executeUpdate("TRUNCATE records");
-            stmt.executeUpdate("TRUNCATE workContains");
-            stmt.executeUpdate("TRUNCATE cache");
+            stmt.executeUpdate("TRUNCATE " + WORK_OBJECT_TABLE_NAME);
+            stmt.executeUpdate("TRUNCATE " + WORK_CONTAINS_TABLE_NAME);
+            stmt.executeUpdate("TRUNCATE " + CACHE_TABLE_NAME);
         } catch (SQLException ex) {
             log.error("Could not clean database: {}", ex.getMessage());
             log.debug("Could not clean database: ", ex);
@@ -135,9 +142,7 @@ public class JpaBase<BF> {
         return new WithEnv(env);
     }
 
-    public BF createBeanFactory(Map<String, String> env, EntityManager em) {
-        return null;
-    }
+    public abstract BF createBeanFactory(Map<String, String> env, EntityManager em);
 
     public class WithEnv {
 
@@ -148,10 +153,32 @@ public class JpaBase<BF> {
         }
 
         public void jpaWithBeans(JpaBeanVoidExecution<BF> execution) {
-            jpa(em -> {
-                execution.execute(createBeanFactory(env, em));
-            });
+            jpa(em -> execution.execute(createBeanFactory(env, em)));
         }
+    }
+
+    public int countCacheEntries() {
+        AtomicInteger i = new AtomicInteger();
+        jpa(em -> {
+            i.set((int) (long) (Long) em.createNativeQuery("SELECT COUNT(1) FROM " + CACHE_TABLE_NAME).getSingleResult());
+        });
+        return i.get();
+    }
+
+    public int countWorkContainsEntries() {
+        AtomicInteger i = new AtomicInteger();
+        jpa(em -> {
+            i.set((int) (long) (Long) em.createNativeQuery("SELECT COUNT(1) FROM " + WORK_CONTAINS_TABLE_NAME).getSingleResult());
+        });
+        return i.get();
+    }
+
+    public int countWorkObjectEntries() {
+        AtomicInteger i = new AtomicInteger();
+        jpa(em -> {
+            i.set((int) (long) (Long) em.createNativeQuery("SELECT COUNT(1) FROM " + WORK_OBJECT_TABLE_NAME).getSingleResult());
+        });
+        return i.get();
     }
 
     protected static PGSimpleDataSource getDataSource(String databaseName) throws NumberFormatException {

@@ -19,13 +19,14 @@
 package dk.dbc.search.work.presentation.api.jpa;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
+import javax.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -72,4 +73,10 @@ public class WorkContainsEntityIT extends JpaBase<Object> {
             assertThat(manifestationIds, containsInAnyOrder("710100-katalog:25912233", "870970-basis:25912233", "911116-katalog:25912233"));
         });
     }
+
+    @Override
+    public Object createBeanFactory(Map<String, String> env, EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }

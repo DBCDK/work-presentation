@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import javax.persistence.EntityManager;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -67,13 +68,13 @@ public class RecordEntityIT extends JpaBase<Object> {
         wi.dbUnitInformation = unitInfo;
 
 
-        RecordEntity oldEntity = new RecordEntity("a", "b", Timestamp.from(Instant.now()), wi);
+        WorkObjectEntity oldEntity = new WorkObjectEntity("a", "b", Timestamp.from(Instant.now()), wi);
         jpa(em -> {
             em.persist(oldEntity);
         });
 
         jpa(em -> {
-            RecordEntity newEntity = RecordEntity.from(em, "a");
+            WorkObjectEntity newEntity = WorkObjectEntity.from(em, "a");
             System.out.println("newEntity = " + newEntity);
             System.out.println("oldEntity = " + oldEntity);
 
@@ -87,7 +88,7 @@ public class RecordEntityIT extends JpaBase<Object> {
         System.out.println("testSaveAndDelete");
 
         jpa(em -> {
-            RecordEntity rec = RecordEntity.from(em, "work-of-x");
+            WorkObjectEntity rec = WorkObjectEntity.from(em, "work-of-x");
             assertThat(rec.persist, is(true)); // NEW
             rec.setContent(new WorkInformation());
             rec.setCorepoWorkId("any");
@@ -95,19 +96,24 @@ public class RecordEntityIT extends JpaBase<Object> {
             rec.save();
         });
         jpa(em -> {
-            RecordEntity rec = RecordEntity.from(em, "work-of-x");
+            WorkObjectEntity rec = WorkObjectEntity.from(em, "work-of-x");
             assertThat(rec.persist, is(false)); // FROM DB
             rec.save();
         });
         jpa(em -> {
-            RecordEntity rec = RecordEntity.from(em, "work-of-x");
+            WorkObjectEntity rec = WorkObjectEntity.from(em, "work-of-x");
             assertThat(rec.persist, is(false)); // FROM DB
             rec.delete();
         });
         jpa(em -> {
-            RecordEntity rec = RecordEntity.from(em, "work-of-x");
+            WorkObjectEntity rec = WorkObjectEntity.from(em, "work-of-x");
             assertThat(rec.persist, is(true)); // NEW
         });
+    }
+
+    @Override
+    public Object createBeanFactory(Map<String, String> env, EntityManager em) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }
