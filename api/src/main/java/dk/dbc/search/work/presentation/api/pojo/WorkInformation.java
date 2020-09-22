@@ -24,7 +24,7 @@ public class WorkInformation implements Serializable {
 
     public String description;
 
-    public Set<String> subjects;
+    public Set<TypedValue> subjects;
 
     @JsonProperty("dbUnits")
     public Map<String, Set<ManifestationInformation>> dbUnitInformation;

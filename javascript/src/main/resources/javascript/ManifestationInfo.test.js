@@ -40,8 +40,6 @@ UnitTest.addFixture( "ManifestationInfo.getManifestationInfoFromXmlObjects", fun
         '<ac:source>Bibliotekskatalog</ac:source>' +
         '<dc:title>Værkstedstekniske beregninger</dc:title>' +
         '<dc:title xsi:type="dkdcplus:full">Værkstedstekniske beregninger. M2, Boring</dc:title>' +
-        '<dc:subject xsi:type="dkdcplus:DK5">51.8</dc:subject>' +
-        '<dc:subject xsi:type="dkdcplus:DK5-Text">Regning</dc:subject>' +
         '<dcterms:audience>voksenmaterialer</dcterms:audience>' +
         '<dkdcplus:version>2. udgave</dkdcplus:version>' +
         '<dc:publisher>Jernindustriens Forlag</dc:publisher>' +
@@ -1095,79 +1093,205 @@ UnitTest.addFixture( "ManifestationInfo.getAbstract", function() {
 
 
 UnitTest.addFixture( "ManifestationInfo.getSubjects", function() {
-    var dcStreamString =
-        '<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-        '<dc:title>værkstedstekniske beregninger</dc:title>' +
-        '<dc:language>Dansk</dc:language>' +
-        '<dc:type>Bog</dc:type>' +
-        '<dc:publisher>jernindustriensforlag</dc:publisher>' +
-        '<dc:date>1972</dc:date>' +
-        '<dc:identifier>870970-basis:08021473</dc:identifier>' +
-        '<dc:identifier>NUMBER:1020</dc:identifier>' +
-        '<dc:identifier>NUMBER:1022</dc:identifier>' +
-        '<dc:identifier>NUMBER:1020</dc:identifier>' +
-        '<dc:identifier>NUMBER:1022</dc:identifier>' +
-        '<dc:relation>50378705</dc:relation>' +
-        '</oai_dc:dc>';
 
-    var dcStream = XmlUtil.fromString( dcStreamString );
+    var localDataString = '<ting:localData' +
+            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+            ' xmlns:ting="http://www.dbc.dk/ting"' +
+            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dkabm:record>' +
+            '<dc:title>Djævelens lærling</dc:title>' +
+            '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
+            '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">Helvede</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">fantasy</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCN">for 14 år</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
+            '</dkabm:record>' +
+            '</ting:localData>';
+    var commonDataString = '<empty/>';
 
-    var expected = [];
+    var localData = XmlUtil.fromString( localDataString );
+    var commonData = XmlUtil.fromString( commonDataString );
 
-    Assert.equalValue( "get subject from dc stream - no subjects", ManifestationInfo.getSubjects( dcStream ), expected );
+    var expected = [
+        { type : "DBCS", value : "Helvede" },
+        { type : "DK5-Text", value : "Skønlitteratur" },
+        { type : "DBCS", value : "fantasy" },
+        { type : "genre", value : "fantasy" },
+        { type : "DBCN", value : "for 12 år" },
+        { type : "DBCN", value : "for 13 år" },
+        { type : "DBCN", value : "for 14 år" },
+        { type : "DK5", value : "sk" }
+    ];
 
-    dcStreamString =
-        '<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-        '<dc:title>vildheks</dc:title>' +
-        '<dc:title>MATCHSTRING:vildheksildproevenbind1oevenbind1</dc:title>' +
-        '<dc:title>MATCH:vildhe</dc:title>' +
-        '<dc:creator>lene kꜳberbøl</dc:creator>' +
-        '<dc:creator>NOBIRTH:lene kꜳberbøl</dc:creator>' +
-        '<dc:creator>MATCHSTRING:kꜳberbøll</dc:creator>' +
-        '<dc:creator>MATCHSTRING:kꜳberbøll</dc:creator>' +
-        '<dc:language>Dansk</dc:language>' +
-        '<dc:subject>dyr</dc:subject>' +
-        '<dc:subject>fantasy</dc:subject>' +
-        '<dc:subject>for 10 år</dc:subject>' +
-        '<dc:subject>for 11 år</dc:subject>' +
-        '<dc:subject>for 12 år</dc:subject>' +
-        '<dc:subject>for 13 år</dc:subject>' +
-        '<dc:subject>for 14 år</dc:subject>' +
-        '<dc:subject>hekse</dc:subject>' +
-        '<dc:subject>piger</dc:subject>' +
-        '</oai_dc:dc>';
+    Assert.equalValue( "get subjects from local stream ", ManifestationInfo.getSubjects( commonData, localData ), expected );
 
-    dcStream = XmlUtil.fromString( dcStreamString );
+    localDataString = '<ting:localData' +
+            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+            ' xmlns:ting="http://www.dbc.dk/ting"' +
+            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dkabm:record>' +
+            '<dc:title>Djævelens lærling</dc:title>' +
+            '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
+            '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">Helvede</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">fantasy</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
+            '</dkabm:record>' +
+            '</ting:localData>';
+    commonDataString = '<ting:container' +
+            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+            ' xmlns:ting="http://www.dbc.dk/ting"' +
+            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dkabm:record>' +
+            '<dc:title>Djævelens lærling</dc:title>' +
+            '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
+            '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
+            '<dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCN">for 14 år</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
+            '</dkabm:record>' +
+            '</ting:container>';
 
-    expected = [ "dyr", "fantasy", "for 10 år", "for 11 år", "for 12 år", "for 13 år", "for 14 år", "hekse", "piger" ];
+    localData = XmlUtil.fromString( localDataString );
+    commonData = XmlUtil.fromString( commonDataString );
 
-    Assert.equalValue( "get subjects from dc stream", ManifestationInfo.getSubjects( dcStream ), expected );
+    expected = [
+        { type : "DBCS", value : "Helvede" },
+        { type : "DK5-Text", value : "Skønlitteratur" },
+        { type : "DBCS", value : "fantasy" },
+        { type : "genre", value : "fantasy" },
+        { type : "DK5", value : "sk" }
+    ];
 
-    dcStreamString =
-        '<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-        '<dc:title>vildheks</dc:title>' +
-        '<dc:title>MATCHSTRING:vildheksildproevenbind1oevenbind1</dc:title>' +
-        '<dc:title>MATCH:vildhe</dc:title>' +
-        '<dc:creator>lene kꜳberbøl</dc:creator>' +
-        '<dc:creator>NOBIRTH:lene kꜳberbøl</dc:creator>' +
-        '<dc:creator>MATCHSTRING:kꜳberbøll</dc:creator>' +
-        '<dc:creator>MATCHSTRING:kꜳberbøll</dc:creator>' +
-        '<dc:language>Dansk</dc:language>' +
-        '<dc:subject> dyr </dc:subject>' +
-        '<dc:subject> fantasy </dc:subject>' +
-        '<dc:subject> for 10 år </dc:subject>' +
-        '<dc:subject> for 11 år </dc:subject>' +
-        '<dc:subject> for 12 år </dc:subject>' +
-        '<dc:subject> for 13 år </dc:subject>' +
-        '<dc:subject> for 14 år </dc:subject>' +
-        '<dc:subject> hekse </dc:subject>' +
-        '<dc:subject> piger </dc:subject>' +
-        '</oai_dc:dc>';
+    Assert.equalValue( "get subjects from local stream over common stream ", ManifestationInfo.getSubjects( commonData, localData ), expected );
 
-    dcStream = XmlUtil.fromString( dcStreamString );
+    localDataString = '<empty/>';
+    commonDataString = '<ting:container' +
+            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+            ' xmlns:ting="http://www.dbc.dk/ting"' +
+            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dkabm:record>' +
+            '<dc:title>Djævelens lærling</dc:title>' +
+            '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
+            '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">Helvede</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">fantasy</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCN">for 14 år</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
+            '</dkabm:record>' +
+            '</ting:container>';
 
-    expected = [ "dyr", "fantasy", "for 10 år", "for 11 år", "for 12 år", "for 13 år", "for 14 år", "hekse", "piger" ];
+    localData = XmlUtil.fromString( localDataString );
+    commonData = XmlUtil.fromString( commonDataString );
 
-    Assert.equalValue( "get subjects from dc stream with whitespace ", ManifestationInfo.getSubjects( dcStream ), expected );
+    expected = [
+        { type : "DBCS", value : "Helvede" },
+        { type : "DK5-Text", value : "Skønlitteratur" },
+        { type : "DBCS", value : "fantasy" },
+        { type : "genre", value : "fantasy" },
+        { type : "DBCN", value : "for 12 år" },
+        { type : "DBCN", value : "for 13 år" },
+        { type : "DBCN", value : "for 14 år" },
+        { type : "DK5", value : "sk" }
+    ];
+
+    Assert.equalValue( "get subjects from common stream ", ManifestationInfo.getSubjects( commonData, localData ), expected );
+
+    localDataString = '<ting:localData' +
+            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+            ' xmlns:ting="http://www.dbc.dk/ting"' +
+            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dkabm:record>' +
+            '<dc:title>Djævelens lærling</dc:title>' +
+            '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
+            '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
+            '</dkabm:record>' +
+            '</ting:localData>';
+    commonDataString = '<empty/>';
+
+    localData = XmlUtil.fromString( localDataString );
+    commonData = XmlUtil.fromString( commonDataString );
+
+    expected = [ ];
+
+    Assert.equalValue( "get subjects from  stream with no subjects", ManifestationInfo.getSubjects( commonData, localData ), expected );
+
+    localDataString = '<ting:localData' +
+            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+            ' xmlns:ting="http://www.dbc.dk/ting"' +
+            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dkabm:record>' +
+            '<dc:title>Djævelens lærling</dc:title>' +
+            '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
+            '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
+            '<dc:subject xsi:type="">Helvede</dc:subject>' +
+            '<dc:subject>Skønlitteratur</dc:subject>' +
+            '</dkabm:record>' +
+            '</ting:localData>';
+    commonDataString = '<empty/>';
+
+    localData = XmlUtil.fromString( localDataString );
+    commonData = XmlUtil.fromString( commonDataString );
+
+    expected = [
+        { "type" : null, "value" : "Helvede" },
+        { "type" : null, "value" : "Skønlitteratur" }
+    ];
+
+    Assert.equalValue( "get subjects from ting stream with no types", ManifestationInfo.getSubjects( commonData, localData ), expected );
 
 } );

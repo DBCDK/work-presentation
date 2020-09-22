@@ -19,6 +19,7 @@
 package dk.dbc.search.work.presentation.api.jpa;
 
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
+import dk.dbc.search.work.presentation.api.pojo.TypedValue;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import org.junit.jupiter.api.Test;
 
@@ -56,7 +57,10 @@ public class RecordEntityIT extends JpaBase<Object> {
         wi.workId = "a";
         wi.title = "title";
         wi.creators = Arrays.asList("hans andersen");
-        wi.subjects = Collections.singleton("emne");
+        TypedValue typedValue = new TypedValue();
+        typedValue.type = null;
+        typedValue.value = "emne";
+        wi.subjects = Collections.singleton(typedValue);
         wi.description = "beskrivelse";
         Map<String, Set<ManifestationInformation>> unitInfo = new HashMap<>();
         unitInfo.put("unitId", ml);

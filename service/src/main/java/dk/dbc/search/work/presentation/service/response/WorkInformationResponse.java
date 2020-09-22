@@ -23,6 +23,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
@@ -52,8 +53,8 @@ public class WorkInformationResponse {
     @Schema(example = "Fictional book")
     public String description;
 
-    @Schema(example = "grimoire", implementation = String.class)
-    public Set<String> subjects;
+    @Schema(implementation = TypedValueResponse.Array.class)
+    public Set<TypedValueResponse> subjects;
 
     @Schema(implementation = ManifestationInformationResponse.Array.class)
     public Set<ManifestationInformationResponse> records;
@@ -65,7 +66,9 @@ public class WorkInformationResponse {
         wir.fullTitle = wi.fullTitle;
         wir.creators = wi.creators;
         wir.description = wi.description;
-        wir.subjects = wi.subjects;
+        wir.subjects = wi.subjects.stream()
+                .map(TypedValueResponse::from)
+                .collect(Collectors.toSet());
         // wir.records is computed in FilterResult.processWork()
         return wir;
     }

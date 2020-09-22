@@ -2,7 +2,7 @@
     "workId": "work-of:870970-basis:0",
     "title": "Two Things",
     "creators": [ "Me" ],
-    "subjects": [ "mice", "men" ],
+    "subjects": [ { "type": "KW", "value": "mice"}, { "type": "KW", "value": "men"} ],
     "dbUnits": {
         "unit:1": [
             {
