@@ -18,6 +18,7 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
+import com.sun.corba.se.impl.util.RepositoryId;
 import dk.dbc.search.work.presentation.worker.tree.NoCacheObjectException;
 import dk.dbc.corepo.queue.QueueJob;
 import dk.dbc.log.LogWith;
@@ -26,6 +27,7 @@ import dk.dbc.pgqueue.consumer.JobMetaData;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.worker.tree.WorkTree;
 import java.sql.Connection;
+import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -74,15 +76,21 @@ public class PresentationObjectBuilder {
         log.info("Processing job: {}", corepoWorkId);
 
         try {
-            WorkTree tree = workTreeBuilder.buildTree(corepoWorkId);
-            tree.prettyPrint(log::trace);
-            parallelCacheContentBuilder.updateCache(tree); // Needs to be before .updateWorkContains(tree)
-            parallelCacheContentBuilder.updateWorkContains(tree);
-            if (tree.isEmpty()) {
-                workConsolidator.deleteWork(corepoWorkId);
-            } else {
-                WorkInformation content = workConsolidator.buildWorkInformation(tree);
-                workConsolidator.saveWork(corepoWorkId, tree, content);
+            try {
+                WorkTree tree = workTreeBuilder.buildTree(corepoWorkId);
+                tree.prettyPrint(log::trace);
+                parallelCacheContentBuilder.updateCache(tree); // Needs to be before .updateWorkContains(tree)
+                parallelCacheContentBuilder.updateWorkContains(tree);
+                if (tree.isEmpty()) {
+                    workConsolidator.deleteWork(corepoWorkId);
+                } else {
+                    WorkInformation content = workConsolidator.buildWorkInformation(tree);
+                    workConsolidator.saveWork(corepoWorkId, tree, content);
+                }
+            } catch (EJBException ex) {
+                if(ex.getCause() instanceof RuntimeException)
+                    throw (RuntimeException) ex.getCause();
+                throw ex;
             }
         } catch (NoCacheObjectException ex) {
             // Unable to get/build Cache object
