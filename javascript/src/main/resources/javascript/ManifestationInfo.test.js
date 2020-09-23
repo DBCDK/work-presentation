@@ -599,88 +599,187 @@ UnitTest.addFixture( "ManifestationInfo.getFullTitle", function() {
 
 UnitTest.addFixture( "ManifestationInfo.getCreators", function() {
 
-    var dcStreamString =
-        '<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-        '<dc:title>værkstedstekniske beregninger</dc:title>' +
-        '<dc:language>Dansk</dc:language>' +
-        '<dc:type>Bog</dc:type>' +
-        '<dc:publisher>jernindustriensforlag</dc:publisher>' +
-        '<dc:date>1972</dc:date>' +
-        '<dc:identifier>870970-basis:08021473</dc:identifier>' +
-        '<dc:identifier>NUMBER:1020</dc:identifier>' +
-        '<dc:identifier>NUMBER:1022</dc:identifier>' +
-        '<dc:identifier>NUMBER:1020</dc:identifier>' +
-        '<dc:identifier>NUMBER:1022</dc:identifier>' +
-        '<dc:relation>50378705</dc:relation>' +
-        '</oai_dc:dc>';
+    var commonDataString = '<empty/>';
+    var localDataString =
+            '<ting:localData' +
+            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+            ' xmlns:ting="http://www.dbc.dk/ting"' +
+            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dkabm:record>' +
+            '<ac:identifier>54969562|700400</ac:identifier>' +
+            '<ac:source>Bibliotekskatalog</ac:source>' +
+            '<dc:title>Vildheks</dc:title>' +
+            '<dc:title xsi:type="dkdcplus:full">Vildheks</dc:title>' +
+            '<dcterms:alternative>Vildheks</dcterms:alternative>' +
+            '<dc:creator xsi:type="dkdcplus:aus">Kaspar Munk</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
+            '<dc:creator xsi:type="dkdcplus:drt">Kaspar Munk</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
+            '<dc:creator xsi:type="dkdcplus:cng">Adam Wallensten</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Wallensten, Adam</dc:creator>' +
+            '<dc:creator xsi:type="dkdcplus:aus">Poul Berg</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Berg, Poul (f. 1970-08-19)</dc:creator>' +
+            '<dc:creator xsi:type="dkdcplus:aus">Bo hr. Hansen</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Hansen, Bo hr. (f. 1961)</dc:creator>' +
+            '</dkabm:record>' +
+            '</ting:localData>';
 
-    var dcStream = XmlUtil.fromString( dcStreamString );
+    var localData = XmlUtil.fromString( localDataString );
+    var commonData = XmlUtil.fromString( commonDataString );
 
-    expected = [];
+    var expected = [
+        { type : "aus", value : "Kaspar Munk" },
+        { type : "drt", value : "Kaspar Munk" },
+        { type : "cng", value : "Adam Wallensten" },
+        { type : "aus", value : "Poul Berg" },
+        { type : "aus", value : "Bo hr. Hansen" }
+    ];
 
-    Assert.equalValue( "get creator no creators ", ManifestationInfo.getCreators( dcStream ), expected );
+    Assert.equalValue( "get creators from localData ", ManifestationInfo.getCreators( commonData, localData ), expected );
 
-    dcStreamString =
-        '<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-        '<dc:title>vildheks</dc:title>' +
-        '<dc:title>MATCHSTRING:vildheksildproevenbind1oevenbind1</dc:title>' +
-        '<dc:title>MATCH:vildhe</dc:title>' +
-        '<dc:creator>lene kꜳberbøl</dc:creator>' +
-        '<dc:creator>NOBIRTH:lene kꜳberbøl</dc:creator>' +
-        '<dc:creator>MATCHSTRING:kꜳberbøll</dc:creator>' +
-        '<dc:creator>MATCHSTRING:kꜳberbøll</dc:creator>' +
-        '<dc:language>Dansk</dc:language>' +
-        '<dc:subject>dyr</dc:subject>' +
-        '<dc:subject>fantasy</dc:subject>' +
-        '<dc:subject>for 10 år</dc:subject>' +
-        '<dc:subject>for 11 år</dc:subject>' +
-        '<dc:subject>for 12 år</dc:subject>' +
-        '<dc:subject>for 13 år</dc:subject>' +
-        '<dc:subject>for 14 år</dc:subject>' +
-        '<dc:subject>hekse</dc:subject>' +
-        '<dc:subject>piger</dc:subject>' +
-        '<dc:type>Bog</dc:type>' +
-        '<dc:type>WORK:literature</dc:type>' +
-        '<dc:type>RECORD:multivolume</dc:type>' +
-        '<dc:type>RECORD:vol1</dc:type>' +
-        '</oai_dc:dc>';
+    commonDataString =
+            '<ting:container' +
+            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+            ' xmlns:ting="http://www.dbc.dk/ting"' +
+            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dkabm:record>' +
+            '<ac:identifier>54969562|700400</ac:identifier>' +
+            '<ac:source>Bibliotekskatalog</ac:source>' +
+            '<dc:title>Vildheks</dc:title>' +
+            '<dc:title xsi:type="dkdcplus:full">Vildheks</dc:title>' +
+            '<dcterms:alternative>Vildheks</dcterms:alternative>' +
+            '<dc:creator xsi:type="dkdcplus:aus">Kaspar Munk</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
+            '<dc:creator xsi:type="dkdcplus:drt">Kaspar Munk</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
+            '<dc:creator xsi:type="dkdcplus:cng">Adam Wallensten</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Wallensten, Adam</dc:creator>' +
+            '<dc:creator xsi:type="dkdcplus:aus">Poul Berg</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Berg, Poul (f. 1970-08-19)</dc:creator>' +
+            '<dc:creator xsi:type="dkdcplus:aus">Bo hr. Hansen</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Hansen, Bo hr. (f. 1961)</dc:creator>' +
+            '</dkabm:record>' +
+            '</ting:container>';
+    localDataString = '<empty/>';
 
-    dcStream = XmlUtil.fromString( dcStreamString );
+    localData = XmlUtil.fromString( localDataString );
+    commonData = XmlUtil.fromString( commonDataString );
 
-    expected = [ "lene kꜳberbøl" ];
+    expected = [
+        { type : "aus", value : "Kaspar Munk" },
+        { type : "drt", value : "Kaspar Munk" },
+        { type : "cng", value : "Adam Wallensten" },
+        { type : "aus", value : "Poul Berg" },
+        { type : "aus", value : "Bo hr. Hansen" }
+    ];
 
-    Assert.equalValue( "get one creator from dc stream, no match-string or nobirth from creator ", ManifestationInfo.getCreators( dcStream ), expected );
+    Assert.equalValue( "get creators from commonData ", ManifestationInfo.getCreators( commonData, localData ), expected );
 
-    dcStreamString =
-        '<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-        '<dc:title>vildheks</dc:title>' +
-        '<dc:title>MATCHSTRING:vildheksildproevenbind1oevenbind1</dc:title>' +
-        '<dc:title>MATCH:vildhe</dc:title>' +
-        '<dc:creator>  lene kꜳberbøl  </dc:creator>' +
-        '<dc:creator>NOBIRTH:lene kꜳberbøl</dc:creator>' +
-        '<dc:creator>MATCHSTRING:kꜳberbøll</dc:creator>' +
-        '<dc:creator>MATCHSTRING:kꜳberbøll</dc:creator>' +
-        '<dc:language>Dansk</dc:language>' +
-        '<dc:subject>dyr</dc:subject>' +
-        '<dc:subject>fantasy</dc:subject>' +
-        '<dc:subject>for 10 år</dc:subject>' +
-        '<dc:subject>for 11 år</dc:subject>' +
-        '<dc:subject>for 12 år</dc:subject>' +
-        '<dc:subject>for 13 år</dc:subject>' +
-        '<dc:subject>for 14 år</dc:subject>' +
-        '<dc:subject>hekse</dc:subject>' +
-        '<dc:subject>piger</dc:subject>' +
-        '<dc:type>Bog</dc:type>' +
-        '<dc:type>WORK:literature</dc:type>' +
-        '<dc:type>RECORD:multivolume</dc:type>' +
-        '<dc:type>RECORD:vol1</dc:type>' +
-        '</oai_dc:dc>';
+    commonDataString =
+            '<ting:container' +
+            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+            ' xmlns:ting="http://www.dbc.dk/ting"' +
+            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dkabm:record>' +
+            '<ac:identifier>54969562|700400</ac:identifier>' +
+            '<ac:source>Bibliotekskatalog</ac:source>' +
+            '<dc:title>Vildheks</dc:title>' +
+            '<dc:title xsi:type="dkdcplus:full">Vildheks</dc:title>' +
+            '<dcterms:alternative>Vildheks</dcterms:alternative>' +
+            '<dc:creator xsi:type="dkdcplus:cng">Adam Wallensten</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Wallensten, Adam</dc:creator>' +
+            '<dc:creator xsi:type="dkdcplus:aus">Poul Berg</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Berg, Poul (f. 1970-08-19)</dc:creator>' +
+            '<dc:creator xsi:type="dkdcplus:aus">Bo hr. Hansen</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Hansen, Bo hr. (f. 1961)</dc:creator>' +
+            '</dkabm:record>' +
+            '</ting:container>';
+    localDataString =
+            '<ting:localData' +
+            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+            ' xmlns:ting="http://www.dbc.dk/ting"' +
+            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dkabm:record>' +
+            '<ac:identifier>54969562|700400</ac:identifier>' +
+            '<ac:source>Bibliotekskatalog</ac:source>' +
+            '<dc:title>Vildheks</dc:title>' +
+            '<dc:title xsi:type="dkdcplus:full">Vildheks</dc:title>' +
+            '<dcterms:alternative>Vildheks</dcterms:alternative>' +
+            '<dc:creator xsi:type="dkdcplus:aus">Kaspar Munk</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
+            '<dc:creator xsi:type="dkdcplus:drt">Kaspar Munk</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
+            '</dkabm:record>' +
+            '</ting:localData>';
 
-    dcStream = XmlUtil.fromString( dcStreamString );
+    localData = XmlUtil.fromString( localDataString );
+    commonData = XmlUtil.fromString( commonDataString );
 
-    expected = [ "lene kꜳberbøl" ];
+    expected = [
+        { type : "aus", value : "Kaspar Munk" },
+        { type : "drt", value : "Kaspar Munk" }
+    ];
 
-    Assert.equalValue( "get one creator from dc stream, no match-string or nobirth from creator with whitespace ", ManifestationInfo.getCreators( dcStream ), expected );
+    Assert.equalValue( "get creators from localData over commonData ", ManifestationInfo.getCreators( commonData, localData ), expected );
+
+    var commonDataString = '<empty/>';
+    var localDataString =
+            '<ting:localData' +
+            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+            ' xmlns:ting="http://www.dbc.dk/ting"' +
+            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dkabm:record>' +
+            '<ac:identifier>54969562|700400</ac:identifier>' +
+            '<ac:source>Bibliotekskatalog</ac:source>' +
+            '<dc:title>Vildheks</dc:title>' +
+            '<dc:title xsi:type="dkdcplus:full">Vildheks</dc:title>' +
+            '<dcterms:alternative>Vildheks</dcterms:alternative>' +
+            '<dc:creator xsi:type="">Kaspar Munk</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
+            '<dc:creator>Kaspar Munk</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
+            '</dkabm:record>' +
+            '</ting:localData>';
+
+    var localData = XmlUtil.fromString( localDataString );
+    var commonData = XmlUtil.fromString( commonDataString );
+
+    var expected = [
+        { type : null, value : "Kaspar Munk" },
+        { type : null, value : "Kaspar Munk" }
+    ];
+
+    Assert.equalValue( "get creators with no type ", ManifestationInfo.getCreators( commonData, localData ), expected );
 
 } );
 

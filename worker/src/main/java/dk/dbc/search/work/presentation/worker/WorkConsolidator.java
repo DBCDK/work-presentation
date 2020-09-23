@@ -122,7 +122,7 @@ public class WorkConsolidator {
         // Copy from owner
         String ownerId = tree.getPrimaryManifestationId();
         ManifestationInformation primary = getCacheContentFor(ownerId);
-        work.creators = primary.creators;
+        work.creators = TypedValue.distinctSet(primary.creators);
         work.description = primary.description;
         work.fullTitle = primary.fullTitle;
         work.title = primary.title;

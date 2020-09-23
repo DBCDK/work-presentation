@@ -5,14 +5,14 @@
             "870970-basis:0": {
                 "localData.870970-basis": {
                     "title": "Two Things",
-                    "creators": [ "Me" ],
+                    "creators": [ { "type": "aut", "value": "Me" } ],
                     "subjects": [ { "type": "KW", "value": "mice"}, { "type": "KW", "value": "men"} ]
                 }
             },
             "870970-basis:1": {
                 "localData.870970-basis": {
                     "title": "Two Things",
-                    "creators": [ "Me", "You" ],
+                    "creators": [ { "type": "aut", "value": "Me" }, { "type": "aut", "value": "You" } ],
                     "subjects": [ { "type": "KW", "value": "mice"}, { "type": "KW", "value": "elephants"} ]
                 }
             }
