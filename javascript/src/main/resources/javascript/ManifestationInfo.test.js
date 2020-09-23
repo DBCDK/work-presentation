@@ -111,7 +111,7 @@ UnitTest.addFixture( "ManifestationInfo.getManifestationInfoFromXmlObjects", fun
     var expected =
         {
             "pid": "870970-basis:08021473",
-            "title": "værkstedstekniske beregninger", //from dc stream string, must be present
+            "title": "Værkstedstekniske beregninger", //from dc stream string, must be present
             "fullTitle": "Værkstedstekniske beregninger. M2, Boring", //from commonData stream or localData stream if title element present, string, must be present
             "creators": [], //from commonData stream creator - array, empty array if no data
             "description": null, //from commonData stream dcterms:abstract - string, null if no data
@@ -124,14 +124,14 @@ UnitTest.addFixture( "ManifestationInfo.getManifestationInfoFromXmlObjects", fun
 
     xmlObjects = {
         "DC": dcStream,
-        "commonData": commonData,
+        "commonData": commonData
     };
     manifestationId = "870970-basis:08021473-no-local-data";
 
     expected =
         {
             "pid": "870970-basis:08021473-no-local-data",
-            "title": "værkstedstekniske beregninger",
+            "title": "Værkstedstekniske beregninger",
             "fullTitle": "Værkstedstekniske beregninger. M2, Boring",
             "creators": [],
             "description": null,
@@ -154,49 +154,131 @@ UnitTest.addFixture( "ManifestationInfo.getManifestationInfoFromXmlObjects", fun
 
 
 UnitTest.addFixture( "ManifestationInfo.getTitle", function() {
-    var dcStreamString =
-        '<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-        '<dc:title>værkstedstekniske beregninger</dc:title>' +
-        '<dc:language>Dansk</dc:language>' +
-        '<dc:type>Bog</dc:type>' +
-        '<dc:publisher>jernindustriensforlag</dc:publisher>' +
-        '<dc:date>1972</dc:date>' +
-        '<dc:identifier>870970-basis:08021473</dc:identifier>' +
-        '<dc:identifier>NUMBER:1020</dc:identifier>' +
-        '<dc:identifier>NUMBER:1022</dc:identifier>' +
-        '<dc:identifier>NUMBER:1020</dc:identifier>' +
-        '<dc:identifier>NUMBER:1022</dc:identifier>' +
-        '<dc:relation>50378705</dc:relation>' +
-        '</oai_dc:dc>';
 
-    var dcStream = XmlUtil.fromString( dcStreamString );
+    var commonDataString = '<empty/>';
+    var localDataString =
+            '<ting:localData' +
+            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+            ' xmlns:ting="http://www.dbc.dk/ting"' +
+            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dkabm:record>' +
+            '<ac:identifier>22023578|870970</ac:identifier>' +
+            '<ac:source>Bibliotekskatalog</ac:source>' +
+            '<dc:title>Ave Femina!</dc:title>' +
+            '<dc:title xsi:type="dkdcplus:full">Ave Femina! : Digte</dc:title>' +
+            '</dkabm:record>' +
+            '</ting:localData>';
 
-    var expected = "værkstedstekniske beregninger";
+    var localData = XmlUtil.fromString(localDataString);
+    var commonData = XmlUtil.fromString(commonDataString);
 
-    Assert.equalValue( "get title from dc stream ", ManifestationInfo.getTitle( dcStream ), expected );
+    var expected = "Ave Femina!";
 
-    var dcStreamString =
-        '<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-        '<dc:title> værkstedstekniske beregninger </dc:title>' +
-        '</oai_dc:dc>';
+    Assert.equalValue( "get title from localData ", ManifestationInfo.getTitle( commonData, localData ), expected );
 
-    var dcStream = XmlUtil.fromString( dcStreamString );
+    commonDataString =
+            '<ting:container' +
+            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+            ' xmlns:ting="http://www.dbc.dk/ting"' +
+            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dkabm:record>' +
+            '<ac:identifier>22023578|870970</ac:identifier>' +
+            '<ac:source>Bibliotekskatalog</ac:source>' +
+            '<dc:title>Ave Femina!</dc:title>' +
+            '<dc:title xsi:type="dkdcplus:full">Ave Femina! : Digte</dc:title>' +
+            '</dkabm:record>' +
+            '</ting:container>';
+    localDataString = '<empty/>';
 
-    var expected = "værkstedstekniske beregninger";
+    localData = XmlUtil.fromString(localDataString);
+    commonData = XmlUtil.fromString(commonDataString);
 
-    Assert.equalValue( "get title from dc stream - with whitespace ", ManifestationInfo.getTitle( dcStream ), expected );
+    expected = "Ave Femina!";
 
-    dcStreamString =
-        '<oai_dc:dc ' +
-        'xmlns:dc="http://purl.org/dc/elements/1.1/" ' +
-        'xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" ' +
-        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-        '</oai_dc:dc>';
+    Assert.equalValue( "get title from commonData ", ManifestationInfo.getTitle( commonData, localData ), expected );
 
-    dcStream = XmlUtil.fromString( dcStreamString );
+    commonDataString =
+            '<ting:container' +
+            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+            ' xmlns:ting="http://www.dbc.dk/ting"' +
+            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dkabm:record>' +
+            '<ac:identifier>22023578|870970</ac:identifier>' +
+            '<ac:source>Bibliotekskatalog</ac:source>' +
+            '<dc:title>Ave Femina! - not this one</dc:title>' +
+            '<dc:title xsi:type="dkdcplus:full">Ave Femina! : Digte</dc:title>' +
+            '</dkabm:record>' +
+            '</ting:container>';
+
+    localDataString =
+            '<ting:localData' +
+            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+            ' xmlns:ting="http://www.dbc.dk/ting"' +
+            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dkabm:record>' +
+            '<ac:identifier>22023578|870970</ac:identifier>' +
+            '<ac:source>Bibliotekskatalog</ac:source>' +
+            '<dc:title>Ave Femina!</dc:title>' +
+            '<dc:title xsi:type="dkdcplus:full">Ave Femina! : Digte</dc:title>' +
+            '</dkabm:record>' +
+            '</ting:localData>';
+
+    localData = XmlUtil.fromString(localDataString);
+    commonData = XmlUtil.fromString(commonDataString);
+
+    expected = "Ave Femina!";
+
+    Assert.equalValue( "get title from localData before commonData ", ManifestationInfo.getTitle( commonData, localData ), expected );
+
+    commonDataString = '<empty/>';
+    localDataString =
+            '<ting:localData' +
+            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+            ' xmlns:ting="http://www.dbc.dk/ting"' +
+            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dkabm:record>' +
+            '<ac:identifier>22023578|870970</ac:identifier>' +
+            '<ac:source>Bibliotekskatalog</ac:source>' +
+/*  TITLE NOT PRESENT '<dc:title>Ave Femina!</dc:title>' + */
+            '<dc:title xsi:type="dkdcplus:full">Ave Femina! : Digte</dc:title>' +
+            '</dkabm:record>' +
+            '</ting:localData>';
+
+    localData = XmlUtil.fromString(localDataString);
+    commonData = XmlUtil.fromString(commonDataString);
 
     Assert.exception( "Stop processing if dc has no title", function() {
-        ManifestationInfo.getTitle( dcStream );
+        ManifestationInfo.getTitle( commonData, localData );
     }, Packages.dk.dbc.javascript.recordprocessing.FailRecord );
 
 } );
