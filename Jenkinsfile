@@ -47,25 +47,25 @@ pipeline {
                         mvn -B -Dmaven.repo.local=\$WORKSPACE/.repo --fail-at-end org.jacoco:jacoco-maven-plugin:prepare-agent install -Dsurefire.useFile=false
                     """
 
-                    // We want code-coverage and pmd/findbugs even if unittests fails
+                    // We want code-coverage and pmd/spotbugs even if unittests fails
                     status += sh returnStatus: true, script:  """
-                        mvn -B -Dmaven.repo.local=\$WORKSPACE/.repo pmd:pmd pmd:cpd findbugs:findbugs javadoc:aggregate
+                        mvn -B -Dmaven.repo.local=\$WORKSPACE/.repo pmd:pmd pmd:cpd spotbugs:spotbugs javadoc:aggregate
                     """
 
                     junit testResults: '**/target/*-reports/TEST-*.xml'
 
                     def java = scanForIssues tool: [$class: 'Java']
                     def javadoc = scanForIssues tool: [$class: 'JavaDoc']
-                    publishIssues issues:[java, javadoc], unstableTotalAll:1
+                    publishIssues issues:[java, javadoc]
 
                     def pmd = scanForIssues tool: [$class: 'Pmd'], pattern: '**/target/pmd.xml'
-                    publishIssues issues:[pmd], unstableTotalAll:1
+                    publishIssues issues:[pmd]
 
                     def cpd = scanForIssues tool: [$class: 'Cpd'], pattern: '**/target/cpd.xml'
                     publishIssues issues:[cpd]
 
-                    def findbugs = scanForIssues tool: [$class: 'FindBugs'], pattern: '**/target/findbugsXml.xml'
-                    publishIssues issues:[findbugs], unstableTotalAll:1
+                    def spotbugs = scanForIssues tool: [$class: 'SpotBugs'], pattern: '**/target/spotbugsXml.xml'
+                    publishIssues issues:[spotbugs]
 
                     step([$class: 'JacocoPublisher',
                           execPattern: 'target/*.exec,**/target/*.exec',
