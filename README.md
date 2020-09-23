@@ -13,6 +13,7 @@ If the JSON schema of the built records changes then the migration path is:
         CREATE TABLE cacheV${version} ...
         ```
     1. Alter `VERSION` in `api/src/main/java/dk/dbc/search/work/presentation/api/jpa/JsonSchemaVersion.java` to reflect the version (numeric)
+1. Lock existing workers (version and instances)
 1. Deploy extra worker that should build the new JSON schema documents
     1. Deploy extra `work-presentation-worker` (work-presentation-worker-v\${version}) with the new version and new `consumer` name (work-\${version},work-\${version}-slow)
     1. Add new `consumer` (work-\${version}) to `corepo`'s `queue_rules`

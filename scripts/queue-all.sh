@@ -16,12 +16,12 @@ if [ x$WORK_PRESENTATION_POSTGRES_URL = x ] || \
     echo "COREPO_POSTGRES_URL (user:pass@host:port/base)" >&2
     echo "JENKINS_BASE_URL (https://jenkins/)" >&2
     echo "Optional environment variables: " >&2
-    echo "QUEUE defaluts to (work-$VERSION-slow)"
+    echo "QUEUE defaluts to (work-v$VERSION-slow)"
     echo "" >&2
     exit 1
 fi
 if [ x$QUEUE = x ]; then
-    QUEUE=work-$VERSION-slow
+    QUEUE=work-v$VERSION-slow
 fi
 
     
@@ -30,4 +30,4 @@ curl -so $CHUNK_INSERT_JAR "${JENKINS_BASE_URL%/}/job/chunk-insert/job/master/la
 trap "rm -vf $CHUNK_INSERT_JAR" EXIT
 
 psql postgres://$WORK_PRESENTATION_POSTGRES_URL -c "TRUNCATE cacheV$VERSION"
-java -jar $CHUNK_INSERT_JAR --dry-run --database=$COREPO_POSTGRES_URL --commit=25000 --vacuum=10 "INSERT INTO queue(pid, consumer, trackingid) SELECT pid, '$QUEUE', 'requeue-by-$USER' FROM records WHERE NOT deleted AND pid LIKE 'work:%'"
+java -jar $CHUNK_INSERT_JAR --database=$COREPO_POSTGRES_URL --commit=25000 --vacuum=10 "INSERT INTO queue(pid, consumer, trackingid) SELECT pid, '$QUEUE', 'requeue-by-$USER' FROM records WHERE NOT deleted AND pid LIKE 'work:%'"
