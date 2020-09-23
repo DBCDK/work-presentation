@@ -18,7 +18,6 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
-import com.sun.corba.se.impl.util.RepositoryId;
 import dk.dbc.search.work.presentation.worker.tree.NoCacheObjectException;
 import dk.dbc.corepo.queue.QueueJob;
 import dk.dbc.log.LogWith;
