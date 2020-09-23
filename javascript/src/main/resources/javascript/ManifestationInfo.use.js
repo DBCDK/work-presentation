@@ -90,7 +90,7 @@ var ManifestationInfo = (function() {
 
         if ( "" === title ) {
             RecordProcessing.terminateProcessingAndFailRecord(
-                "ManifestationInfo.getFullTitle no full title was found in local or common stream" );
+                "ManifestationInfo.getTitle title was found in local or common stream" );
         }
 
         Log.trace( "Leaving: ManifestationInfo.getTitle function" );

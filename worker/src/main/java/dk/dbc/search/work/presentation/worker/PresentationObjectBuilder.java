@@ -18,8 +18,10 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
+import dk.dbc.search.work.presentation.worker.tree.NoCacheObjectException;
 import dk.dbc.corepo.queue.QueueJob;
 import dk.dbc.log.LogWith;
+import dk.dbc.pgqueue.consumer.FatalQueueError;
 import dk.dbc.pgqueue.consumer.JobMetaData;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.worker.tree.WorkTree;
@@ -54,7 +56,7 @@ public class PresentationObjectBuilder {
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     @Timed(reusable = true)
-    public void processJob(Connection connection, QueueJob job, JobMetaData metaData) {
+    public void processJob(Connection connection, QueueJob job, JobMetaData metaData) throws FatalQueueError {
         String corepoWorkId = job.getPid();
         try (LogWith logWith = LogWith.track(job.getTrackingId())
                 .pid(corepoWorkId);) {
@@ -68,18 +70,23 @@ public class PresentationObjectBuilder {
         }
     }
 
-    void process(String corepoWorkId) {
+    void process(String corepoWorkId) throws FatalQueueError {
         log.info("Processing job: {}", corepoWorkId);
 
-        WorkTree tree = workTreeBuilder.buildTree(corepoWorkId);
-        tree.prettyPrint(log::trace);
-        parallelCacheContentBuilder.updateCache(tree); // Needs to be before .updateWorkContains(tree)
-        parallelCacheContentBuilder.updateWorkContains(tree);
-        if (tree.isEmpty()) {
-            workConsolidator.deleteWork(corepoWorkId);
-        } else {
-            WorkInformation content = workConsolidator.buildWorkInformation(tree);
-            workConsolidator.saveWork(corepoWorkId, tree, content);
+        try {
+            WorkTree tree = workTreeBuilder.buildTree(corepoWorkId);
+            tree.prettyPrint(log::trace);
+            parallelCacheContentBuilder.updateCache(tree); // Needs to be before .updateWorkContains(tree)
+            parallelCacheContentBuilder.updateWorkContains(tree);
+            if (tree.isEmpty()) {
+                workConsolidator.deleteWork(corepoWorkId);
+            } else {
+                WorkInformation content = workConsolidator.buildWorkInformation(tree);
+                workConsolidator.saveWork(corepoWorkId, tree, content);
+            }
+        } catch (NoCacheObjectException ex) {
+            // Unable to get/build Cache object
+            throw new FatalQueueError(false, "Could not access cache for: " + ex.getMessage());
         }
     }
 

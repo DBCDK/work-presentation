@@ -18,6 +18,7 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
+import dk.dbc.search.work.presentation.worker.tree.NoCacheObjectException;
 import dk.dbc.search.work.presentation.api.jpa.CacheEntity;
 import dk.dbc.search.work.presentation.api.jpa.WorkObjectEntity;
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
@@ -39,6 +40,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -132,8 +134,8 @@ public class WorkConsolidator {
         tree.forEach((unitId, unit) -> {
             Set<ManifestationInformation> manifestations = unit.values().stream() // All ObjectTree from a unit
                     .map(ObjectTree::values) // Find manifestationIds
-                    .flatMap(Collection::stream) // as a stream of manifestations
-                    .filter(m -> !m.isDeleted()) // only those not deleted
+                    .flatMap(Collection::stream) // as a stream of manifestation references
+                    .filter(not(CacheContentBuilder::isDeleted)) // only those not deleted
                     .map(CacheContentBuilder::getManifestationId)
                     .map(this::getCacheContentFor) // Lookup manifestation data
                     .collect(Collectors.toSet());
@@ -172,7 +174,7 @@ public class WorkConsolidator {
     ManifestationInformation getCacheContentFor(String id) {
         ManifestationInformation content = CacheEntity.from(em, id).getContent();
         if (content == null)
-            throw new IllegalStateException("Got null content for: " + id);
+            throw new NoCacheObjectException(id);
         return content;
     }
 
@@ -193,5 +195,9 @@ public class WorkConsolidator {
 
     private static boolean notNull(Object o) {
         return o != null;
+    }
+
+    private static <T> Predicate<T> not(Predicate<T> p) {
+        return t -> !p.test(t);
     }
 }
