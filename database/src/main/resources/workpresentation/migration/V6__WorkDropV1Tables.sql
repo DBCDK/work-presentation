@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS workObject;
+DROP TABLE IF EXISTS workContains;
+DROP TABLE IF EXISTS cache;
