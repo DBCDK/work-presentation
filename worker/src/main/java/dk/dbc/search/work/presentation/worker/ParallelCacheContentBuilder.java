@@ -33,13 +33,14 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import javax.annotation.PreDestroy;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
-import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
@@ -62,8 +63,7 @@ public class ParallelCacheContentBuilder {
     @PersistenceContext(unitName = "workPresentation_PU")
     public EntityManager em;
 
-    @Resource(type = ManagedExecutorService.class)
-    public ExecutorService executor;
+    private ExecutorService executor;
 
     @Inject
     Config config;
@@ -78,7 +78,22 @@ public class ParallelCacheContentBuilder {
         jsWorkers = new QuickPool<>(JavascriptCacheObjectBuilder.builder()
                 .build());
         jsWorkers.setMaxTotal(config.getJsPoolSize());
+        executor = Executors.newFixedThreadPool(config.getJsPoolSize());
     }
+
+    @PreDestroy
+    public void destroy() {
+        executor.shutdown();
+        try {
+            boolean terminated = executor.awaitTermination(15, TimeUnit.SECONDS);
+            if(!terminated)
+                log.error("Error terminating JavaScript thread pool, tasks didn't complete");
+        } catch (InterruptedException ex) {
+            log.error("Error shutting down JavaScript thread pool, interrupted: {}", ex.getMessage());
+            log.debug("Error shutting down JavaScript thread pool, interrupted: ", ex);
+        }
+    }
+
 
     /**
      * Deletes all cache entries for a corepoWorkId, in case the object is

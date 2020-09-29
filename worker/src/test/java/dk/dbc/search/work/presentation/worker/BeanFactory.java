@@ -99,10 +99,10 @@ public class BeanFactory implements AutoCloseable {
 
     private void setupParallelCacheContentBuilder(ParallelCacheContentBuilder bean) {
         bean.em = entityManager;
-        bean.executor = Executors.newCachedThreadPool();
         bean.config = config;
         bean.corepoContentService = corepoContentService.get();
         bean.init();
+        cleanup.add(bean::destroy);
     }
 
     public BeanFactory withCorepoContentServiceConnector(CorepoContentServiceConnector ccsc) {
