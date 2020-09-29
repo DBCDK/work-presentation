@@ -32,6 +32,7 @@ If the JSON schema of the built records changes then the migration path is:
         DROP TABLE IF EXISTS workContainsV${version-1} ...
         DROP TABLE IF EXISTS cacheV${version-1} ...
         ```
+    1. Update version in `DatabaseMigratorIT.java`.
     1. Ensure new migration is applied
         * Deploy a new version of either service or worker, that contain the `drop table` migration step
         * Or run `work-presentation-postgresql-jar-with-dependencies.jar` by hand to apply the new migration step
