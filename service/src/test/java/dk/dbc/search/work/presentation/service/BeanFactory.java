@@ -34,7 +34,7 @@ import org.glassfish.jersey.client.JerseyClientBuilder;
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
-public class BeanFactory {
+public class BeanFactory implements AutoCloseable {
 
     private final EntityManager em;
     private final DataSource dataSource;
@@ -49,6 +49,10 @@ public class BeanFactory {
         this.em = em;
         this.dataSource = dataSource;
         this.config = makeConfig(envs);
+    }
+
+    @Override
+    public void close() throws Exception {
     }
 
     private static Config makeConfig(Map<String, String> envs) {

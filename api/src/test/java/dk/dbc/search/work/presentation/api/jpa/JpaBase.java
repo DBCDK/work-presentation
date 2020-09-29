@@ -54,7 +54,7 @@ import static org.eclipse.persistence.config.PersistenceUnitProperties.JDBC_USER
  * @param <BF> a beanFactory as produced by
  *             {@link #createBeanFactory(java.util.Map, javax.persistence.EntityManager)}
  */
-public abstract class JpaBase<BF> {
+public abstract class JpaBase<BF extends AutoCloseable> {
 
     private static final Logger log = LoggerFactory.getLogger(JpaBase.class);
 
@@ -153,7 +153,11 @@ public abstract class JpaBase<BF> {
         }
 
         public void jpaWithBeans(JpaBeanVoidExecution<BF> execution) {
-            jpa(em -> execution.execute(createBeanFactory(env, em)));
+            jpa(em -> {
+                try (BF bf = createBeanFactory(env, em)) {
+                    execution.execute(bf);
+                }
+            });
         }
     }
 

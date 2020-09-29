@@ -18,6 +18,7 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +34,7 @@ import org.glassfish.jersey.client.JerseyClientBuilder;
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
-public class BeanFactory {
+public class BeanFactory implements AutoCloseable {
 
     private final EntityManager entityManager;
     private final DataSource corepoDataSource;
@@ -45,11 +46,17 @@ public class BeanFactory {
     private final Bean<WorkConsolidator> workConsolidator = new Bean<>(new WorkConsolidator(), this::setupWorkConsolidator);
     private final Bean<Worker> worker = new Bean<>(new Worker(), this::setupWorker);
     private final Bean<WorkTreeBuilder> workTreeBuilder = new Bean<>(new WorkTreeBuilder(), this::setupWorkTreeBuilder);
+    private final ArrayList<Runnable> cleanup = new ArrayList<>();
 
     public BeanFactory(Map<String, String> envs, EntityManager em, DataSource corepoDataSource) {
         this.entityManager = em;
         this.corepoDataSource = corepoDataSource;
         this.config = makeConfig(envs);
+    }
+
+    @Override
+    public void close() throws Exception {
+        cleanup.forEach(Runnable::run);
     }
 
     private static Config makeConfig(Map<String, String> envs) {

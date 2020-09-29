@@ -39,7 +39,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
-public class RecordEntityIT extends JpaBase<Object> {
+public class RecordEntityIT extends JpaBase<AutoCloseable> {
 
     public RecordEntityIT() {
     }
@@ -115,8 +115,9 @@ public class RecordEntityIT extends JpaBase<Object> {
     }
 
     @Override
-    public Object createBeanFactory(Map<String, String> env, EntityManager em) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public AutoCloseable createBeanFactory(Map<String, String> env, EntityManager em) {
+        return () -> {
+        };
     }
 
 }
