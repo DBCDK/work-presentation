@@ -20,6 +20,7 @@ package dk.dbc.search.work.presentation.worker;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -151,7 +152,7 @@ public class Config {
         return ClientBuilder.newBuilder();
     }
 
-    private static final Pattern MS = Pattern.compile("(0|[1-9]\\d*)\\s*([a-z]+)");
+    private static final Pattern MS = Pattern.compile("(0|[1-9]\\d*)\\s*(\\D+)");
 
     static long ms(String duration) {
         Matcher matcher = MS.matcher(duration);
@@ -159,7 +160,7 @@ public class Config {
             throw new EJBException("Duration: '" + duration + "' is not of format {number}{unit}");
         }
         long amount = Long.parseLong(matcher.group(1));
-        switch (matcher.group(2)) {
+        switch (matcher.group(2).toLowerCase(Locale.ROOT).trim()) {
             case "m":
             case "min":
             case "mins":
