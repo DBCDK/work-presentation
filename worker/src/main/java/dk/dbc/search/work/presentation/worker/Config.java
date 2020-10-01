@@ -88,10 +88,10 @@ public class Config {
         this.corepoContentService = UriBuilder.fromPath(getOrFail("COREPO_CONTENT_SERVICE_URL"));
         this.jsPoolSize = Integer.max(1, Integer.parseInt(getOrFail("JS_POOL_SIZE")));
 
-        computePostpomeParameters(getOrFail("JPA_POSTPONE"));
+        computePostponeParameters(getOrFail("JPA_POSTPONE"));
     }
 
-    void computePostpomeParameters(String postponeRule) throws EJBException {
+    void computePostponeParameters(String postponeRule) throws EJBException {
         String[] postponeParts = postponeRule.split("-");
         if (postponeParts.length != 2)
             throw new EJBException("JPA_POSTPONE should be 'duration-duration'");

@@ -42,7 +42,7 @@ public class ConfigTest {
         long sixMinutes = 6L * 60L * 1000L;
 
         Config config = new Config();
-        config.computePostpomeParameters("3s-6m");
+        config.computePostponeParameters("3s-6m");
         // List of random numbers in range
         List<Long> longs = Stream.generate(config::postponeDuration)
                 .limit(25)
