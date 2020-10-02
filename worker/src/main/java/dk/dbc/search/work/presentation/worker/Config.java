@@ -20,7 +20,11 @@ package dk.dbc.search.work.presentation.worker;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJBException;
 import javax.ejb.Lock;
@@ -54,6 +58,8 @@ public class Config {
     private String[] queues;
     private boolean queueDeduplicate;
     private int threads;
+    private long postponeFrom;
+    private long postponeRange;
 
     public Config() {
         this(System.getenv());
@@ -81,6 +87,19 @@ public class Config {
                 .build();
         this.corepoContentService = UriBuilder.fromPath(getOrFail("COREPO_CONTENT_SERVICE_URL"));
         this.jsPoolSize = Integer.max(1, Integer.parseInt(getOrFail("JS_POOL_SIZE")));
+
+        computePostponeParameters(getOrFail("JPA_POSTPONE"));
+    }
+
+    void computePostponeParameters(String postponeRule) throws EJBException {
+        String[] postponeParts = postponeRule.split("-");
+        if (postponeParts.length != 2)
+            throw new EJBException("JPA_POSTPONE should be 'duration-duration'");
+        this.postponeFrom = ms(postponeParts[0]);
+        this.postponeRange = ms(postponeParts[1]) - postponeFrom;
+        if (postponeRange < 0) {
+            throw new EJBException("JPA_POSTPONE should be 'duration-duration' where durations is lower-higher");
+        }
     }
 
     public UriBuilder getCorepoContentService() {
@@ -108,6 +127,10 @@ public class Config {
         return threads;
     }
 
+    public long postponeDuration() {
+        return postponeFrom + (long) ( Math.random() * (double) postponeRange );
+    }
+
     private String getOrFail(String var) {
         String value = env.get(var);
         if (value == null)
@@ -127,5 +150,37 @@ public class Config {
      */
     protected ClientBuilder clientBuilder() {
         return ClientBuilder.newBuilder();
+    }
+
+    private static final Pattern MS = Pattern.compile("(0|[1-9]\\d*)\\s*(\\D+)");
+
+    static long ms(String duration) {
+        Matcher matcher = MS.matcher(duration);
+        if (!matcher.matches()) {
+            throw new EJBException("Duration: '" + duration + "' is not of format {number}{unit}");
+        }
+        long amount = Long.parseLong(matcher.group(1));
+        switch (matcher.group(2).toLowerCase(Locale.ROOT).trim()) {
+            case "m":
+            case "min":
+            case "mins":
+            case "minute":
+            case "minutes":
+                return TimeUnit.MINUTES.toMillis(amount);
+            case "s":
+            case "sec":
+            case "secs":
+            case "second":
+            case "seconds":
+                return TimeUnit.SECONDS.toMillis(amount);
+            case "ms":
+            case "milli":
+            case "millis":
+            case "millisecond":
+            case "milliseconds":
+                return TimeUnit.MILLISECONDS.toMillis(amount);
+            default:
+                throw new EJBException("Duration: '" + duration + "' with unknown unit (ms/s/m)");
+        }
     }
 }

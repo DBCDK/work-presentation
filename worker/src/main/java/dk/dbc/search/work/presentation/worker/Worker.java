@@ -19,18 +19,24 @@
 package dk.dbc.search.work.presentation.worker;
 
 import dk.dbc.corepo.queue.QueueJob;
+import dk.dbc.pgqueue.consumer.FatalQueueError;
+import dk.dbc.pgqueue.consumer.JobMetaData;
+import dk.dbc.pgqueue.consumer.PostponedNonFatalQueueError;
 import dk.dbc.pgqueue.consumer.QueueWorker;
+import java.sql.Connection;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import javax.ejb.EJBException;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
+import javax.persistence.PersistenceException;
 import javax.sql.DataSource;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
@@ -73,13 +79,13 @@ public class Worker implements HealthCheck {
         log.info("Staring worker");
 
         worker = QueueWorker.builder(QueueJob.STORAGE_ABSTRACTION)
-                .skipDuplicateJobs(config.hasQueueDeduplicate() ? QueueJob.DEDUPLICATE_ABSTRACTION : null)
+                .skipDuplicateJobs(config.hasQueueDeduplicate() ? QueueJob.DEDUPLICATE_ABSTRACTION : null, true, true)
                 .consume(config.getQueues())
                 .dataSource(dataSource)
                 .fromEnvWithDefaults()
                 .executor(executor)
                 .metricRegistryMicroProfile(metrics)
-                .build(config.getThreads(), presentationObjectBuilder::processJob);
+                .build(config.getThreads(), this::processJob);
         worker.start();
     }
 
@@ -97,4 +103,24 @@ public class Worker implements HealthCheck {
                 .build();
     }
 
+    public void processJob(Connection connection, QueueJob job, JobMetaData metaData) throws FatalQueueError, PostponedNonFatalQueueError {
+        try {
+            presentationObjectBuilder.processJob(connection, job, metaData);
+        } catch (EJBException ex) {
+            Throwable cause = ex.getCause();
+            if (cause != null) {
+                if (cause instanceof FatalQueueError) {
+                    throw (FatalQueueError) cause;
+                }
+                if (cause instanceof PersistenceException) {
+                    PersistenceException pex = (PersistenceException) cause;
+                    long postpone = config.postponeDuration();
+                    log.error("PersistenceException, postponing: {}: {}", postpone, pex.getMessage());
+                    log.debug("PersistenceException, postponing: {}: ", postpone, pex);
+                    throw new PostponedNonFatalQueueError(postpone, ex);
+                }
+            }
+            throw ex;
+        }
+    }
 }

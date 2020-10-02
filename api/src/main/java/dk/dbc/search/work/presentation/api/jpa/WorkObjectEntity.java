@@ -145,18 +145,12 @@ public class WorkObjectEntity implements Serializable {
         this.persist = true;
     }
 
-    private static final Logger log = LoggerFactory.getLogger(WorkObjectEntity.class);
-
     public void save() {
         if (persist) {
-            log.info("persist()");
             em.persist(this);
         } else {
-            log.info("merge()");
             em.merge(this);
         }
-        log.info("flush()");
-        em.flush();
         persist = false;
     }
 

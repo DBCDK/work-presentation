@@ -24,7 +24,8 @@ LABEL \
       IDLE_RESCAN_EVERY="How often to rediscover start time when idling (default: 5)" \
       RESCAN_EVERY="How often to rediscover start time when running (default: 500)" \
       MAX_TRIES="Now many times to try to process a queue entry (default: 3)" \
-      THREADS="Number of parallel processings (required)", \
+      THREADS="Number of parallel processings (required)" \
+      JPA_POSTPONE="In case of JPA errors how long to postpone a retry duration-duration ex. 5s-3m(required)" \
       \
       JS_POOL_SIZE="Max number og JavaScript worker objects (default: 8)" \
       MAX_POOL_SIZE="Number of database connections to allocate (default: 16)"

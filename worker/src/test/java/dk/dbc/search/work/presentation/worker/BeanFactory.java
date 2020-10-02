@@ -62,6 +62,7 @@ public class BeanFactory implements AutoCloseable {
     private static Config makeConfig(Map<String, String> envs) {
         Map<String, String> env = new HashMap<>();
         env.putAll(config("COREPO_CONTENT_SERVICE_URL=" + System.getenv("COREPO_CONTENT_SERVICE_URL"),
+                          "JPA_POSTPONE=5s-10s",
                           "JS_POOL_SIZE=2",
                           "SYSTEM_NAME=test",
                           "THREADS=1",
