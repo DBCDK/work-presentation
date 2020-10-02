@@ -24,6 +24,7 @@ import dk.dbc.search.work.presentation.service.response.WorkInformationResponse;
 import dk.dbc.search.work.presentation.service.solr.Solr;
 import java.util.AbstractMap;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -82,10 +83,12 @@ public class FilterResult {
         log.debug("dbUnitInformation = {}", dbUnitInformation);
 
         WorkInformationResponse wir = WorkInformationResponse.from(work);
-        // Flatten the manifestations
-        wir.records = dbUnitInformation.values().stream()
+        // Flatten the manifestations - with predictable order
+        wir.records = new LinkedHashSet<>();
+        dbUnitInformation.values().stream()
                 .flatMap(Collection::stream)
-                .collect(Collectors.toSet());
+                .sorted((l, r) -> l.id.compareTo(r.id))
+                .forEach(wir.records::add);
         return wir;
     }
 }
