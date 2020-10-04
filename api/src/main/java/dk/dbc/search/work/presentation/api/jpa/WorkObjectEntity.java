@@ -40,8 +40,6 @@ import java.sql.Timestamp;
 import java.util.Objects;
 import javax.persistence.LockModeType;
 import javax.persistence.NamedQuery;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
