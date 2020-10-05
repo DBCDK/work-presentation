@@ -29,7 +29,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
 @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-@Schema(hidden = true, name = TypedValueResponse.NAME)
+@Schema(name = TypedValueResponse.NAME)
 public class TypedValueResponse {
 
     public static final String NAME = "typedvalue";
@@ -41,7 +41,7 @@ public class TypedValueResponse {
         public static final String NAME = TypedValueResponse.NAME + "_list";
     }
 
-    @Schema(example = "classifier")
+    @Schema(example = "classifier", nullable = true)
     public String type;
 
     @Schema(example = "Value", required = true)

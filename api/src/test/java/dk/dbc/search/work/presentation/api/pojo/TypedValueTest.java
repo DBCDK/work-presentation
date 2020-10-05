@@ -18,8 +18,11 @@
  */
 package dk.dbc.search.work.presentation.api.pojo;
 
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.Matchers.*;
@@ -72,6 +75,8 @@ public class TypedValueTest {
         ));
         assertThat(set, contains(
                    TypedValue.with("", "abc")));
+        assertThat(set, contains(
+                   TypedValue.with(null, "abc")));
     }
 
     @Test
