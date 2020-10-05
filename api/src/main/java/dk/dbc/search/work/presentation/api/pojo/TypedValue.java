@@ -95,7 +95,6 @@ public class TypedValue implements Serializable {
                 TypedValue typedValue = with(type, value);
                 ret.add(typedValue);
             });
-
         });
 
         return ret;
@@ -103,7 +102,7 @@ public class TypedValue implements Serializable {
 
     static TypedValue with(String type, String value) {
         TypedValue typedValue = new TypedValue();
-        typedValue.type = type.isEmpty() ? "" : type;
+        typedValue.type = type == null || type.isEmpty() ? null : type;
         typedValue.value = value;
         return typedValue;
     }
