@@ -42,6 +42,7 @@ import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.Liveness;
 import org.eclipse.microprofile.metrics.MetricRegistry;
+import org.eclipse.persistence.exceptions.DatabaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,7 +118,14 @@ public class Worker implements HealthCheck {
                     long postpone = config.postponeDuration();
                     log.error("PersistenceException, postponing: {}: {}", postpone, pex.getMessage());
                     log.debug("PersistenceException, postponing: {}: ", postpone, pex);
-                    throw new PostponedNonFatalQueueError(postpone, ex);
+                    throw new PostponedNonFatalQueueError(postpone, cause);
+                }
+                if (cause instanceof DatabaseException) {
+                    DatabaseException pex = (DatabaseException) cause;
+                    long postpone = config.postponeDuration();
+                    log.error("DatabaseException, postponing: {}: {}", postpone, pex.getMessage());
+                    log.debug("DatabaseException, postponing: {}: ", postpone, pex);
+                    throw new PostponedNonFatalQueueError(postpone, cause);
                 }
             }
             throw ex;
