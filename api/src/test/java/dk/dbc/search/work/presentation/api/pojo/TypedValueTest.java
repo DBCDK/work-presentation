@@ -50,8 +50,8 @@ public class TypedValueTest {
                 TypedValue.with("", "def")
         ));
         assertThat(set, containsInAnyOrder(
-                   TypedValue.with("", "abc"),
-                   TypedValue.with("", "def")));
+                   TypedValue.with("not specified", "abc"),
+                   TypedValue.with("not specified", "def")));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class TypedValueTest {
                 TypedValue.with("", "abc")
         ));
         assertThat(set, contains(
-                   TypedValue.with("", "abc")));
+                   TypedValue.with("not specified", "abc")));
         assertThat(set, contains(
                    TypedValue.with(null, "abc")));
     }
@@ -88,13 +88,13 @@ public class TypedValueTest {
                 TypedValue.with("", "Abc")
         ));
         assertThat(set1, contains(
-                   TypedValue.with("", "Abc")));
+                   TypedValue.with("not specified", "Abc")));
 
         Set<TypedValue> set2 = TypedValue.distinctSet(Arrays.asList(
                 TypedValue.with("", "Abc"),
                 TypedValue.with("", "abc")
         ));
         assertThat(set2, contains(
-                   TypedValue.with("", "Abc")));
+                   TypedValue.with("not specified", "Abc")));
     }
 }
