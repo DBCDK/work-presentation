@@ -41,7 +41,8 @@ public class TypedValueResponse {
         public static final String NAME = TypedValueResponse.NAME + "_list";
     }
 
-    @Schema(example = "classifier", nullable = true)
+    // SAHU: added required = true
+    @Schema(example = "classifier", required = true)
     public String type;
 
     @Schema(example = "Value", required = true)

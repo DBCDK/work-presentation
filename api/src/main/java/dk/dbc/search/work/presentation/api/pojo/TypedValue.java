@@ -102,6 +102,7 @@ public class TypedValue implements Serializable {
 
     static TypedValue with(String type, String value) {
         TypedValue typedValue = new TypedValue();
+        // sahu: changed from "" to "not specified"
         typedValue.type = type == null || type.isEmpty() ? "not specified" : type;
         typedValue.value = value;
         return typedValue;

@@ -49,6 +49,7 @@ public class TypedValueTest {
                 TypedValue.with("", "abc"),
                 TypedValue.with("", "def")
         ));
+        // SAHU: changed from "" to "not specified"
         assertThat(set, containsInAnyOrder(
                    TypedValue.with("not specified", "abc"),
                    TypedValue.with("not specified", "def")));
@@ -73,10 +74,11 @@ public class TypedValueTest {
                 TypedValue.with("", "abc"),
                 TypedValue.with("", "abc")
         ));
+        // SAHU: changed from "" and null to "not specified"
         assertThat(set, contains(
                    TypedValue.with("not specified", "abc")));
         assertThat(set, contains(
-                   TypedValue.with(null, "abc")));
+                   TypedValue.with("not specified", "abc")));
     }
 
     @Test
@@ -87,6 +89,7 @@ public class TypedValueTest {
                 TypedValue.with("", "abc"),
                 TypedValue.with("", "Abc")
         ));
+        // SAHU: changed from "" to "not specified"
         assertThat(set1, contains(
                    TypedValue.with("not specified", "Abc")));
 
@@ -94,6 +97,7 @@ public class TypedValueTest {
                 TypedValue.with("", "Abc"),
                 TypedValue.with("", "abc")
         ));
+        // SAHU: changed from "" to "not specified"
         assertThat(set2, contains(
                    TypedValue.with("not specified", "Abc")));
     }
