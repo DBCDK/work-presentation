@@ -18,11 +18,9 @@
  */
 package dk.dbc.search.work.presentation.api.pojo;
 
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Set;
-import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.Matchers.*;
@@ -33,11 +31,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
 public class TypedValueTest {
+    private final String fallbackType = "not_specified";
 
     @Test
     public void testEmptyList() throws Exception {
         System.out.println("testEmptyList");
-        Set<TypedValue> set = TypedValue.distinctSet(Arrays.asList());
+        Set<TypedValue> set = TypedValue.distinctSet(Arrays.asList(), fallbackType);
         assertThat(set, is(empty()));
     }
 
@@ -46,39 +45,41 @@ public class TypedValueTest {
         System.out.println("testMultipleDifferentValues");
 
         Set<TypedValue> set = TypedValue.distinctSet(Arrays.asList(
-                TypedValue.with("", "abc"),
-                TypedValue.with("", "def")
-        ));
-        // SAHU: changed from "" to "not specified"
+                TypedValue.with("", fallbackType,"abc"),
+                TypedValue.with(null, fallbackType, "def")
+        ), fallbackType);
+
         assertThat(set, containsInAnyOrder(
-                   TypedValue.with("not specified", "abc"),
-                   TypedValue.with("not specified", "def")));
+                   TypedValue.with(fallbackType, fallbackType, "abc"),
+                   TypedValue.with(fallbackType, fallbackType, "def"))
+        );
     }
 
     @Test
     public void testDifferentTypes() throws Exception {
         System.out.println("testDifferentTypes");
         Set<TypedValue> set = TypedValue.distinctSet(Arrays.asList(
-                TypedValue.with("1", "abc"),
-                TypedValue.with("a", "def")
-        ));
+                TypedValue.with("1", fallbackType, "abc"),
+                TypedValue.with("a", fallbackType, "def")
+        ), fallbackType);
+
         assertThat(set, containsInAnyOrder(
-                   TypedValue.with("1", "abc"),
-                   TypedValue.with("a", "def")));
+                   TypedValue.with("1", fallbackType, "abc"),
+                   TypedValue.with("a", fallbackType, "def")));
     }
 
     @Test
     public void testRemoveDuplicates() throws Exception {
         System.out.println("testRemoveDuplicates");
         Set<TypedValue> set = TypedValue.distinctSet(Arrays.asList(
-                TypedValue.with("", "abc"),
-                TypedValue.with("", "abc")
-        ));
-        // SAHU: changed from "" and null to "not specified"
+                TypedValue.with("", fallbackType, "abc"),
+                TypedValue.with("", fallbackType, "abc")
+        ), fallbackType);
+
         assertThat(set, contains(
-                   TypedValue.with("not specified", "abc")));
+                   TypedValue.with(fallbackType, fallbackType,"abc")));
         assertThat(set, contains(
-                   TypedValue.with("not specified", "abc")));
+                   TypedValue.with(fallbackType, fallbackType, "abc")));
     }
 
     @Test
@@ -86,19 +87,44 @@ public class TypedValueTest {
         System.out.println("testUseCapitalized");
 
         Set<TypedValue> set1 = TypedValue.distinctSet(Arrays.asList(
-                TypedValue.with("", "abc"),
-                TypedValue.with("", "Abc")
-        ));
-        // SAHU: changed from "" to "not specified"
+                TypedValue.with("", fallbackType, "abc"),
+                TypedValue.with("", fallbackType, "Abc")
+        ), fallbackType);
+
         assertThat(set1, contains(
-                   TypedValue.with("not specified", "Abc")));
+                   TypedValue.with(fallbackType, fallbackType, "Abc")));
 
         Set<TypedValue> set2 = TypedValue.distinctSet(Arrays.asList(
-                TypedValue.with("", "Abc"),
-                TypedValue.with("", "abc")
-        ));
-        // SAHU: changed from "" to "not specified"
+                TypedValue.with("", fallbackType, "Abc"),
+                TypedValue.with("", fallbackType, "abc")
+        ), fallbackType);
+
         assertThat(set2, contains(
-                   TypedValue.with("not specified", "Abc")));
+                   TypedValue.with(fallbackType, fallbackType, "Abc")));
+    }
+
+    @Test
+    public void testFallbackType() throws Exception {
+        System.out.println("testFallbackType");
+
+        Set<TypedValue> set1 = TypedValue.distinctSet(Arrays.asList(
+                TypedValue.with("", fallbackType, "abc"),
+                TypedValue.with(null, fallbackType, "def")
+        ), fallbackType);
+
+        assertThat(set1, containsInAnyOrder(
+                TypedValue.with(fallbackType, fallbackType, "abc"),
+                TypedValue.with(fallbackType, fallbackType, "def"))
+        );
+
+        Set<TypedValue> set2 = TypedValue.distinctSet(Arrays.asList(
+                TypedValue.with("", "", "abc"),
+                TypedValue.with(null, "", "def")
+        ), "");
+
+        assertThat(set2, containsInAnyOrder(
+                TypedValue.with("", "", "abc"),
+                TypedValue.with("", "", "def"))
+        );
     }
 }
