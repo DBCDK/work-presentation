@@ -205,7 +205,7 @@
                             <COREPO_POSTGRES_URL>localhost:${postgresql.port}/corepo</COREPO_POSTGRES_URL>
                             <COREPO_CONTENT_SERVICE_URL>http://localhost:${wiremock.port}/corepo-content-service</COREPO_CONTENT_SERVICE_URL>
                             <COREPO_SOLR_URL>http://localhost:${wiremock.port}/corepo-solr</COREPO_SOLR_URL>
-                            <VIP_CORE_URL>http://localhost:${wiremock.port}/vip-core</VIP_CORE_URL>
+                            <VIP_CORE_URL>http://localhost:${wiremock.port}/vip-core/api</VIP_CORE_URL>
                         </environmentVariables>
                         <systemPropertyVariables>
                             <postgresql.port>${postgresql.port}</postgresql.port>
