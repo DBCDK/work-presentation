@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import javax.cache.annotation.CacheKey;
 import javax.cache.annotation.CacheResult;
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
@@ -70,7 +69,7 @@ public class ProfileService {
     @Timed(reusable = true)
     public String filterQueryFor(@CacheKey String agencyId, @CacheKey String profile, String trackingId) {
         URI uri = config.getVipCore()
-                .path("api/profileservice/search/{agencyId}/{profile}")
+                .path("profileservice/search/{agencyId}/{profile}")
                 .build(agencyId, profile);
         try (InputStream is = config.getVipCoreHttpClient(trackingId)
                 .target(uri)
@@ -81,17 +80,17 @@ public class ProfileService {
                 switch (resp.getError()) {
                     case AGENCY_NOT_FOUND:
                     case PROFILE_NOT_FOUND:
-                        log.info("Failed vip-core request: {}, error: {}", uri, resp.getError());
+                        log.warn("Failed vip-core request: {}, error: {}", uri, resp.getError());
                         throw new NoSuchProfileException(agencyId, profile);
                     default:
                         log.warn("Failed vip-core request: {}, error: {}", uri, resp.getError());
-                        throw new BadRequestException("Error: " + resp.getError().value());
+                        throw new ProfileServiceException(agencyId, profile, uri.toString(), resp.getError().toString());
                 }
             }
             return resp.getFilterQuery();
-        } catch (IOException ex) {
+        } catch (WebApplicationException | IOException ex) {
             log.warn("Failed vip-core request: {}, error: {}", uri, ex.getMessage());
-            throw new BadRequestException(ex);
+            throw new ProfileServiceException(agencyId, profile, uri.toString(), ex.getMessage());
         }
     }
 }
