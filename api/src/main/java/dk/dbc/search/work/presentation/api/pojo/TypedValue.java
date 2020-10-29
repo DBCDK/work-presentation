@@ -79,7 +79,7 @@ public class TypedValue implements Serializable {
     public static Set<TypedValue> distinctSet(Collection<TypedValue> typedValues, String fallback_type) {
         HashMap<String, HashMap<String, String>> completeCollection = new HashMap<>();
         typedValues.forEach(typedValue -> {
-            String safeType = typedValue.type == null ? fallback_type : typedValue.type;
+            String safeType = typedValue.type == null || typedValue.type.isEmpty()? fallback_type : typedValue.type;
             HashMap<String, String> values = completeCollection.computeIfAbsent(safeType, s -> new HashMap<>());
             String normalized = Normalizer.normalize(typedValue.value, Normalizer.Form.NFC);
             String key = normalized.toLowerCase(Locale.ROOT);
@@ -93,7 +93,7 @@ public class TypedValue implements Serializable {
         HashSet<TypedValue> ret = new HashSet<>();
         completeCollection.forEach((type, valueMap) -> {
             valueMap.values().forEach(value -> {
-                TypedValue typedValue = with(type, fallback_type, value);
+                TypedValue typedValue = with(type, value);
                 ret.add(typedValue);
             });
         });
@@ -101,9 +101,9 @@ public class TypedValue implements Serializable {
         return ret;
     }
 
-    static TypedValue with(String type, String fallbackType, String value) {
+    static TypedValue with(String type, String value) {
         TypedValue typedValue = new TypedValue();
-        typedValue.type = type == null || type.isEmpty() ? fallbackType : type;
+        typedValue.type = type;
         typedValue.value = value;
         return typedValue;
     }

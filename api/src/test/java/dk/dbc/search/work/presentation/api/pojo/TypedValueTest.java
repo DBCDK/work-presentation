@@ -19,7 +19,6 @@
 package dk.dbc.search.work.presentation.api.pojo;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 
@@ -31,12 +30,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
 public class TypedValueTest {
-    private final String fallbackType = "not_specified";
+    private final String not_spec = "not_specified";
+    private final String empty_string = "";
 
     @Test
     public void testEmptyList() throws Exception {
         System.out.println("testEmptyList");
-        Set<TypedValue> set = TypedValue.distinctSet(Arrays.asList(), fallbackType);
+        Set<TypedValue> set = TypedValue.distinctSet(Arrays.asList(), empty_string);
         assertThat(set, is(empty()));
     }
 
@@ -45,13 +45,13 @@ public class TypedValueTest {
         System.out.println("testMultipleDifferentValues");
 
         Set<TypedValue> set = TypedValue.distinctSet(Arrays.asList(
-                TypedValue.with("", fallbackType,"abc"),
-                TypedValue.with(null, fallbackType, "def")
-        ), fallbackType);
+                TypedValue.with("", "abc"),
+                TypedValue.with(null, "def")
+        ), empty_string);
 
         assertThat(set, containsInAnyOrder(
-                   TypedValue.with(fallbackType, fallbackType, "abc"),
-                   TypedValue.with(fallbackType, fallbackType, "def"))
+                   TypedValue.with(empty_string, "abc"),
+                   TypedValue.with(empty_string, "def"))
         );
     }
 
@@ -59,27 +59,30 @@ public class TypedValueTest {
     public void testDifferentTypes() throws Exception {
         System.out.println("testDifferentTypes");
         Set<TypedValue> set = TypedValue.distinctSet(Arrays.asList(
-                TypedValue.with("1", fallbackType, "abc"),
-                TypedValue.with("a", fallbackType, "def")
-        ), fallbackType);
+                TypedValue.with("1", "abc"),
+                TypedValue.with("a", "def"),
+                TypedValue.with(null, "ghi")
+        ), empty_string);
 
         assertThat(set, containsInAnyOrder(
-                   TypedValue.with("1", fallbackType, "abc"),
-                   TypedValue.with("a", fallbackType, "def")));
+                 TypedValue.with("1", "abc"),
+                 TypedValue.with("a", "def"),
+                 TypedValue.with(empty_string,"ghi"))
+        );
     }
 
     @Test
     public void testRemoveDuplicates() throws Exception {
         System.out.println("testRemoveDuplicates");
         Set<TypedValue> set = TypedValue.distinctSet(Arrays.asList(
-                TypedValue.with("", fallbackType, "abc"),
-                TypedValue.with("", fallbackType, "abc")
-        ), fallbackType);
+                TypedValue.with("", "abc"),
+                TypedValue.with("", "abc")
+        ), empty_string);
 
         assertThat(set, contains(
-                   TypedValue.with(fallbackType, fallbackType,"abc")));
-        assertThat(set, contains(
-                   TypedValue.with(fallbackType, fallbackType, "abc")));
+                   TypedValue.with(empty_string, "abc")));
+
+        assertThat(set.size(), equalTo(1));
     }
 
     @Test
@@ -87,20 +90,20 @@ public class TypedValueTest {
         System.out.println("testUseCapitalized");
 
         Set<TypedValue> set1 = TypedValue.distinctSet(Arrays.asList(
-                TypedValue.with("", fallbackType, "abc"),
-                TypedValue.with("", fallbackType, "Abc")
-        ), fallbackType);
+                TypedValue.with("", "abc"),
+                TypedValue.with("", "Abc")
+        ), empty_string);
 
         assertThat(set1, contains(
-                   TypedValue.with(fallbackType, fallbackType, "Abc")));
+                   TypedValue.with(empty_string, "Abc")));
 
         Set<TypedValue> set2 = TypedValue.distinctSet(Arrays.asList(
-                TypedValue.with("", fallbackType, "Abc"),
-                TypedValue.with("", fallbackType, "abc")
-        ), fallbackType);
+                TypedValue.with("", "Abc"),
+                TypedValue.with("", "abc")
+        ), empty_string);
 
         assertThat(set2, contains(
-                   TypedValue.with(fallbackType, fallbackType, "Abc")));
+                   TypedValue.with(empty_string, "Abc")));
     }
 
     @Test
@@ -108,23 +111,29 @@ public class TypedValueTest {
         System.out.println("testFallbackType");
 
         Set<TypedValue> set1 = TypedValue.distinctSet(Arrays.asList(
-                TypedValue.with("", fallbackType, "abc"),
-                TypedValue.with(null, fallbackType, "def")
-        ), fallbackType);
+                TypedValue.with("", "abc"),
+                TypedValue.with(null, "def"),
+                TypedValue.with("type", "ghi")
+        ), empty_string);
 
         assertThat(set1, containsInAnyOrder(
-                TypedValue.with(fallbackType, fallbackType, "abc"),
-                TypedValue.with(fallbackType, fallbackType, "def"))
+                TypedValue.with(empty_string, "abc"),
+                TypedValue.with(empty_string, "def"),
+                TypedValue.with("type", "ghi")
+                )
         );
 
         Set<TypedValue> set2 = TypedValue.distinctSet(Arrays.asList(
-                TypedValue.with("", "", "abc"),
-                TypedValue.with(null, "", "def")
-        ), "");
+                TypedValue.with("", "abc"),
+                TypedValue.with(null, "def"),
+                TypedValue.with("type", "ghi")
+        ), not_spec);
 
         assertThat(set2, containsInAnyOrder(
-                TypedValue.with("", "", "abc"),
-                TypedValue.with("", "", "def"))
+                TypedValue.with(not_spec,"abc"),
+                TypedValue.with(not_spec, "def"),
+                TypedValue.with("type", "ghi")
+                )
         );
     }
 }
