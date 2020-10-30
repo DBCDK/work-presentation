@@ -66,7 +66,7 @@ public class TypedValueTest {
                 TypedValue.with("1", "abc"),
                 TypedValue.with("a", "def"),
                 TypedValue.with(not_spec, "ghi"),
-                TypedValue.with(not_spec, "jki"))
+                TypedValue.with(not_spec, "jkl"))
         );
     }
 
