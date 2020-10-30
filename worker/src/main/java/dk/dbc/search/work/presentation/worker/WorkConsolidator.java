@@ -124,7 +124,7 @@ public class WorkConsolidator {
         // Copy from owner
         String ownerId = tree.getPrimaryManifestationId();
         ManifestationInformation primary = getCacheContentFor(ownerId);
-        work.creators = TypedValue.distinctSet(primary.creators, "");
+        work.creators = TypedValue.distinctSet(primary.creators);
         work.description = primary.description;
         work.fullTitle = primary.fullTitle;
         work.title = primary.title;
@@ -152,7 +152,7 @@ public class WorkConsolidator {
                 .filter(WorkConsolidator::notNull)
                 .flatMap(Collection::stream) // as a stream of String
                 .collect(Collectors.toSet());
-        work.subjects = TypedValue.distinctSet(work.subjects, "not_specified");
+        work.subjects = TypedValue.distinctSet(work.subjects);
 
         tree.forEach((unitId, unit) -> {
             Set<ManifestationInformation> manifestations = work.dbUnitInformation.get(unitId)

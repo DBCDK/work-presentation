@@ -31,12 +31,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class TypedValueTest {
     private final String not_spec = "not_specified";
-    private final String empty_string = "";
 
     @Test
     public void testEmptyList() throws Exception {
         System.out.println("testEmptyList");
-        Set<TypedValue> set = TypedValue.distinctSet(Arrays.asList(), empty_string);
+        Set<TypedValue> set = TypedValue.distinctSet(Arrays.asList());
         assertThat(set, is(empty()));
     }
 
@@ -46,12 +45,11 @@ public class TypedValueTest {
 
         Set<TypedValue> set = TypedValue.distinctSet(Arrays.asList(
                 TypedValue.with("", "abc"),
-                TypedValue.with(null, "def")
-        ), empty_string);
+                TypedValue.with(null, "def")));
 
         assertThat(set, containsInAnyOrder(
-                   TypedValue.with(empty_string, "abc"),
-                   TypedValue.with(empty_string, "def"))
+                   TypedValue.with(not_spec, "abc"),
+                   TypedValue.with(not_spec, "def"))
         );
     }
 
@@ -61,13 +59,12 @@ public class TypedValueTest {
         Set<TypedValue> set = TypedValue.distinctSet(Arrays.asList(
                 TypedValue.with("1", "abc"),
                 TypedValue.with("a", "def"),
-                TypedValue.with(null, "ghi")
-        ), empty_string);
+                TypedValue.with(null, "ghi")));
 
         assertThat(set, containsInAnyOrder(
                  TypedValue.with("1", "abc"),
                  TypedValue.with("a", "def"),
-                 TypedValue.with(empty_string,"ghi"))
+                 TypedValue.with(not_spec,"ghi"))
         );
     }
 
@@ -76,11 +73,10 @@ public class TypedValueTest {
         System.out.println("testRemoveDuplicates");
         Set<TypedValue> set = TypedValue.distinctSet(Arrays.asList(
                 TypedValue.with("", "abc"),
-                TypedValue.with("", "abc")
-        ), empty_string);
+                TypedValue.with("", "abc")));
 
         assertThat(set, contains(
-                   TypedValue.with(empty_string, "abc")));
+                   TypedValue.with(not_spec, "abc")));
 
         assertThat(set.size(), equalTo(1));
     }
@@ -91,19 +87,17 @@ public class TypedValueTest {
 
         Set<TypedValue> set1 = TypedValue.distinctSet(Arrays.asList(
                 TypedValue.with("", "abc"),
-                TypedValue.with("", "Abc")
-        ), empty_string);
+                TypedValue.with("", "Abc")));
 
         assertThat(set1, contains(
-                   TypedValue.with(empty_string, "Abc")));
+                   TypedValue.with(not_spec, "Abc")));
 
         Set<TypedValue> set2 = TypedValue.distinctSet(Arrays.asList(
                 TypedValue.with("", "Abc"),
-                TypedValue.with("", "abc")
-        ), empty_string);
+                TypedValue.with("", "abc")));
 
         assertThat(set2, contains(
-                   TypedValue.with(empty_string, "Abc")));
+                   TypedValue.with(not_spec, "Abc")));
     }
 
     @Test
@@ -113,27 +107,21 @@ public class TypedValueTest {
         Set<TypedValue> set1 = TypedValue.distinctSet(Arrays.asList(
                 TypedValue.with("", "abc"),
                 TypedValue.with(null, "def"),
-                TypedValue.with("type", "ghi")
-        ), empty_string);
+                TypedValue.with("type", "ghi")));
 
         assertThat(set1, containsInAnyOrder(
-                TypedValue.with(empty_string, "abc"),
-                TypedValue.with(empty_string, "def"),
-                TypedValue.with("type", "ghi")
-                )
-        );
+                TypedValue.with(not_spec, "abc"),
+                TypedValue.with(not_spec, "def"),
+                TypedValue.with("type", "ghi")));
 
         Set<TypedValue> set2 = TypedValue.distinctSet(Arrays.asList(
                 TypedValue.with("", "abc"),
                 TypedValue.with(null, "def"),
-                TypedValue.with("type", "ghi")
-        ), not_spec);
+                TypedValue.with("type", "ghi")));
 
         assertThat(set2, containsInAnyOrder(
                 TypedValue.with(not_spec,"abc"),
                 TypedValue.with(not_spec, "def"),
-                TypedValue.with("type", "ghi")
-                )
-        );
+                TypedValue.with("type", "ghi")));
     }
 }

@@ -39,6 +39,7 @@ import java.util.Set;
 public class TypedValue implements Serializable {
 
     private static final long serialVersionUID = 0x138510F9E2C42638L;
+    private static final String fallback_type = "not_specified";
 
     public String type;
     public String value;
@@ -76,7 +77,7 @@ public class TypedValue implements Serializable {
      * @param typedValues collection of values with duplicates
      * @return collection of values without duplicates
      */
-    public static Set<TypedValue> distinctSet(Collection<TypedValue> typedValues, String fallback_type) {
+    public static Set<TypedValue> distinctSet(Collection<TypedValue> typedValues) {
         HashMap<String, HashMap<String, String>> completeCollection = new HashMap<>();
         typedValues.forEach(typedValue -> {
             String safeType = typedValue.type == null || typedValue.type.isEmpty()? fallback_type : typedValue.type;
