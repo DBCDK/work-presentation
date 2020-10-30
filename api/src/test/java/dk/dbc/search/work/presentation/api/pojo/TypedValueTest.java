@@ -20,13 +20,13 @@ package dk.dbc.search.work.presentation.api.pojo;
 
 import java.util.Arrays;
 import java.util.Set;
+
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
- *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
 public class TypedValueTest {
@@ -48,8 +48,8 @@ public class TypedValueTest {
                 TypedValue.with(null, "def")));
 
         assertThat(set, containsInAnyOrder(
-                   TypedValue.with(not_spec, "abc"),
-                   TypedValue.with(not_spec, "def"))
+                TypedValue.with(not_spec, "abc"),
+                TypedValue.with(not_spec, "def"))
         );
     }
 
@@ -59,12 +59,14 @@ public class TypedValueTest {
         Set<TypedValue> set = TypedValue.distinctSet(Arrays.asList(
                 TypedValue.with("1", "abc"),
                 TypedValue.with("a", "def"),
-                TypedValue.with(null, "ghi")));
+                TypedValue.with("", "ghi"),
+                TypedValue.with(null, "jkl")));
 
         assertThat(set, containsInAnyOrder(
-                 TypedValue.with("1", "abc"),
-                 TypedValue.with("a", "def"),
-                 TypedValue.with(not_spec,"ghi"))
+                TypedValue.with("1", "abc"),
+                TypedValue.with("a", "def"),
+                TypedValue.with(not_spec, "ghi"),
+                TypedValue.with(not_spec, "jki"))
         );
     }
 
@@ -76,7 +78,7 @@ public class TypedValueTest {
                 TypedValue.with("", "abc")));
 
         assertThat(set, contains(
-                   TypedValue.with(not_spec, "abc")));
+                TypedValue.with(not_spec, "abc")));
 
         assertThat(set.size(), equalTo(1));
     }
@@ -90,38 +92,13 @@ public class TypedValueTest {
                 TypedValue.with("", "Abc")));
 
         assertThat(set1, contains(
-                   TypedValue.with(not_spec, "Abc")));
+                TypedValue.with(not_spec, "Abc")));
 
         Set<TypedValue> set2 = TypedValue.distinctSet(Arrays.asList(
                 TypedValue.with("", "Abc"),
                 TypedValue.with("", "abc")));
 
         assertThat(set2, contains(
-                   TypedValue.with(not_spec, "Abc")));
-    }
-
-    @Test
-    public void testFallbackType() throws Exception {
-        System.out.println("testFallbackType");
-
-        Set<TypedValue> set1 = TypedValue.distinctSet(Arrays.asList(
-                TypedValue.with("", "abc"),
-                TypedValue.with(null, "def"),
-                TypedValue.with("type", "ghi")));
-
-        assertThat(set1, containsInAnyOrder(
-                TypedValue.with(not_spec, "abc"),
-                TypedValue.with(not_spec, "def"),
-                TypedValue.with("type", "ghi")));
-
-        Set<TypedValue> set2 = TypedValue.distinctSet(Arrays.asList(
-                TypedValue.with("", "abc"),
-                TypedValue.with(null, "def"),
-                TypedValue.with("type", "ghi")));
-
-        assertThat(set2, containsInAnyOrder(
-                TypedValue.with(not_spec,"abc"),
-                TypedValue.with(not_spec, "def"),
-                TypedValue.with("type", "ghi")));
+                TypedValue.with(not_spec, "Abc")));
     }
 }
