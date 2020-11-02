@@ -30,7 +30,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
 public class TypedValueTest {
-    private final String not_spec = "not_specified";
+    private final String notSpec = "not_specified";
 
     @Test
     public void testEmptyList() throws Exception {
@@ -48,8 +48,8 @@ public class TypedValueTest {
                 TypedValue.with(null, "def")));
 
         assertThat(set, containsInAnyOrder(
-                TypedValue.with(not_spec, "abc"),
-                TypedValue.with(not_spec, "def"))
+                TypedValue.with(notSpec, "abc"),
+                TypedValue.with(notSpec, "def"))
         );
     }
 
@@ -65,8 +65,8 @@ public class TypedValueTest {
         assertThat(set, containsInAnyOrder(
                 TypedValue.with("1", "abc"),
                 TypedValue.with("a", "def"),
-                TypedValue.with(not_spec, "ghi"),
-                TypedValue.with(not_spec, "jkl"))
+                TypedValue.with(notSpec, "ghi"),
+                TypedValue.with(notSpec, "jkl"))
         );
     }
 
@@ -78,9 +78,9 @@ public class TypedValueTest {
                 TypedValue.with("", "abc")));
 
         assertThat(set, contains(
-                TypedValue.with(not_spec, "abc")));
-
-        assertThat(set.size(), equalTo(1));
+                TypedValue.with(notSpec, "abc")));
+        assertThat(set, contains(
+                TypedValue.with(null, "abc")));
     }
 
     @Test
@@ -92,13 +92,13 @@ public class TypedValueTest {
                 TypedValue.with("", "Abc")));
 
         assertThat(set1, contains(
-                TypedValue.with(not_spec, "Abc")));
+                TypedValue.with(notSpec, "Abc")));
 
         Set<TypedValue> set2 = TypedValue.distinctSet(Arrays.asList(
                 TypedValue.with("", "Abc"),
                 TypedValue.with("", "abc")));
 
         assertThat(set2, contains(
-                TypedValue.with(not_spec, "Abc")));
+                TypedValue.with(notSpec, "Abc")));
     }
 }

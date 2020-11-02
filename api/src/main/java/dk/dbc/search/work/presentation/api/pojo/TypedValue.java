@@ -39,7 +39,7 @@ import java.util.Set;
 public class TypedValue implements Serializable {
 
     private static final long serialVersionUID = 0x138510F9E2C42638L;
-    private static final String fallback_type = "not_specified";
+    private static final String fallbackType = "not_specified";
 
     public String type;
     public String value;
@@ -80,7 +80,7 @@ public class TypedValue implements Serializable {
     public static Set<TypedValue> distinctSet(Collection<TypedValue> typedValues) {
         HashMap<String, HashMap<String, String>> completeCollection = new HashMap<>();
         typedValues.forEach(typedValue -> {
-            String safeType = typedValue.type == null || typedValue.type.isEmpty()? fallback_type : typedValue.type;
+            String safeType = typedValue.type == null ? fallbackType : typedValue.type;
             HashMap<String, String> values = completeCollection.computeIfAbsent(safeType, s -> new HashMap<>());
             String normalized = Normalizer.normalize(typedValue.value, Normalizer.Form.NFC);
             String key = normalized.toLowerCase(Locale.ROOT);
@@ -104,7 +104,7 @@ public class TypedValue implements Serializable {
 
     static TypedValue with(String type, String value) {
         TypedValue typedValue = new TypedValue();
-        typedValue.type = type;
+        typedValue.type = type == null || type.isEmpty() ? null : type;
         typedValue.value = value;
         return typedValue;
     }
