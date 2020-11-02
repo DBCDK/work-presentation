@@ -79,8 +79,6 @@ public class TypedValueTest {
 
         assertThat(set, contains(
                 TypedValue.with(notSpec, "abc")));
-        assertThat(set, contains(
-                TypedValue.with(null, "abc")));
     }
 
     @Test
