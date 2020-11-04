@@ -24,10 +24,10 @@ if [ x$QUEUE = x ]; then
     QUEUE=work-v$VERSION-slow
 fi
 
-    
 CHUNK_INSERT_JAR=/tmp/$USER-chunk-insert-$$.jar
 curl -so $CHUNK_INSERT_JAR "${JENKINS_BASE_URL%/}/job/chunk-insert/job/master/lastSuccessfulBuild/artifact/target/chunk-insert.jar"
 trap "rm -vf $CHUNK_INSERT_JAR" EXIT
 
 psql postgres://$WORK_PRESENTATION_POSTGRES_URL -c "TRUNCATE cacheV$VERSION"
+echo "IT MIGHT TAKE A WHILE BEFORE PROCESSING STARTS (15-20min)"
 java -jar $CHUNK_INSERT_JAR --database=$COREPO_POSTGRES_URL --commit=25000 --vacuum=10 "INSERT INTO queue(pid, consumer, trackingid) SELECT pid, '$QUEUE', 'requeue-by-$USER' FROM records WHERE NOT deleted AND pid LIKE 'work:%'"
