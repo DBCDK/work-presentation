@@ -35,6 +35,7 @@ import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import javax.ws.rs.NotFoundException;
 
 /**
  * Caching interface to vip-cores profileservice endpoint
@@ -48,7 +49,6 @@ public class ProfileService {
     private static final ObjectMapper O = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
             .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true);
-
 
     @Inject
     public Config config;
@@ -88,6 +88,9 @@ public class ProfileService {
                 }
             }
             return resp.getFilterQuery();
+        } catch (NotFoundException ex) {
+            log.warn("Failed vip-core request: {}, error: {}", uri, ex.getMessage());
+            throw new NoSuchProfileException(agencyId, profile);
         } catch (WebApplicationException | IOException ex) {
             log.warn("Failed vip-core request: {}, error: {}", uri, ex.getMessage());
             throw new ProfileServiceException(agencyId, profile, uri.toString(), ex.getMessage());
