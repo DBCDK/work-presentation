@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.net.URI;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import org.apache.commons.io.IOUtils;
@@ -61,14 +62,14 @@ public class CorepoContentServiceConnector {
                 .path("/rest/objects/{id}/datastreams/RELS-SYS/content")
                 .build(id);
         log.debug("Fetching {} to RelsSys object", id);
-        return callUrl(uri, RelsSys::new);
+        return callUrl(uri, RelsSys::new, false);
     }
 
     /**
      * Fetch a RELS-EXT stream from corepo-content-service
      *
      * @param id the repository-id
-     * @return parsed RELS-EXT
+     * @return parsed RELS-EXT or null if not found
      */
     @Timed(reusable = true)
     public RelsExt relsExt(String id) {
@@ -76,7 +77,7 @@ public class CorepoContentServiceConnector {
                 .path("/rest/objects/{id}/datastreams/RELS-EXT/content")
                 .build(id);
         log.debug("Fetching {} to RelsExt object", id);
-        return callUrl(uri, RelsExt::new);
+        return callUrl(uri, RelsExt::new, true);
     }
 
     /**
@@ -93,7 +94,7 @@ public class CorepoContentServiceConnector {
                 .path("/rest/objects/{id}")
                 .build(id);
         log.debug("Fetching {} to ObjectMetaData object", id);
-        return callUrl(uri, ObjectMetaData::new);
+        return callUrl(uri, ObjectMetaData::new, false);
     }
 
     /**
@@ -111,7 +112,7 @@ public class CorepoContentServiceConnector {
                 .path("/rest/objects/{id}/datastreams/{stream}")
                 .build(id, stream);
         log.debug("Fetching {}/{} to DataStreamMetaData object", id, stream);
-        return callUrl(uri, DataStreamMetaData::new);
+        return callUrl(uri, DataStreamMetaData::new, false);
     }
 
     /**
@@ -127,7 +128,7 @@ public class CorepoContentServiceConnector {
                 .path("/rest/objects/{id}/datastreams")
                 .build(id);
         log.debug("Fetching {} to DataStreams object", id);
-        return callUrl(uri, DataStreams::new);
+        return callUrl(uri, DataStreams::new, false);
     }
 
     /**
@@ -143,7 +144,7 @@ public class CorepoContentServiceConnector {
                 .path("/rest/objects/{id}/datastreams/{stream}/content")
                 .build(id, stream);
         log.debug("Fetching {}/{} to String", id, stream);
-        return callUrl(uri, is -> IOUtils.toString(is, UTF_8));
+        return callUrl(uri, is -> IOUtils.toString(is, UTF_8), false);
     }
 
     @FunctionalInterface
@@ -152,13 +153,16 @@ public class CorepoContentServiceConnector {
         R call(InputStream is) throws IOException;
     }
 
-    private <R> R callUrl(URI uri, Callback<R> callback) {
+    private <R> R callUrl(URI uri, Callback<R> callback, boolean nullOn404) {
         try (InputStream is = config.getHttpClient()
                 .target(uri)
                 .request(MediaType.APPLICATION_XML_TYPE)
                 .get(InputStream.class)) {
             return callback.call(is);
         } catch (WebApplicationException | IOException ex) {
+            if (ex instanceof NotFoundException && nullOn404) {
+                return null;
+            }
             log.error("Error requesting {}: {}", uri, ex.getMessage());
             log.debug("Error requesting {}: ", uri, ex);
             throw new RuntimeException("Error requesting: " + uri + ": " + ex.getMessage(), ex);
