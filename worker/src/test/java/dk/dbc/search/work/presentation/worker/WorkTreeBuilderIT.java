@@ -19,7 +19,6 @@
 package dk.dbc.search.work.presentation.worker;
 
 import dk.dbc.search.work.presentation.worker.tree.WorkTree;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -72,6 +71,31 @@ public class WorkTreeBuilderIT extends JpaBase {
                     WorkTree tree = workTreeBuilder.buildTree("work:27827958");
                     tree.prettyPrint(System.out::println);
                     assertThat(tree.getPersistentWorkId(), nullValue());
+                });
+    }
+
+
+    @Test
+    public void testRelationIsFound() throws Exception {
+        System.out.println("testRelationIsFound");
+        withConfigEnv()
+                .jpaWithBeans(bf -> {
+                    WorkTreeBuilder workTreeBuilder = bf.getWorkTreeBuilder();
+                    WorkTree tree = workTreeBuilder.buildTree("work:35940818");
+                    tree.prettyPrint(System.out::println);
+                    assertThat(tree.getRelations(), notNullValue());
+                    assertThat(tree.getRelations().isEmpty(), is(false));
+                });
+    }
+
+
+    public void testTraekopFuglen() throws Exception {
+        System.out.println("testTraekopFuglen");
+        withConfigEnv()
+                .jpaWithBeans(bf -> {
+                    WorkTreeBuilder workTreeBuilder = bf.getWorkTreeBuilder();
+                    WorkTree tree = workTreeBuilder.buildTree("work:754877");
+                    tree.prettyPrint(System.out::println);
                 });
     }
 

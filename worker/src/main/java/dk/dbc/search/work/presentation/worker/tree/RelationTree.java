@@ -18,51 +18,41 @@
  */
 package dk.dbc.search.work.presentation.worker.tree;
 
-import java.time.Instant;
+import dk.dbc.search.work.presentation.worker.corepo.RelsExtType;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.HashMap;
 import java.util.Objects;
 
 /**
- * Pojo to represent the leaf of a work tree, when extracting from corepo
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
-public class ObjectTree extends HashMap<String, CacheContentBuilder> {
+@SuppressFBWarnings({"EI_EXPOSE_REP2", "EI_EXPOSE_REP"})
+public class RelationTree extends HashMap<String, ObjectTree> {
 
-    private static final long serialVersionUID = 0x4976FB455503CDEEL;
+    private static final long serialVersionUID = 0xBE9CEC397287462FL;
 
-    private final boolean primary;
-    private final Instant modified;
+    private final RelsExtType type;
 
-    public ObjectTree(boolean primary, Instant modified) {
-        this.primary = primary;
-        this.modified = modified;
-    }
-
-    public boolean isPrimary() {
-        return primary;
-    }
-
-    public Instant getModified() {
-        return modified;
+    public RelationTree(RelsExtType type) {
+        this.type = type;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), primary , modified);
+        return Objects.hash(super.hashCode(), type);
     }
 
     @Override
     public boolean equals(Object obj) {
         if (!super.equals(obj) || getClass() != obj.getClass())
             return false;
-        final ObjectTree other = (ObjectTree) obj;
-        return this.primary == other.primary &&
-               Objects.equals(this.modified, other.modified);
+        final RelationTree other = (RelationTree) obj;
+        return this.type == other.type;
     }
 
     @Override
     public String toString() {
-        return "ObjectTree{" + "primary=" + primary + ", modified=" + modified + ", " + super.toString() + '}';
+        return "RelationTree{" + "type=" + type + ", " + super.toString() + '}';
     }
 }

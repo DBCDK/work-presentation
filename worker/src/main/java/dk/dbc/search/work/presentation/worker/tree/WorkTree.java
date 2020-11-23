@@ -25,9 +25,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import static java.util.Collections.EMPTY_SET;
 
 /**
  * Pojo to represent the root of a work tree, when extracting from corepo
@@ -42,14 +47,17 @@ public class WorkTree extends HashMap<String, UnitTree> {
     private final String corepoWorkId;
     private String primary;
     private final Instant modified;
+    private final HashMap<TypedRelation, RelationTree> relations;
 
     public WorkTree(String corepoWorkId, Instant modified) {
         this.corepoWorkId = corepoWorkId;
         this.modified = modified;
+        this.relations = new HashMap<>();
     }
 
     public List<CacheContentBuilder> extractActiveCacheContentBuilders() {
-        return this.values().stream()
+        return Stream.concat(this.values().stream(),
+                             relations.values().stream())
                 .flatMap(u -> u.values().stream())
                 .flatMap(o -> o.values().stream())
                 .filter(builder -> !builder.isDeleted())
@@ -64,6 +72,14 @@ public class WorkTree extends HashMap<String, UnitTree> {
 
     public Instant getModified() {
         return modified;
+    }
+
+    public HashMap<TypedRelation, RelationTree> getRelations() {
+        return relations;
+    }
+
+    public void addRelation(TypedRelation relationUnitId, RelationTree relation) {
+        this.relations.put(relationUnitId, relation);
     }
 
     /**
@@ -99,34 +115,87 @@ public class WorkTree extends HashMap<String, UnitTree> {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), corepoWorkId, primary, modified, relations);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!super.equals(obj) || getClass() != obj.getClass())
+            return false;
+        final WorkTree other = (WorkTree) obj;
+        return Objects.equals(this.corepoWorkId, other.corepoWorkId) &&
+               Objects.equals(this.primary, other.primary) &&
+               Objects.equals(this.modified, other.modified) &&
+               Objects.equals(this.relations, other.relations);
+    }
+
+    @Override
     public String toString() {
-        return "WorkTree{" + "corepoWorkId=" + corepoWorkId + ", primary=" + getPrimaryManifestationId() + ", modified=" + modified + ", " + super.toString() + "}";
+        return "WorkTree{" + "corepoWorkId=" + corepoWorkId + ", primary=" + getPrimaryManifestationId() + ", modified=" + modified + ", relations=" + relations + ", " + super.toString() + "}";
     }
 
     public void prettyPrint(Consumer<String> logger) {
         println(logger, "Work: %s", corepoWorkId);
         println(logger, " |-- primary: %s", getPrimaryManifestationId());
         println(logger, " %s modified: %s", isEmpty() ? "`--" : "|--", modified);
+        boolean hasWorkRelations = !relations.isEmpty();
         for (Iterator<Entry<String, UnitTree>> units = entrySet().iterator() ; units.hasNext() ;) {
             Map.Entry<String, UnitTree> nextUnit = units.next();
             UnitTree unit = nextUnit.getValue();
+            boolean hasRelations = !unit.getRelations().isEmpty();
             String unitPrefix = units.hasNext() ? "|--" : "`--";
             println(logger, " %s Unit: %s", unitPrefix, nextUnit.getKey());
-            unitPrefix = units.hasNext() ? "|  " : "   ";
+            unitPrefix = units.hasNext() || hasWorkRelations ? "|  " : "   ";
             println(logger, " %s  |-- primary: %s", unitPrefix, unit.isPrimary());
-            println(logger, " %s  %s modified: %s", unitPrefix, unit.isEmpty() ? "`--" : "|--", unit.getModified());
+            println(logger, " %s  %s modified: %s", unitPrefix, unit.isEmpty() && !hasRelations ? "`--" : "|--", unit.getModified());
+
             for (Iterator<Entry<String, ObjectTree>> objs = unit.entrySet().iterator() ; objs.hasNext() ;) {
                 Map.Entry<String, ObjectTree> nextObj = objs.next();
                 ObjectTree obj = nextObj.getValue();
-                String objPrefix = objs.hasNext() ? "|--" : "`--";
+                boolean moreObjEntries = objs.hasNext() || hasRelations;
+                String objPrefix = moreObjEntries ? "|--" : "`--";
                 println(logger, " %s  %s Obj: %s", unitPrefix, objPrefix, nextObj.getKey());
-                objPrefix = objs.hasNext() ? "|  " : "   ";
+                objPrefix = moreObjEntries ? "|  " : "   ";
                 println(logger, " %s  %s  |-- primary: %s", unitPrefix, objPrefix, obj.isPrimary());
                 println(logger, " %s  %s  %s modified: %s", unitPrefix, objPrefix, obj.isEmpty() ? "`--" : "|--", obj.getModified());
                 for (Iterator<Entry<String, CacheContentBuilder>> streams = obj.entrySet().iterator() ; streams.hasNext() ;) {
                     Map.Entry<String, CacheContentBuilder> nextStream = streams.next();
                     String streamPrefix = streams.hasNext() ? "|--" : "`--";
                     println(logger, " %s  %s  %s Manifestation: %s: %s", unitPrefix, objPrefix, streamPrefix, nextStream.getKey(), nextStream.getValue());
+                }
+            }
+            if (hasRelations) {
+                println(logger, " %s  `-- Relations:", unitPrefix);
+                for (Iterator<TypedRelation> rels = unit.getRelations().iterator() ; rels.hasNext() ;) {
+                    TypedRelation rel = rels.next();
+                    String relPrefix = rels.hasNext() ? "|--" : "`--";
+                    println(logger, " %s      %s %s in %s", unitPrefix, relPrefix, rel.getType(), rel.getUnit());
+                }
+            }
+        }
+        if (hasWorkRelations) {
+            println(logger, " `-- Relations:");
+            for (Iterator<Entry<TypedRelation, RelationTree>> rels = relations.entrySet().iterator() ; rels.hasNext() ;) {
+                Map.Entry<TypedRelation, RelationTree> rel = rels.next();
+                String relPrefix = rels.hasNext() ? "|--" : "`--";
+                println(logger, "      %s Relation:", relPrefix);
+                relPrefix = rels.hasNext() ? "|  " : "   ";
+                println(logger, "      %s  |-- Type: %s", relPrefix, rel.getKey().getType().getName());
+                println(logger, "      %s  |-- Unit: %s ", relPrefix, rel.getKey().getUnit());
+                for (Iterator<Entry<String, ObjectTree>> objs = rel.getValue().entrySet().iterator() ; objs.hasNext() ;) {
+                    Map.Entry<String, ObjectTree> nextObj = objs.next();
+                    ObjectTree obj = nextObj.getValue();
+                    String objPrefix = objs.hasNext() ? "|--" : "`--";
+                    println(logger, "      %s  %s Obj: %s", relPrefix, objPrefix, nextObj.getKey());
+                    objPrefix = objs.hasNext() ? "|  " : "   ";
+                    println(logger, "      %s  %s  |-- primary: %s", relPrefix, objPrefix, obj.isPrimary());
+                    println(logger, "      %s  %s  %s modified: %s", relPrefix, objPrefix, obj.isEmpty() ? "`--" : "|--", obj.getModified());
+                    for (Iterator<Entry<String, CacheContentBuilder>> streams = obj.entrySet().iterator() ; streams.hasNext() ;) {
+                        Map.Entry<String, CacheContentBuilder> nextStream = streams.next();
+                        String streamPrefix = streams.hasNext() ? "|--" : "`--";
+                        println(logger, "      %s  %s  %s Manifestation: %s: %s", relPrefix, objPrefix, streamPrefix, nextStream.getKey(), nextStream.getValue());
+                    }
                 }
             }
         }

@@ -18,51 +18,52 @@
  */
 package dk.dbc.search.work.presentation.worker.tree;
 
-import java.time.Instant;
-import java.util.HashMap;
+import dk.dbc.search.work.presentation.worker.corepo.RelsExtType;
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Pojo to represent the leaf of a work tree, when extracting from corepo
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
-public class ObjectTree extends HashMap<String, CacheContentBuilder> {
+public class TypedRelation implements Serializable {
 
-    private static final long serialVersionUID = 0x4976FB455503CDEEL;
+    private static final long serialVersionUID = 0x045EC0BE89AF5B34L;
 
-    private final boolean primary;
-    private final Instant modified;
+    private final RelsExtType type;
+    private final String unit;
 
-    public ObjectTree(boolean primary, Instant modified) {
-        this.primary = primary;
-        this.modified = modified;
+    public TypedRelation(RelsExtType type, String unit) {
+        this.type = type;
+        this.unit = unit;
     }
 
-    public boolean isPrimary() {
-        return primary;
+    public RelsExtType getType() {
+        return type;
     }
 
-    public Instant getModified() {
-        return modified;
+    public String getUnit() {
+        return unit;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), primary , modified);
+        return Objects.hash(type, unit);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!super.equals(obj) || getClass() != obj.getClass())
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
             return false;
-        final ObjectTree other = (ObjectTree) obj;
-        return this.primary == other.primary &&
-               Objects.equals(this.modified, other.modified);
+        final TypedRelation other = (TypedRelation) obj;
+        return this.type == other.type &&
+               Objects.equals(this.unit, other.unit);
     }
 
     @Override
     public String toString() {
-        return "ObjectTree{" + "primary=" + primary + ", modified=" + modified + ", " + super.toString() + '}';
+        return "TypedRelation{" + "type=" + type + ", relationUnit=" + unit + '}';
     }
 }
