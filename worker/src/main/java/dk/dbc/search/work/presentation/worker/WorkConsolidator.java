@@ -39,10 +39,14 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  *
@@ -129,38 +133,57 @@ public class WorkConsolidator {
         work.fullTitle = primary.fullTitle;
         work.title = primary.title;
 
-        // Map into unit->manifestations
+        // Map into unit->manifestations and unit->relationType->relationManifestation
         work.dbUnitInformation = new HashMap<>();
+        work.relUnitTypeInformation = new HashMap<>();
+
+        Set<TypedValue> subjects = new HashSet<>();
         tree.forEach((unitId, unit) -> {
-            Set<ManifestationInformation> manifestations = unit.values().stream() // All ObjectTree from a unit
+            List<ManifestationInformation> fullManifestations = unit.values().stream() // All ObjectTree from a unit
                     .map(ObjectTree::values) // Find manifestationIds
                     .flatMap(Collection::stream) // as a stream of manifestation references
                     .filter(not(CacheContentBuilder::isDeleted)) // only those not deleted
                     .map(CacheContentBuilder::getManifestationId)
-                    .map(this::getCacheContentFor) // Lookup manifestation data
-                    .collect(Collectors.toSet());
-            work.dbUnitInformation.put(unitId, manifestations);
-        });
-
-        // Collect all subjects
-        work.subjects = work.dbUnitInformation.values()
-                .stream() // Stream of Set<ManifestationInformation>
-                .filter(WorkConsolidator::notNull)
-                .flatMap(Collection::stream) // as a stream of ManifestationInformation
-                .filter(WorkConsolidator::notNull)
+                    .map(this::getCacheContentFor)
+                    .collect(toList()); // Lookup manifestation data
+            fullManifestations.stream()
                 .map(m -> m.subjects) // as a stream of Set<String>
                 .filter(WorkConsolidator::notNull)
                 .flatMap(Collection::stream) // as a stream of String
-                .collect(Collectors.toSet());
-        work.subjects = TypedValue.distinctSet(work.subjects);
+                    .forEach(subjects::add);
 
-        tree.forEach((unitId, unit) -> {
-            Set<ManifestationInformation> manifestations = work.dbUnitInformation.get(unitId)
-                    .stream()
+            Set<ManifestationInformation> manifestations = fullManifestations.stream()
                     .map(ManifestationInformation::onlyPresentationFields)
                     .collect(Collectors.toSet());
             work.dbUnitInformation.put(unitId, manifestations);
+
+            HashMap<String, Set<ManifestationInformation>> relationsForUnit = new HashMap<>();
+            unit.getRelations().forEach(tr -> {
+                Set<ManifestationInformation> relationManifestation = relationsForUnit.computeIfAbsent(tr.getType().getName(), t -> new HashSet<>());
+                tree.getRelations().get(tr).values().stream()
+                        .map(ObjectTree::values) // Find manifestationIds
+                        .flatMap(Collection::stream) // as a stream of manifestation references
+                        .filter(not(CacheContentBuilder::isDeleted)) // only those not deleted
+                        .map(CacheContentBuilder::getManifestationId)
+                        .map(this::getCacheContentFor) // Lookup manifestation data
+                        .map(ManifestationInformation::onlyRelationPresentationFields)
+                        .forEach(relationManifestation::add);
+            });
+
+            work.relUnitTypeInformation.put(unitId, relationsForUnit);
+
         });
+//        // Collect all subjects
+//        work.subjects = work.dbUnitInformation.values()
+//                .stream() // Stream of Set<ManifestationInformation>
+//                .filter(WorkConsolidator::notNull)
+//                .flatMap(Collection::stream) // as a stream of ManifestationInformation
+//                .filter(WorkConsolidator::notNull)
+//                .map(m -> m.subjects) // as a stream of Set<String>
+//                .filter(WorkConsolidator::notNull)
+//                .flatMap(Collection::stream) // as a stream of String
+//                .collect(Collectors.toSet());
+        work.subjects = TypedValue.distinctSet(subjects);
 
         return work;
     }

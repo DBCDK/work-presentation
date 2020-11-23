@@ -1,0 +1,37 @@
+{
+    "creators": [ { "type": "aut", "value": "Me" } ],
+    "subjects": [ { "type": "KW", "value": "mice" }, { "type": "KW", "value": "men" }, { "type": "KW", "value": "elephants" } ],
+    "title": "Two Things",
+    "workId": "work-of:870970-basis:0",
+    "dbUnits": {
+        "unit:1": [
+            {
+                "pid": "870970-basis:0",
+                "types": [ "book" ]
+            }
+        ],
+        "unit:2": [
+            {
+                "pid": "870970-basis:1",
+                "types": [ "ebook" ]
+            }
+        ]
+    },
+    "dbRelUnits": {
+        "unit:1": {
+            "analysis-of": [
+                {
+                    "pid": "87097x-xxxxxx:8",
+                    "types": [ "analysis" ]
+                }
+            ],
+            "review": [
+                {
+                    "pid": "870971-anmeld:9",
+                    "types": [ "review" ]
+                }
+            ]
+        },
+        "unit:2": { }
+    }
+}
