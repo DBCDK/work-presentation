@@ -1,0 +1,17 @@
+{
+  "id": "57309a73-26b9-3404-acf5-abe28437b0a1",
+  "request": {
+    "url": "/corepo-content-service/rest/objects/unit:39069576/datastreams/RELS-EXT/content",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "body-unit-39069576_RELS-EXT-content.xml",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/xml",
+      "X-Frame-Options": "SAMEORIGIN"
+    }
+  },
+  "uuid": "57309a73-26b9-3404-acf5-abe28437b0a1"
+}
