@@ -30,9 +30,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
-import static java.util.Collections.EMPTY_SET;
 
 /**
  * Pojo to represent the root of a work tree, when extracting from corepo
