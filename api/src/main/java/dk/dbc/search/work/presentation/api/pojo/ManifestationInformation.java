@@ -12,7 +12,7 @@ import java.util.Objects;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ManifestationInformation implements Serializable {
 
-    private static final long serialVersionUID = 8070506196810189178L;
+    private static final long serialVersionUID = 0x644CAC76C6A06754L;
 
     @JsonProperty("pid")
     public String manifestationId;
@@ -65,6 +65,13 @@ public class ManifestationInformation implements Serializable {
     }
 
     public ManifestationInformation onlyPresentationFields() {
+        ManifestationInformation res = new ManifestationInformation();
+        res.manifestationId = this.manifestationId;
+        res.materialTypes = this.materialTypes;
+        return res;
+    }
+
+    public ManifestationInformation onlyRelationPresentationFields() {
         ManifestationInformation res = new ManifestationInformation();
         res.manifestationId = this.manifestationId;
         res.materialTypes = this.materialTypes;

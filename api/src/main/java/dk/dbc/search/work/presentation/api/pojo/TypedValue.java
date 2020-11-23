@@ -44,6 +44,14 @@ public class TypedValue implements Serializable {
     public String type;
     public String value;
 
+    public TypedValue() {
+    }
+
+    public TypedValue(String type, String value) {
+        this.type = type;
+        this.value = value;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
