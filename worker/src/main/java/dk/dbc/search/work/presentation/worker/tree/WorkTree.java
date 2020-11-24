@@ -52,6 +52,13 @@ public class WorkTree extends HashMap<String, UnitTree> {
         this.relations = new HashMap<>();
     }
 
+    /**
+     * Get all cache-content-builders that are used in this work-tree
+     * <p>
+     * This includes both manifestations, and relations
+     *
+     * @return cache-content-builders
+     */
     public List<CacheContentBuilder> extractActiveCacheContentBuilders() {
         return Stream.concat(this.values().stream(),
                              relations.values().stream())
@@ -61,8 +68,18 @@ public class WorkTree extends HashMap<String, UnitTree> {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Get all the manifestation ids that are a part of this work-structure.
+     * <p>
+     * This does NOT include relations
+     *
+     * @return manifestationIds
+     */
     public Set<String> extractManifestationIds() {
-        return extractActiveCacheContentBuilders().stream()
+        return this.values().stream()
+                .flatMap(u -> u.values().stream())
+                .flatMap(o -> o.values().stream())
+                .filter(builder -> !builder.isDeleted())
                 .map(CacheContentBuilder::getManifestationId)
                 .collect(Collectors.toSet());
     }

@@ -105,6 +105,7 @@ public class WorkTreeBuilder {
                 if (type.isPresentable()) {
                     ids.stream()
                             .filter(s -> s.startsWith("unit:")) // This can be removed when corepo has been cleaned up for bad relations
+                            .filter(contentService::objectIsActive) // This is a hack, because some relations haven't been removed when they were deleted
                             .forEach(r -> unitTree.addRelation(type, r));
                 }
             });
