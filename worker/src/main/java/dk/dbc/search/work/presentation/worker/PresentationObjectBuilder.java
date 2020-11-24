@@ -87,7 +87,7 @@ public class PresentationObjectBuilder {
                     workConsolidator.saveWork(corepoWorkId, tree, content);
                 }
             } catch (EJBException ex) {
-                if(ex.getCause() instanceof RuntimeException)
+                if (ex.getCause() instanceof RuntimeException)
                     throw (RuntimeException) ex.getCause();
                 throw ex;
             }

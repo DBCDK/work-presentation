@@ -81,6 +81,22 @@ public class CorepoContentServiceConnector {
     }
 
     /**
+     * Check if an object exists and is active
+     *
+     * @param id the repository-id
+     * @return alive and well
+     */
+    @Timed(reusable = true)
+    public boolean objectIsActive(String id) {
+        URI uri = config.getCorepoContentService()
+                .path("/rest/objects/{id}")
+                .build(id);
+        log.debug("Fetching {} to boolean", id);
+        ObjectMetaData meta = callUrl(uri, ObjectMetaData::new, true);
+        return meta != null && meta.isActive();
+    }
+
+    /**
      * Fetch a metadata of an object (work/unit/obj) from corepo-content-service
      * <p>
      * Timestamps and active/deleted

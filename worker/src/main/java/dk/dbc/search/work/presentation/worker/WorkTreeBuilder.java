@@ -37,6 +37,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.ws.rs.NotFoundException;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,6 +106,7 @@ public class WorkTreeBuilder {
                 if (type.isPresentable()) {
                     ids.stream()
                             .filter(s -> s.startsWith("unit:")) // This can be removed when corepo has been cleaned up for bad relations
+                            .filter(contentService::objectIsActive) // This is a hack, because some relations hasn't been removed when they were deleted
                             .forEach(r -> unitTree.addRelation(type, r));
                 }
             });
