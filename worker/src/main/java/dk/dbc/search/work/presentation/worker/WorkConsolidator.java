@@ -173,16 +173,7 @@ public class WorkConsolidator {
             work.relUnitTypeInformation.put(unitId, relationsForUnit);
 
         });
-//        // Collect all subjects
-//        work.subjects = work.dbUnitInformation.values()
-//                .stream() // Stream of Set<ManifestationInformation>
-//                .filter(WorkConsolidator::notNull)
-//                .flatMap(Collection::stream) // as a stream of ManifestationInformation
-//                .filter(WorkConsolidator::notNull)
-//                .map(m -> m.subjects) // as a stream of Set<String>
-//                .filter(WorkConsolidator::notNull)
-//                .flatMap(Collection::stream) // as a stream of String
-//                .collect(Collectors.toSet());
+
         work.subjects = TypedValue.distinctSet(subjects);
 
         return work;

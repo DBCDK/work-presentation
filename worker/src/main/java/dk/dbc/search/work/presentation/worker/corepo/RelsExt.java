@@ -24,11 +24,8 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 
 /**
  * Pojo to represent a CorepoContentService response for the Rels-Ext stream on
@@ -59,20 +56,8 @@ public class RelsExt {
         return map.getOrDefault(key, Collections.EMPTY_LIST);
     }
 
-    public Set<Map.Entry<RelsExtType, List<String>>> entrySet() {
-        return map.entrySet();
-    }
-
     public void forEach(BiConsumer<RelsExtType, List<String>> action) {
         map.entrySet().forEach(entry -> action.accept(entry.getKey(), entry.getValue()));
-    }
-
-    public Stream<RelsExtType> keys() {
-        return map.keySet().stream();
-    }
-
-    public Stream<String> values() {
-        return map.values().stream().flatMap(List::stream);
     }
 
     @Override

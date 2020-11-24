@@ -41,7 +41,6 @@ import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Extract the structure of the work/units/records for a CORepo work
  *
@@ -84,9 +83,7 @@ public class WorkTreeBuilder {
         workTree.values().forEach(unit -> relationUnits.addAll(unit.getRelations()));
         relationUnits.forEach(tr -> {
             RelationTree relTree = buildRelationTree(tr);
-            if (relTree != null) {
-                workTree.addRelation(tr, relTree);
-            }
+            workTree.addRelation(tr, relTree);
         });
     }
 
