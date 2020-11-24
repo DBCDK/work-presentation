@@ -22,8 +22,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
+import dk.dbc.search.work.presentation.worker.corepo.RelsExtType;
 import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
 import dk.dbc.search.work.presentation.worker.tree.ObjectTree;
+import dk.dbc.search.work.presentation.worker.tree.RelationTree;
+import dk.dbc.search.work.presentation.worker.tree.TypedRelation;
 import dk.dbc.search.work.presentation.worker.tree.UnitTree;
 import dk.dbc.search.work.presentation.worker.tree.WorkTree;
 import java.io.File;
@@ -31,12 +34,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -65,7 +69,10 @@ public class WorkConsolidatorTest {
         WorkConsolidator workConsolidator = new WorkConsolidator() {
             @Override
             ManifestationInformation getCacheContentFor(String id) {
-                return source.getManifestationInformation(id);
+                System.out.println("getCacheContentFor( " + id + ")");
+                ManifestationInformation manifestationInformation = source.getManifestationInformation(id);
+                System.out.println("manifestationInformation = " + manifestationInformation);
+                return manifestationInformation;
             }
         };
 
@@ -97,6 +104,17 @@ public class WorkConsolidatorTest {
                                 m.manifestationId = mId;
                             });
                         }));
+        if (source.relations != null) {
+            source.relations.values()
+                    .forEach(r -> r.values()
+                            .forEach(u -> u
+                                    .forEach((objId, obj) -> {
+                                        obj.forEach((stream, m) -> {
+                                            String mId = manifestationIdOf(objId, stream);
+                                            m.manifestationId = mId;
+                                        });
+                                    })));
+        }
         return source;
     }
 
@@ -126,7 +144,43 @@ public class WorkConsolidatorTest {
                     objectTree.put(builder.getManifestationId(), builder);
                 });
             });
+            if (source.relationMap != null) {
+                source.relationMap.getOrDefault(unitId, Collections.EMPTY_LIST).forEach(new Consumer<String>() {
+                    @Override
+                    public void accept(String relUnitId) {
+                        source.relations.get(relUnitId)
+                                .keySet()
+                                .forEach(type -> {
+                                    unitTree.addRelation(RelsExtType.from(type), relUnitId);
+                                });
+                    }
+                });
+            }
         });
+        if (source.relations != null) {
+            source.relations.forEach((unitId, unit) -> {
+                unit.forEach((type, relations) -> {
+                    RelsExtType relType = RelsExtType.from(type);
+                    TypedRelation key = new TypedRelation(relType, unitId);
+                    RelationTree relationTree = new RelationTree(relType);
+                    workTree.addRelation(key, relationTree);
+                    relations.forEach((objId, obj) -> {
+                        boolean primaryObj = objectHasPrimary(obj, objId, source.primary);
+                        ObjectTree objectTree = new ObjectTree(primaryObj, Instant.now());
+                        relationTree.put(objId, objectTree);
+                        obj.forEach((localStream, mani) -> {
+                            CacheContentBuilder builder = new CacheContentBuilder(objId, localStream, Instant.now(), false) {
+                                @Override
+                                public String toString() {
+                                    return mani.toString();
+                                }
+                            };
+                            objectTree.put(builder.getManifestationId(), builder);
+                        });
+                    });
+                });
+            });
+        }
         return workTree;
     }
 
@@ -141,13 +195,29 @@ public class WorkConsolidatorTest {
         public String primary;
         //             Unit            Object          Stream
         public TreeMap<String, TreeMap<String, TreeMap<String, ManifestationInformation>>> units;
+        //             RelationUnit    RelationType    Object          Stream
+        public TreeMap<String, TreeMap<String, TreeMap<String, TreeMap<String, ManifestationInformation>>>> relations;
+        //             Unit    RelationUnit
+        public TreeMap<String, List<String>> relationMap;
 
         public ManifestationInformation getManifestationInformation(String id) {
-            return units.values().stream() // Unit
+            Stream<ManifestationInformation> unitStream = units.values().stream() // Unit
                     .map(Map::values)
                     .flatMap(Collection::stream) //Object
                     .map(Map::values)
-                    .flatMap(Collection::stream) // ManifestationInformation
+                    .flatMap(Collection::stream); // ManifestationInformation
+
+            Stream<ManifestationInformation> relStream = Stream.empty();
+            if (relations != null) {
+                relStream = relations.values().stream() // Unit
+                        .map(Map::values)
+                        .flatMap(Collection::stream) //RelationType
+                        .map(Map::values)
+                        .flatMap(Collection::stream) //Object
+                        .map(Map::values)
+                        .flatMap(Collection::stream); // ManifestationInformation
+            }
+            return Stream.concat(unitStream, relStream)
                     .filter(m -> m.manifestationId.equals(id))
                     .findAny()
                     .orElseThrow(() -> new IllegalStateException("Trying to get content for id: " + id));
@@ -155,7 +225,7 @@ public class WorkConsolidatorTest {
 
         @Override
         public String toString() {
-            return "Source{" + "primary=" + primary + ", units=" + units + '}';
+            return "Source{" + "primary=" + primary + ", units=" + units + ", relations=" + relations + '}';
         }
     }
 
@@ -163,7 +233,7 @@ public class WorkConsolidatorTest {
         URL testResource = WorkConsolidatorTest.class.getClassLoader()
                 .getResource("WorkConsolidator");
         File[] dirs = new File(testResource.getFile()).listFiles(dir -> {
-            return dir.isDirectory();
+            return dir.isDirectory();// && dir.getName().equals("include-relations");
         });
         return Stream.of(dirs).map(Arguments::of);
     }

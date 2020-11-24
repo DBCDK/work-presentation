@@ -1,0 +1,17 @@
+{
+  "id": "ca5c306c-264b-3116-bf7a-9a857c2fb99d",
+  "request": {
+    "url": "/corepo-content-service/rest/objects/unit:7892641/datastreams/RELS-EXT/content",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "body-unit-7892641_RELS-EXT-content.xml",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/xml",
+      "X-Frame-Options": "SAMEORIGIN"
+    }
+  },
+  "uuid": "ca5c306c-264b-3116-bf7a-9a857c2fb99d"
+}

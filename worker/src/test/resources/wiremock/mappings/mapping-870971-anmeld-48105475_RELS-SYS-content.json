@@ -1,0 +1,17 @@
+{
+  "id": "0e148091-34da-3a1a-96ab-1976822933ce",
+  "request": {
+    "url": "/corepo-content-service/rest/objects/870971-anmeld:48105475/datastreams/RELS-SYS/content",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "body-870971-anmeld-48105475_RELS-SYS-content.xml",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/xml",
+      "X-Frame-Options": "SAMEORIGIN"
+    }
+  },
+  "uuid": "0e148091-34da-3a1a-96ab-1976822933ce"
+}

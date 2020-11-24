@@ -18,9 +18,12 @@
  */
 package dk.dbc.search.work.presentation.worker.tree;
 
+import dk.dbc.search.work.presentation.worker.corepo.RelsExtType;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Objects;
 
 /**
  * Pojo to represent the unit level of a work tree, when extracting from corepo
@@ -34,10 +37,12 @@ public class UnitTree extends HashMap<String, ObjectTree> {
 
     private final boolean primary;
     private final Instant modified;
+    private final HashSet<TypedRelation> relations;
 
     public UnitTree(boolean primary, Instant modified) {
         this.primary = primary;
         this.modified = modified;
+        this.relations = new HashSet<>();
     }
 
     public boolean isPrimary() {
@@ -48,8 +53,31 @@ public class UnitTree extends HashMap<String, ObjectTree> {
         return modified;
     }
 
+    public HashSet<TypedRelation> getRelations() {
+        return relations;
+    }
+
+    public void addRelation(RelsExtType type, String relationUnitId) {
+        relations.add(new TypedRelation(type, relationUnitId));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), primary, modified, relations);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!super.equals(obj) || getClass() != obj.getClass())
+            return false;
+        final UnitTree other = (UnitTree) obj;
+        return this.primary == other.primary &&
+               Objects.equals(this.modified, other.modified) &&
+               Objects.equals(this.relations, other.relations);
+    }
+
     @Override
     public String toString() {
-        return "UnitTree{" + "primary=" + primary + ", modified=" + modified + ", " + super.toString() + '}';
+        return "UnitTree{" + "primary=" + primary + ", modified=" + modified + ", " + super.toString() + ", relations=" + relations + '}';
     }
 }

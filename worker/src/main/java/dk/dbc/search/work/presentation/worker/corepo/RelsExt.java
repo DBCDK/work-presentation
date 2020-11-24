@@ -24,9 +24,8 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Pojo to represent a CorepoContentService response for the Rels-Ext stream on
@@ -40,24 +39,25 @@ public class RelsExt {
 
     public RelsExt(InputStream is) {
         SimpleFields fields = new SimpleFields(is);
-        this.map = new EnumMap<>((Map<RelsExtType, List<String>>) fields.getFields()
+        Map<RelsExtType, List<String>> tempMap = fields.getFields()
                 .entrySet()
                 .stream()
                 .map(e -> new AbstractMap.SimpleEntry<>(RelsExtType.from(e.getKey()), Collections.unmodifiableList(e.getValue())))
                 .filter(e -> e.getKey() != null)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        if (tempMap.isEmpty()) {
+            this.map = new EnumMap<>(RelsExtType.class);
+        } else {
+            this.map = new EnumMap<>(tempMap);
+        }
     }
 
     public List<String> get(RelsExtType key) {
         return map.getOrDefault(key, Collections.EMPTY_LIST);
     }
 
-    public Set<Map.Entry<RelsExtType, List<String>>> entrySet() {
-        return map.entrySet();
-    }
-
-    public Stream<String> values() {
-        return map.values().stream().flatMap(List::stream);
+    public void forEach(BiConsumer<RelsExtType, List<String>> action) {
+        map.entrySet().forEach(entry -> action.accept(entry.getKey(), entry.getValue()));
     }
 
     @Override

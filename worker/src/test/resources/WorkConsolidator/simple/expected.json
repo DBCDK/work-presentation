@@ -1,13 +1,23 @@
 {
-    "workId": "work-of:870970-basis:0",
-    "title": "Two Things",
-    "creators": [ { "type": "aut", "value": "Me" } ],
-    "subjects": [ { "type": "KW", "value": "mice"}, { "type": "KW", "value": "men"} ],
-    "dbUnits": {
-        "unit:1": [
-            {
-                "pid": "870970-basis:0"
-            }
-        ]
-    }
+  "workId" : "work-of:870970-basis:0",
+  "title" : "Two Things",
+  "creators" : [ {
+    "type" : "aut",
+    "value" : "Me"
+  } ],
+  "subjects" : [ {
+    "type" : "KW",
+    "value" : "mice"
+  }, {
+    "type" : "KW",
+    "value" : "men"
+  } ],
+  "dbUnits" : {
+    "unit:1" : [ {
+      "pid" : "870970-basis:0"
+    } ]
+  },
+  "dbRelUnits" : {
+    "unit:1" : { }
+  }
 }

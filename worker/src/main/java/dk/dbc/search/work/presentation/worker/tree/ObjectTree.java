@@ -20,6 +20,7 @@ package dk.dbc.search.work.presentation.worker.tree;
 
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Pojo to represent the leaf of a work tree, when extracting from corepo
@@ -44,6 +45,20 @@ public class ObjectTree extends HashMap<String, CacheContentBuilder> {
 
     public Instant getModified() {
         return modified;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), primary , modified);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!super.equals(obj) || getClass() != obj.getClass())
+            return false;
+        final ObjectTree other = (ObjectTree) obj;
+        return this.primary == other.primary &&
+               Objects.equals(this.modified, other.modified);
     }
 
     @Override

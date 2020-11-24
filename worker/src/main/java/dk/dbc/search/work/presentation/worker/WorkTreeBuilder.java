@@ -24,8 +24,12 @@ import dk.dbc.search.work.presentation.worker.tree.WorkTree;
 import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
 import dk.dbc.search.work.presentation.worker.corepo.DataStreamMetaData;
 import dk.dbc.search.work.presentation.worker.corepo.ObjectMetaData;
+import dk.dbc.search.work.presentation.worker.corepo.RelsExt;
 import dk.dbc.search.work.presentation.worker.corepo.RelsSys;
+import dk.dbc.search.work.presentation.worker.tree.RelationTree;
+import dk.dbc.search.work.presentation.worker.tree.TypedRelation;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -75,6 +79,12 @@ public class WorkTreeBuilder {
         log.trace("workRelsSys = {}", workRelsSys);
         workRelsSys.getChildren()
                 .forEach(unit -> workTree.put(unit, buildUnitTree(unit)));
+        HashSet<TypedRelation> relationUnits = new HashSet<>();
+        workTree.values().forEach(unit -> relationUnits.addAll(unit.getRelations()));
+        relationUnits.forEach(tr -> {
+            RelationTree relTree = buildRelationTree(tr);
+            workTree.addRelation(tr, relTree);
+        });
     }
 
     private UnitTree buildUnitTree(String unit) throws IllegalStateException {
@@ -88,6 +98,17 @@ public class WorkTreeBuilder {
 
         unitRelsSys.getChildren()
                 .forEach(object -> unitTree.put(object, buildObjectTree(object)));
+
+        RelsExt unitRelsExt = contentService.relsExt(unit);
+        if (unitRelsExt != null) {
+            unitRelsExt.forEach((type, ids) -> {
+                if (type.isPresentable()) {
+                    ids.stream()
+                            .filter(s -> s.startsWith("unit:")) // This can be removed when corepo has been cleaned up for bad relations
+                            .forEach(r -> unitTree.addRelation(type, r));
+                }
+            });
+        }
         return unitTree;
     }
 
@@ -126,6 +147,22 @@ public class WorkTreeBuilder {
             }
         });
         return objectTree;
+    }
+
+    private RelationTree buildRelationTree(TypedRelation entry) throws IllegalStateException {
+        String unit = entry.getUnit();
+        ObjectMetaData unitMetaData = contentService.objectMetaData(unit);
+        if (!unitMetaData.isActive()) {
+            throw new IllegalStateException("Unit: " + unit + " is deleted but part of rels-sys");
+        }
+
+        RelsSys unitRelsSys = contentService.relsSys(unit);
+        RelationTree relsTree = new RelationTree(entry.getType());
+
+        unitRelsSys.getChildren()
+                .forEach(object -> relsTree.put(object, buildObjectTree(object)));
+
+        return relsTree;
     }
 
     private static Instant latestOf(Instant first, Instant second) {

@@ -23,5 +23,5 @@ package dk.dbc.search.work.presentation.api.jpa;
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
 public class JsonSchemaVersion {
-    public static final String VERSION = "2";
+    public static final String VERSION = "3";
 }

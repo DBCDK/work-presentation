@@ -33,15 +33,16 @@ public enum RelsExtType {
     CONTINUES("continues"),
     DISCUSSED_IN("discussedIn"),
     DISCUSSES("discusses"),
-    HAS_ADAPTATION("hasAdaptation"),
-    HAS_ANALYSIS("hasAnalysis"),
-    HAS_CREATOR_DESCRIPTION("hasCreatorDescription"),
-    HAS_DESCRIPTION_FROM_PUBLISHER("hasDescriptionFromPublisher"),
-    HAS_MANUSCRIPT("hasManuscript"),
-    HAS_REVIEW("hasReview"),
-    HAS_SOUNDTRACK("hasSoundtrack"),
+    HAS_ADAPTATION("hasAdaptation", "adaptation-of"),
+    HAS_ANALYSIS("hasAnalysis", "analysis-of"),
+    HAS_CREATOR_DESCRIPTION("hasCreatorDescription", "creator"),
+    HAS_DESCRIPTION_FROM_PUBLISHER("hasDescriptionFromPublisher", "description"),
+    HAS_MANUSCRIPT("hasManuscript", "manuscript"),
+    HAS_REVIEW("hasReview", "review"),
+    HAS_SOUNDTRACK("hasSoundtrack", "soundtrack"),
     IS_ADAPTATION_OF("isAdaptationOf"),
     IS_ANALYSIS_OF("isAnalysisOf"),
+    IS_CREATOR_DESCRIPTION("isCreatorDescription"),
     IS_DESCRIPTION_FROM_PUBLISHER_OF("isDescriptionFromPublisherOf"),
     IS_MANUSCRIPT_OF("isManuscriptOf"),
     IS_REVIEW_OF("isReviewOf"),
@@ -50,18 +51,32 @@ public enum RelsExtType {
 
     private static final Map<String, RelsExtType> LOOKUP = EnumSet.allOf(RelsExtType.class)
             .stream()
-            .collect(Collectors.toMap(RelsExtType::getText, e -> e));
+            .collect(Collectors.toMap(e -> e.text, e -> e));
     private final String text;
+    private final String name;
+    private final boolean presentable;
+
+    RelsExtType(String text, String presentationName) {
+        this.text = text;
+        this.name = presentationName;
+        this.presentable = true;
+    }
 
     RelsExtType(String text) {
         this.text = text;
+        this.name = text;
+        this.presentable = true;
     }
 
-    public String getText() {
-        return text;
+    public String getName() {
+        return name;
     }
 
     public static RelsExtType from(String text) {
         return LOOKUP.get(text);
+    }
+
+    public boolean isPresentable() {
+        return presentable;
     }
 }

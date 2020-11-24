@@ -1,0 +1,17 @@
+{
+  "id": "b6a10a67-292f-337b-8ff5-7711533f6e25",
+  "request": {
+    "url": "/corepo-content-service/rest/objects/870971-anmeld:48105475/datastreams/commonData",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "body-870971-anmeld-48105475_commonData.xml",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/xml",
+      "X-Frame-Options": "SAMEORIGIN"
+    }
+  },
+  "uuid": "b6a10a67-292f-337b-8ff5-7711533f6e25"
+}

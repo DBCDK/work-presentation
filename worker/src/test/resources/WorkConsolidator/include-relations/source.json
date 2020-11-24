@@ -1,0 +1,50 @@
+{
+    "primary": "870970-basis:0",
+    "units": {
+        "unit:1": {
+            "870970-basis:0": {
+                "localData.870970-basis": {
+                    "title": "Two Things",
+                    "creators": [ { "type": "aut", "value": "Me" } ],
+                    "subjects": [ { "type": "KW", "value": "mice"}, { "type": "KW", "value": "men"} ],
+                    "types": [ "book" ]
+                }
+            }
+        },
+        "unit:2": {
+            "870970-basis:1": {
+                "localData.870970-basis": {
+                    "title": "Two Things",
+                    "creators": [ { "type": "aut", "value": "Me" }, { "type": "aut", "value": "You" } ],
+                    "subjects": [ { "type": "KW", "value": "mice"}, { "type": "KW", "value": "elephants"} ],
+                    "types": [ "ebook" ]
+                }
+            }
+        }
+    },
+    "relationMap": {
+        "unit:1": [ "unit:8", "unit:9" ]
+    },
+    "relations": {
+        "unit:8": {
+            "hasAnalysis": {
+                "87097x-xxxxxx:8": {
+                    "localData.87097x-xxxxxx": {
+                        "title": "Analysis of: Two Things",
+                        "types": [ "analysis" ]
+                    }
+                }
+            }
+        },
+        "unit:9": {
+            "hasReview": {
+                "870971-anmeld:9": {
+                    "localData.870971-anmeld": {
+                        "title": "About Two Things",
+                        "types": [ "review" ]
+                    }
+                }
+            }
+        }
+    }
+}

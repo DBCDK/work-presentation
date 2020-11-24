@@ -1,0 +1,17 @@
+{
+  "id": "97278476-ae61-3f77-a97d-2039606994fb",
+  "request": {
+    "url": "/corepo-content-service/rest/objects/870971-anmeld:48105475/datastreams/DC",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "body-870971-anmeld-48105475_DC.xml",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/xml",
+      "X-Frame-Options": "SAMEORIGIN"
+    }
+  },
+  "uuid": "97278476-ae61-3f77-a97d-2039606994fb"
+}

@@ -1,0 +1,17 @@
+{
+  "id": "ce27a1cd-2589-3065-8d7f-9952e4d7fcb2",
+  "request": {
+    "url": "/corepo-content-service/rest/objects/870970-basis:47579562/datastreams/RELS-SYS/content",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "body-870970-basis-47579562_RELS-SYS-content.xml",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/xml",
+      "X-Frame-Options": "SAMEORIGIN"
+    }
+  },
+  "uuid": "ce27a1cd-2589-3065-8d7f-9952e4d7fcb2"
+}
