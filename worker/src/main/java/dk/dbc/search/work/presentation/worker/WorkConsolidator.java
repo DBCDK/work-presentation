@@ -22,6 +22,7 @@ import dk.dbc.search.work.presentation.worker.tree.NoCacheObjectException;
 import dk.dbc.search.work.presentation.api.jpa.CacheEntity;
 import dk.dbc.search.work.presentation.api.jpa.WorkObjectEntity;
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
+import dk.dbc.search.work.presentation.api.pojo.RelationInformation;
 import dk.dbc.search.work.presentation.api.pojo.TypedValue;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
@@ -135,7 +136,7 @@ public class WorkConsolidator {
 
         // Map into unit->manifestations and unit->relationType->relationManifestation
         work.dbUnitInformation = new HashMap<>();
-        work.relUnitTypeInformation = new HashMap<>();
+        work.dbRelUnitInformation = new HashMap<>();
 
         Set<TypedValue> subjects = new HashSet<>();
         tree.forEach((unitId, unit) -> {
@@ -147,9 +148,9 @@ public class WorkConsolidator {
                     .map(this::getCacheContentFor)
                     .collect(toList()); // Lookup manifestation data
             fullManifestations.stream()
-                .map(m -> m.subjects) // as a stream of Set<String>
-                .filter(WorkConsolidator::notNull)
-                .flatMap(Collection::stream) // as a stream of String
+                    .map(m -> m.subjects) // as a stream of Set<String>
+                    .filter(WorkConsolidator::notNull)
+                    .flatMap(Collection::stream) // as a stream of String
                     .forEach(subjects::add);
 
             Set<ManifestationInformation> manifestations = fullManifestations.stream()
@@ -157,20 +158,20 @@ public class WorkConsolidator {
                     .collect(Collectors.toSet());
             work.dbUnitInformation.put(unitId, manifestations);
 
-            HashMap<String, Set<ManifestationInformation>> relationsForUnit = new HashMap<>();
+            HashSet<RelationInformation> relationsForUnit = new HashSet<>();
             unit.getRelations().forEach(tr -> {
-                Set<ManifestationInformation> relationManifestation = relationsForUnit.computeIfAbsent(tr.getType().getName(), t -> new HashSet<>());
                 tree.getRelations().get(tr).values().stream()
                         .map(ObjectTree::values) // Find manifestationIds
                         .flatMap(Collection::stream) // as a stream of manifestation references
                         .filter(not(CacheContentBuilder::isDeleted)) // only those not deleted
                         .map(CacheContentBuilder::getManifestationId)
                         .map(this::getCacheContentFor) // Lookup manifestation data
-                        .map(ManifestationInformation::onlyRelationPresentationFields)
-                        .forEach(relationManifestation::add);
+                        .map(RelationInformation.mapperWith(tr.getType().getName()))
+                        .map(RelationInformation::onlyPresentationFields)
+                        .forEach(relationsForUnit::add);
             });
 
-            work.relUnitTypeInformation.put(unitId, relationsForUnit);
+            work.dbRelUnitInformation.put(unitId, relationsForUnit);
 
         });
 

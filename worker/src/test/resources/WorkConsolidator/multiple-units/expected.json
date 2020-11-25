@@ -24,7 +24,7 @@
     } ]
   },
   "dbRelUnits" : {
-    "unit:2" : { },
-    "unit:1" : { }
+    "unit:2" : [ ],
+    "unit:1" : [ ]
   }
 }

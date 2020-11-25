@@ -30,8 +30,8 @@ public class WorkInformation implements Serializable {
     public Map<String, Set<ManifestationInformation>> dbUnitInformation;
 
     @JsonProperty("dbRelUnits")
-    // Unit -> Relation-Type -> Manifestations
-    public Map<String, Map<String, Set<ManifestationInformation>>> relUnitTypeInformation;
+    // Unit -> Relations
+    public Map<String, Set<RelationInformation>> dbRelUnitInformation;
 
     @Override
     public boolean equals(Object o) {
@@ -47,12 +47,12 @@ public class WorkInformation implements Serializable {
                Objects.equals(description, that.description) &&
                Objects.equals(subjects, that.subjects) &&
                Objects.equals(dbUnitInformation, that.dbUnitInformation) &&
-               Objects.equals(relUnitTypeInformation, that.relUnitTypeInformation);
+               Objects.equals(dbRelUnitInformation, that.dbRelUnitInformation);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(workId, title, fullTitle, creators, description, subjects, dbUnitInformation, relUnitTypeInformation);
+        return Objects.hash(workId, title, fullTitle, creators, description, subjects, dbUnitInformation, dbRelUnitInformation);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class WorkInformation implements Serializable {
                ", description='" + description + '\'' +
                ", subjects='" + subjects + '\'' +
                ", dbUnitInformation=" + dbUnitInformation +
-               ", relUnitTypeInformation=" + relUnitTypeInformation +
+               ", relUnitTypeInformation=" + dbRelUnitInformation +
                '}';
     }
 }

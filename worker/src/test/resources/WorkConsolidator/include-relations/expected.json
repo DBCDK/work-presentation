@@ -1,6 +1,7 @@
 {
     "creators": [ { "type": "aut", "value": "Me" } ],
-    "subjects": [ { "type": "KW", "value": "mice" }, { "type": "KW", "value": "men" }, { "type": "KW", "value": "elephants" } ],
+    "subjects": [ { "type": "KW", "value": "mice" }, { "type": "KW",
+            "value": "men" }, { "type": "KW", "value": "elephants" } ],
     "title": "Two Things",
     "workId": "work-of:870970-basis:0",
     "dbUnits": {
@@ -18,20 +19,19 @@
         ]
     },
     "dbRelUnits": {
-        "unit:1": {
-            "analysis-of": [
-                {
-                    "pid": "87097x-xxxxxx:8",
-                    "types": [ "analysis" ]
-                }
-            ],
-            "review": [
-                {
-                    "pid": "870971-anmeld:9",
-                    "types": [ "review" ]
-                }
-            ]
-        },
-        "unit:2": { }
+        "unit:1": [
+            {
+                "type": "analysis-of",
+                "pid": "87097x-xxxxxx:8",
+                "types": [ "analysis" ]
+            },
+
+            {
+                "type": "review",
+                "pid": "870971-anmeld:9",
+                "types": [ "review" ]
+            }
+        ],
+        "unit:2": [ ]
     }
 }
