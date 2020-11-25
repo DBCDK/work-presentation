@@ -14,27 +14,6 @@ public class RelationInformation extends ManifestationInformation {
 
     public String type;
 
-    @Override
-    public boolean equals(Object o) {
-        if (!super.equals(o)) // Checks class too
-            return true;
-        RelationInformation that = (RelationInformation) o;
-        return Objects.equals(type, that.type);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), type);
-    }
-
-    @Override
-    public String toString() {
-        return "RelationInformation{" +
-               "type='" + type + '\'' +
-               super.toString() +
-               '}';
-    }
-
     public static RelationInformation from(String type, ManifestationInformation mani) {
         RelationInformation res = new RelationInformation();
         res.type = type;
@@ -60,4 +39,27 @@ public class RelationInformation extends ManifestationInformation {
         res.materialTypes = this.materialTypes;
         return res;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!super.equals(o)) // Checks class too
+            return true;
+        RelationInformation that = (RelationInformation) o;
+        return Objects.equals(type, that.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), type);
+    }
+
+    @Override
+    public String toString() {
+        String parent = super.toString();
+        return "RelationInformation{" +
+               "type='" + type + "\', " +
+               parent.substring(parent.indexOf('{') + 1) +
+               '}';
+    }
+
 }
