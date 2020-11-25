@@ -18,6 +18,6 @@
     } ]
   },
   "dbRelUnits" : {
-    "unit:1" : { }
+    "unit:1" : [ ]
   }
 }
