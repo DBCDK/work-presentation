@@ -35,7 +35,7 @@ public enum RelsExtType {
     DISCUSSES("discusses"),
     HAS_ADAPTATION("hasAdaptation", "adaptation-of"),
     HAS_ANALYSIS("hasAnalysis", "analysis-of"),
-    HAS_CREATOR_DESCRIPTION("hasCreatorDescription", "creator"),
+    HAS_CREATOR_DESCRIPTION("hasCreatorDescription", "creator-description"),
     HAS_DESCRIPTION_FROM_PUBLISHER("hasDescriptionFromPublisher", "description"),
     HAS_MANUSCRIPT("hasManuscript", "manuscript"),
     HAS_REVIEW("hasReview", "review"),
