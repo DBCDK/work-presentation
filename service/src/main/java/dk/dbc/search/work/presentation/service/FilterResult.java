@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +61,7 @@ public class FilterResult {
      * @param trackingId The tracking id for the request
      * @return the work as presented to the user
      */
+    @Timed(reusable = true)
     public WorkInformationResponse processWork(WorkInformation work, String agencyId, String profile, String trackingId) {
         log.debug("work = {}", work);
         int manifestationCount = work.dbUnitInformation.values()
@@ -79,16 +81,23 @@ public class FilterResult {
                                         .collect(Collectors.toSet())))
                         .filter(e -> !e.getValue().isEmpty())
                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
         log.debug("dbUnitInformation = {}", dbUnitInformation);
+
+        RelationIndexComputer relationIndexes = new RelationIndexComputer(work.dbRelUnitInformation);
+        dbUnitInformation.forEach((unitId, manifestations) -> {
+            int[] indexes = relationIndexes.unitRelationIndexes(unitId);
+            manifestations.forEach(m -> m.relations = indexes);
+        });
 
         WorkInformationResponse wir = WorkInformationResponse.from(work);
         // Flatten the manifestations - with predictable order
         wir.records = new LinkedHashSet<>();
+        wir.relations = relationIndexes.getRelationList();
         dbUnitInformation.values().stream()
                 .flatMap(Collection::stream)
                 .sorted((l, r) -> l.id.compareTo(r.id))
                 .forEach(wir.records::add);
         return wir;
     }
+
 }
