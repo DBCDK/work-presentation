@@ -56,7 +56,7 @@ public class ProfileService {
 
         private final String requestValue;
 
-        private ProfileDomain(String requestValue) {
+        ProfileDomain(String requestValue) {
             this.requestValue = requestValue;
         }
 

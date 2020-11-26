@@ -18,7 +18,6 @@
  */
 package dk.dbc.search.work.presentation.service;
 
-import dk.dbc.search.work.presentation.api.pojo.RelationInformation;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.service.response.ManifestationInformationResponse;
 import dk.dbc.search.work.presentation.service.response.WorkInformationResponse;
@@ -28,14 +27,13 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.*;
 
 /**
  *
@@ -81,9 +79,9 @@ public class FilterResult {
                                 e.getValue().stream()
                                         .filter(m -> visibleManifestations.contains(m.manifestationId))
                                         .map(ManifestationInformationResponse::from)
-                                        .collect(Collectors.toSet())))
+                                        .collect(toSet())))
                         .filter(e -> !e.getValue().isEmpty())
-                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                        .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
         log.debug("dbUnitInformation = {}", dbUnitInformation);
 
         Set<String> possibleRelations = work.dbRelUnitInformation.values()
