@@ -41,9 +41,10 @@ public class RelationIndexComputer {
     private final List<RelationInformationResponse> relationList;
     private final Map<String, int[]> unitRelationIndexes;
 
-    public RelationIndexComputer(Map<String, Set<RelationInformation>> unitRelations) {
+    public RelationIndexComputer(Set<String> accessibleRelations, Map<String, Set<RelationInformation>> unitRelations) {
         relationList = unitRelations.values().stream()
                 .flatMap(Collection::stream)
+                .filter(ri -> accessibleRelations.contains(ri.manifestationId))
                 .map(RelationInformationResponse::from)
                 .collect(Collectors.toSet()) //uniq
                 .stream()
@@ -63,6 +64,7 @@ public class RelationIndexComputer {
         unitRelationIndexes = unitRelations.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey,
                                           e -> e.getValue().stream()
+                                                  .filter(ri -> accessibleRelations.contains(ri.manifestationId))
                                                   .map(RelationInformationResponse::from)
                                                   .mapToInt(indexes::get)
                                                   .sorted()

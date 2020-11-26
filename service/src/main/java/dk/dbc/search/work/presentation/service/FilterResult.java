@@ -18,6 +18,7 @@
  */
 package dk.dbc.search.work.presentation.service;
 
+import dk.dbc.search.work.presentation.api.pojo.RelationInformation;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.service.response.ManifestationInformationResponse;
 import dk.dbc.search.work.presentation.service.response.WorkInformationResponse;
@@ -33,6 +34,8 @@ import javax.inject.Inject;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.stream.Collectors.toSet;
 
 /**
  *
@@ -83,7 +86,14 @@ public class FilterResult {
                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         log.debug("dbUnitInformation = {}", dbUnitInformation);
 
-        RelationIndexComputer relationIndexes = new RelationIndexComputer(work.dbRelUnitInformation);
+        Set<String> possibleRelations = work.dbRelUnitInformation.values()
+                .stream()
+                .flatMap(Collection::stream)
+                .map(r -> r.manifestationId)
+                .collect(toSet());
+        Set<String> accessibleRelations = solr.getAccessibleRelations(possibleRelations, agencyId, profile, trackingId);
+
+        RelationIndexComputer relationIndexes = new RelationIndexComputer(accessibleRelations, work.dbRelUnitInformation);
         dbUnitInformation.forEach((unitId, manifestations) -> {
             int[] indexes = relationIndexes.unitRelationIndexes(unitId);
             manifestations.forEach(m -> m.relations = indexes);
