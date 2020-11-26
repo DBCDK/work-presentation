@@ -50,6 +50,20 @@ public class ProfileService {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
             .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true);
 
+    public enum ProfileDomain {
+        SEARCH("search"),
+        PRESENT("present");
+
+        private final String requestValue;
+
+        private ProfileDomain(String requestValue) {
+            this.requestValue = requestValue;
+        }
+
+        public String getRequestValue() {
+            return requestValue;
+        }
+    }
     @Inject
     public Config config;
 
@@ -59,6 +73,7 @@ public class ProfileService {
      * @param agencyId   Owner of the profile
      * @param profile    Name of the profile
      * @param trackingId For logging in vip-core
+     * @param domain
      * @return filter query
      * @throws NoSuchProfileException  if a non-existing profile was requested
      * @throws WebApplicationException in case of communication errors with
@@ -67,10 +82,13 @@ public class ProfileService {
     @CacheResult(cacheName = "vip-core",
                  exceptionCacheName = "vip-core-error")
     @Timed(reusable = true)
-    public String filterQueryFor(@CacheKey String agencyId, @CacheKey String profile, String trackingId) {
+    public String filterQueryFor(@CacheKey ProfileDomain domain,
+                                 @CacheKey String agencyId,
+                                 @CacheKey String profile,
+                                 String trackingId) {
         URI uri = config.getVipCore()
-                .path("profileservice/search/{agencyId}/{profile}")
-                .build(agencyId, profile);
+                .path("profileservice/{domain}/{agencyId}/{profile}")
+                .build(domain.getRequestValue(), agencyId, profile);
         try (InputStream is = config.getVipCoreHttpClient(trackingId)
                 .target(uri)
                 .request(MediaType.APPLICATION_JSON_TYPE)
