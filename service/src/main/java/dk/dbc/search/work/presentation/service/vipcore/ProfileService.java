@@ -73,7 +73,8 @@ public class ProfileService {
      * @param agencyId   Owner of the profile
      * @param profile    Name of the profile
      * @param trackingId For logging in vip-core
-     * @param domain
+     * @param domain     Which kind of profile is requested, for searching or
+     *                   presenting
      * @return filter query
      * @throws NoSuchProfileException  if a non-existing profile was requested
      * @throws WebApplicationException in case of communication errors with
