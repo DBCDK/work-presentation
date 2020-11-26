@@ -18,31 +18,32 @@
  */
 package dk.dbc.search.work.presentation.service.response;
 
-import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
+import dk.dbc.search.work.presentation.api.pojo.RelationInformation;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.util.Arrays;
-import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
-
 import java.util.List;
 import java.util.Objects;
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
 @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-@Schema(name = ManifestationInformationResponse.NAME)
-public class ManifestationInformationResponse {
+@Schema(name = RelationInformationResponse.NAME)
+public class RelationInformationResponse implements Comparable<RelationInformationResponse> {
 
-    public static final String NAME = "manifestation";
+    public static final String NAME = "relation";
 
     // Ugly hack: https://github.com/eclipse/microprofile-open-api/issues/425
-    @Schema(name = ManifestationInformationResponse.Array.NAME, type = SchemaType.ARRAY, ref = ManifestationInformationResponse.NAME, hidden = true)
+    @Schema(name = RelationInformationResponse.Array.NAME, type = SchemaType.ARRAY, ref = RelationInformationResponse.NAME, hidden = true)
     public static class Array {
 
-        public static final String NAME = ManifestationInformationResponse.NAME + "_list";
+        public static final String NAME = RelationInformationResponse.NAME + "_list";
     }
+
+    @Schema(example = "review")
+    public String type;
 
     @Schema(example = "id-enti:fier")
     public String id;
@@ -50,14 +51,20 @@ public class ManifestationInformationResponse {
     @Schema(example = "ether", implementation = String.class)
     public List<String> types;
 
-    @Schema(example = "0,2,7", implementation = int.class, description = "indexes (starting with 0) in " + WorkInformationResponse.NAME + "/relations")
-    public int[] relations;
+    public static RelationInformationResponse from(RelationInformation ri) {
+        RelationInformationResponse rir = new RelationInformationResponse();
+        rir.type = ri.type;
+        rir.id = ri.manifestationId;
+        rir.types = ri.materialTypes;
+        return rir;
+    }
 
-    public static ManifestationInformationResponse from(ManifestationInformation mi) {
-        ManifestationInformationResponse mir = new ManifestationInformationResponse();
-        mir.id = mi.manifestationId;
-        mir.types = mi.materialTypes;
-        return mir;
+    @Override
+    public int compareTo(RelationInformationResponse o) {
+        int ret = this.id.compareTo(o.id);
+        if (ret == 0)
+            ret = this.type.compareTo(o.type);
+        return ret;
     }
 
     @Override
@@ -66,19 +73,19 @@ public class ManifestationInformationResponse {
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        ManifestationInformationResponse that = (ManifestationInformationResponse) o;
-        return Objects.equals(id, that.id) &&
-               Objects.equals(types, that.types) &&
-               Arrays.equals(relations, that.relations);
+        RelationInformationResponse that = (RelationInformationResponse) o;
+        return Objects.equals(type, that.type) &&
+               Objects.equals(id, that.id) &&
+               Objects.equals(types, that.types);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, types);
+        return Objects.hash(type, id);
     }
 
     @Override
     public String toString() {
-        return "ManifestationInformationResponse{" + "id=" + id + '}';
+        return "RelationInformationResponse{" + "type=" + type + ", id=" + id + ", types=" + types + '}';
     }
 }
