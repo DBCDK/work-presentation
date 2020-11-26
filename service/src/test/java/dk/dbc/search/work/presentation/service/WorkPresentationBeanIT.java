@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
@@ -71,8 +72,15 @@ public class WorkPresentationBeanIT extends JpaBase {
             try {
                 WorkInformationResponse actual = wpb.processRequest(args.workId, "190102", "danbib", "track-me");
                 System.out.println("actual = " + actual);
-                WorkInformationResponse expected = O.readValue(dir.resolve("expected.json").toFile(), WorkInformationResponse.class);
                 O.writeValue(dir.resolve("actual.json").toFile(), actual);
+                WorkInformationResponse expected = null;
+                try {
+                    expected = O.readValue(dir.resolve("expected.json").toFile(), WorkInformationResponse.class);
+                } catch (IOException ioex) {
+                    log.error("Exceprion parsing expected as response: {}", ioex.getMessage());
+                    log.debug("Exceprion parsing expected as response: ", ioex);
+                    fail("Could not parse expected.json as response");
+                }
                 if (!expected.equals(actual)) {
                     System.out.println("Actual:");
                     O.writeValue(System.out, actual);
@@ -86,7 +94,14 @@ public class WorkPresentationBeanIT extends JpaBase {
                 System.out.println("  Exception:" + ex.getClass().getName() + ", " + ex.getMessage());
                 log.error("Exception: {}", ex.getMessage());
                 log.debug("Exception: ", ex);
-                ExpectedError expected = O.readValue(dir.resolve("expected.json").toFile(), ExpectedError.class);
+                ExpectedError expected = null;
+                try {
+                    expected = O.readValue(dir.resolve("expected.json").toFile(), ExpectedError.class);
+                } catch (IOException ioex) {
+                    log.error("Exception parsing expected as error: {}", ioex.getMessage());
+                    log.debug("Exception parsing expected as error: ", ioex);
+                    fail("Could not parse expected.json as error");
+                }
                 assertThat(ex.getClass().getName(), is(expected.exception));
                 if (expected.regexp != null)
                     assertThat(ex.getMessage(), matchesPattern(expected.regexp));
@@ -115,7 +130,6 @@ public class WorkPresentationBeanIT extends JpaBase {
 
     private static Stream<Arguments> tests() {
         URL url = WorkPresentationBeanIT.class.getClassLoader().getResource("WorkPresentationBean");
-        System.out.println("url = " + url);
         return Stream.of(new File(url.getPath()).listFiles(File::isDirectory))
                 .map(File::toPath)
                 .map(Arguments::of);
