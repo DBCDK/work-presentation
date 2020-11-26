@@ -28,6 +28,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.cache.annotation.CacheKey;
+import javax.cache.annotation.CacheResult;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
@@ -80,8 +82,10 @@ public class Solr {
      * @param trackingId                Tracking
      * @return collection of visible manifestations
      */
+    @CacheResult(cacheName = "solr-manifestations",
+                 exceptionCacheName = "solr-manifestations-error")
     @Timed(reusable = true)
-    public Set<String> getAccessibleManifestations(String workId, String agencyId, String profile, int maxExpectedManifestations, String trackingId) {
+    public Set<String> getAccessibleManifestations(@CacheKey String workId, @CacheKey String agencyId, @CacheKey String profile, int maxExpectedManifestations, String trackingId) {
         String filterQuery = profileService.filterQueryFor(SEARCH, agencyId, profile, trackingId);
         String queryString = WORK_ID_FIELD + ":" + ClientUtils.escapeQueryChars(workId);
         return pullSolrManifestations(queryString, filterQuery, maxExpectedManifestations,
@@ -97,8 +101,10 @@ public class Solr {
      * @param trackingId  Tracking
      * @return collection of visible manifestations
      */
+    @CacheResult(cacheName = "solr-relations",
+                 exceptionCacheName = "solr-relations-error")
     @Timed(reusable = true)
-    public Set<String> getAccessibleRelations(Set<String> relationIds, String agencyId, String profile, String trackingId) {
+    public Set<String> getAccessibleRelations(@CacheKey Set<String> relationIds, @CacheKey String agencyId, @CacheKey String profile, String trackingId) {
         int maxExpectedManifestations = relationIds.size();
         String filterQuery = profileService.filterQueryFor(PRESENT, agencyId, profile, trackingId);
         String queryString = MANIFESTATION_ID_FIELD + ":(" +

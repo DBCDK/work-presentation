@@ -21,6 +21,22 @@
             "vip-core-error": {
                 "timeout": "3",
                 "timeUnit": "Minutes"
+            },
+            "solr-manifestations": {
+                "timeout": "5",
+                "timeUnit": "Minutes"
+            },
+            "solr-manifestations-error": {
+                "timeout": "10",
+                "timeUnit": "Seconds"
+            },
+            "solr-relations": {
+                "timeout": "5",
+                "timeUnit": "Minutes"
+            },
+            "solr-relations-error": {
+                "timeout": "10",
+                "timeUnit": "Seconds"
             }
         }
     }
