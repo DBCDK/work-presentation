@@ -12,23 +12,28 @@
     "records": [
         {
             "id": "870970-basis:00010529",
-            "types": [ "Node" ]
+            "types": [ "Node" ],
+            "relations": [ ]
         },
         {
             "id": "800010-katalog:99122054413305763",
-            "types": [ "Node" ]
+            "types": [ "Node" ],
+            "relations": [ ]
         },
         {
             "id": "830520-katalog:000025251",
-            "types": [ "Node" ]
+            "types": [ "Node" ],
+            "relations": [ ]
         },
         {
             "id": "710100-katalog:00010529",
-            "types": [ "Node" ]
+            "types": [ "Node" ],
+            "relations": [ ]
         },
         {
             "id": "763000-katalog:00010529",
-            "types": [ "Node" ]
+            "types": [ "Node" ],
+            "relations": [ ]
         }
     ]
 }
