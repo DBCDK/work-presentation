@@ -48,6 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static dk.dbc.search.work.presentation.service.vipcore.ProfileService.ProfileDomain.*;
+import static java.util.Collections.EMPTY_SET;
 import static java.util.stream.Collectors.joining;
 
 /**
@@ -105,6 +106,8 @@ public class Solr {
                  exceptionCacheName = "solr-relations-error")
     @Timed(reusable = true)
     public Set<String> getAccessibleRelations(@CacheKey Set<String> relationIds, @CacheKey String agencyId, @CacheKey String profile, String trackingId) {
+        if(relationIds.isEmpty())
+            return EMPTY_SET;
         int maxExpectedManifestations = relationIds.size();
         String filterQuery = profileService.filterQueryFor(PRESENT, agencyId, profile, trackingId);
         String queryString = MANIFESTATION_ID_FIELD + ":(" +
