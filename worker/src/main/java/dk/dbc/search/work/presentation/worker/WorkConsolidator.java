@@ -46,6 +46,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.function.BinaryOperator;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import javax.ejb.EJBException;
@@ -202,52 +203,32 @@ public class WorkConsolidator {
     Map<String, ManifestationInformation> buildManifestationCache(WorkTree tree) {
         Map<String, String> mdc = MDC.getCopyOfContextMap();
 
+        ManifestationCollection manifestationCollection = new ManifestationCollection();
+
         // All manifestations as future ManiInfo (delete should be removed from cache)
-        Stream<Future<ManifestationInformation>> manifestationStream = tree.values().stream()
+        tree.values().stream()
                 .map(Map::values)
                 .flatMap(Collection::stream)
                 .map(Map::values)
                 .flatMap(Collection::stream)
-                .map(cacheContentBuilder -> asyncCacheContentBuilder.getFromCache(cacheContentBuilder, mdc, true));
+                .map(cacheContentBuilder -> asyncCacheContentBuilder.getFromCache(cacheContentBuilder, mdc, true))
+                .collect(toList())
+                .forEach(manifestationCollection::include);
+
         // All distinct relations as future ManiInfo (deletes should be retained in cache)
-        Stream<Future<ManifestationInformation>> relationStream = tree.getRelations().values().stream()
+        tree.getRelations().values().stream()
                 .map(Map::values)
                 .flatMap(Collection::stream)
                 .map(Map::values)
                 .flatMap(Collection::stream)
-                .collect(toMap(CacheContentBuilder::getManifestationId, c -> c)) // Distinct by manifestationId
+                .collect(toMap(CacheContentBuilder::getManifestationId, c -> c, (t1, t2) -> t1)) // Distinct by manifestationId
                 .values()
                 .stream()
-                .map(cacheContentBuilder -> asyncCacheContentBuilder.getFromCache(cacheContentBuilder, mdc, false));
+                .map(cacheContentBuilder -> asyncCacheContentBuilder.getFromCache(cacheContentBuilder, mdc, false))
+                .collect(toList())
+                .forEach(manifestationCollection::include);
 
-        List<Future<ManifestationInformation>> allManifestations = Stream.concat(manifestationStream, relationStream)
-                .collect(toList());
-
-
-        // Collect all manifestations - allow for saving
-        // Even if one before has produced an exception
-        // This speeds up next try, in case of cache (write) collision
-        HashMap<String, ManifestationInformation> manifestations = new HashMap<>();
-        EJBException exception = null;
-        for (Future<ManifestationInformation> future : allManifestations) {
-            try {
-                ManifestationInformation maniInfo = future.get();
-                if (maniInfo != null) {
-                    manifestations.put(maniInfo.manifestationId, maniInfo);
-                }
-            } catch (ExecutionException ex) {
-                if (ex.getCause() instanceof EJBException) {
-                    exception = (EJBException) ex.getCause();
-                } else {
-                    exception = new EJBException("Could not build cache entry", ex);
-                }
-            } catch (InterruptedException ex) {
-                exception = new EJBException("Could not build cache entry", ex);
-            }
-        }
-        if (exception != null)
-            throw exception;
-        return manifestations;
+        return manifestationCollection.getManifestations();
     }
 
     void setWorkContains(WorkTree tree) {
@@ -276,5 +257,47 @@ public class WorkConsolidator {
 
     private static <T> Predicate<T> notNull() {
         return o -> o != null;
+    }
+
+    private static class ManifestationCollection {
+
+        private final HashMap<String, ManifestationInformation> manifestations = new HashMap<>();
+        private EJBException exception = null;
+
+        /**
+         * Extract manifestation from future and store the result (optionally an
+         * exception)
+         *
+         * @param future Where to get the manifestation
+         */
+        private void include(Future<ManifestationInformation> future) {
+            try {
+                ManifestationInformation maniInfo = future.get();
+                if (maniInfo != null) {
+                    manifestations.put(maniInfo.manifestationId, maniInfo);
+                }
+            } catch (ExecutionException ex) {
+                if (ex.getCause() instanceof EJBException) {
+                    exception = (EJBException) ex.getCause();
+                } else {
+                    exception = new EJBException("Could not build cache entry", ex);
+                }
+            } catch (InterruptedException ex) {
+                exception = new EJBException("Could not build cache entry", ex);
+            }
+        }
+
+        /**
+         * Get the manifestations or throw an exception
+         * <p>
+         * If a manifestation resulted in an exception that is raised
+         *
+         * @return manifestations by id
+         */
+        public HashMap<String, ManifestationInformation> getManifestations() {
+            if (exception != null)
+                throw exception;
+            return manifestations;
+        }
     }
 }
