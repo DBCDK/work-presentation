@@ -22,10 +22,8 @@ import dk.dbc.search.work.presentation.service.JpaBase;
 import dk.dbc.search.work.presentation.service.vipcore.NoSuchProfileException;
 import java.time.Duration;
 import java.util.Set;
-import org.eclipse.persistence.jpa.jpql.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.jupiter.api.function.ThrowingSupplier;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;

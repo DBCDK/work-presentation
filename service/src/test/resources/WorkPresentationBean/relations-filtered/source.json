@@ -83,9 +83,34 @@
             "value": "yrjö kilpinen"
         }
     ],
-    "dbRelUnits":{
-        "unit:64": [ ],
-        "unit:7892641": [ ]
+    "dbRelUnits": {
+        "unit:64": [
+            {
+                "type": "review",
+                "pid": "870976-anmeld:00000001",
+                "types": [ "Article" ]
+
+            },
+            {
+                "type": "description",
+                "pid": "870976-anmeld:00000002",
+                "types": [ "Description" ]
+            }
+        ],
+        "unit:7892641": [
+                    {
+                "type": "review",
+                "pid": "870976-anmeld:00000001",
+                "types": [ "Article" ]
+
+            },
+            {
+                "type": "description",
+                "pid": "870976-anmeld:33333333",
+                "types": [ "Description" ]
+            }
+
+        ]
     },
     "subjects": [ ],
     "fullTitle": "Fjeldsange : for 1 stemme og klaver"

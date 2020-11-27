@@ -27,11 +27,13 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.stream.Collectors.*;
 
 /**
  *
@@ -60,6 +62,7 @@ public class FilterResult {
      * @param trackingId The tracking id for the request
      * @return the work as presented to the user
      */
+    @Timed(reusable = true)
     public WorkInformationResponse processWork(WorkInformation work, String agencyId, String profile, String trackingId) {
         log.debug("work = {}", work);
         int manifestationCount = work.dbUnitInformation.values()
@@ -76,19 +79,33 @@ public class FilterResult {
                                 e.getValue().stream()
                                         .filter(m -> visibleManifestations.contains(m.manifestationId))
                                         .map(ManifestationInformationResponse::from)
-                                        .collect(Collectors.toSet())))
+                                        .collect(toSet())))
                         .filter(e -> !e.getValue().isEmpty())
-                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
+                        .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
         log.debug("dbUnitInformation = {}", dbUnitInformation);
+
+        Set<String> possibleRelations = work.dbRelUnitInformation.values()
+                .stream()
+                .flatMap(Collection::stream)
+                .map(r -> r.manifestationId)
+                .collect(toSet());
+        Set<String> accessibleRelations = solr.getAccessibleRelations(possibleRelations, agencyId, profile, trackingId);
+
+        RelationIndexComputer relationIndexes = new RelationIndexComputer(accessibleRelations, work.dbRelUnitInformation);
+        dbUnitInformation.forEach((unitId, manifestations) -> {
+            int[] indexes = relationIndexes.unitRelationIndexes(unitId);
+            manifestations.forEach(m -> m.relations = indexes);
+        });
 
         WorkInformationResponse wir = WorkInformationResponse.from(work);
         // Flatten the manifestations - with predictable order
         wir.records = new LinkedHashSet<>();
+        wir.relations = relationIndexes.getRelationList();
         dbUnitInformation.values().stream()
                 .flatMap(Collection::stream)
-                .sorted((l, r) -> l.id.compareTo(r.id))
+                .sorted()
                 .forEach(wir.records::add);
         return wir;
     }
+
 }

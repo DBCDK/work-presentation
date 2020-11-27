@@ -28,6 +28,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.cache.annotation.CacheKey;
+import javax.cache.annotation.CacheResult;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
 import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
 import org.apache.solr.client.solrj.SolrClient;
@@ -42,16 +47,22 @@ import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static dk.dbc.search.work.presentation.service.vipcore.ProfileService.ProfileDomain.*;
+import static java.util.Collections.EMPTY_SET;
+import static java.util.stream.Collectors.joining;
+
 /**
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
+@Singleton
+@Lock(LockType.READ)
 public class Solr {
 
     private static final Logger log = LoggerFactory.getLogger(Solr.class);
 
     private static final String WORK_ID_FIELD = "rec.persistentWorkId";
-    private static final String MANIFESTATION_ID = "rec.manifestationId";
+    private static final String MANIFESTATION_ID_FIELD = "rec.manifestationId";
 
     private static final Pattern ZK = Pattern.compile("zk://([^/]*)(/.*)?/([^/]*)");
 
@@ -72,18 +83,52 @@ public class Solr {
      * @param trackingId                Tracking
      * @return collection of visible manifestations
      */
+    @CacheResult(cacheName = "solr-manifestations",
+                 exceptionCacheName = "solr-manifestations-error")
     @Timed(reusable = true)
-    public Set<String> getAccessibleManifestations(String workId, String agencyId, String profile, int maxExpectedManifestations, String trackingId) {
-        String filterQuery = profileService.filterQueryFor(agencyId, profile, trackingId);
+    public Set<String> getAccessibleManifestations(@CacheKey String workId, @CacheKey String agencyId, @CacheKey String profile, int maxExpectedManifestations, String trackingId) {
+        String filterQuery = profileService.filterQueryFor(SEARCH, agencyId, profile, trackingId);
+        String queryString = WORK_ID_FIELD + ":" + ClientUtils.escapeQueryChars(workId);
+        return pullSolrManifestations(queryString, filterQuery, maxExpectedManifestations,
+                                      "Error requesting manifstationIds from solr for: " + workId);
+    }
+
+    /**
+     * Filter manifestationIds of relations to those visible by a given profile
+     *
+     * @param relationIds collection of manifestationIds
+     * @param agencyId    The agency part of the profile
+     * @param profile     The symbolic name of the profile
+     * @param trackingId  Tracking
+     * @return collection of visible manifestations
+     */
+    @CacheResult(cacheName = "solr-relations",
+                 exceptionCacheName = "solr-relations-error")
+    @Timed(reusable = true)
+    public Set<String> getAccessibleRelations(@CacheKey Set<String> relationIds, @CacheKey String agencyId, @CacheKey String profile, String trackingId) {
+        if(relationIds.isEmpty())
+            return EMPTY_SET;
+        int maxExpectedManifestations = relationIds.size();
+        String filterQuery = profileService.filterQueryFor(PRESENT, agencyId, profile, trackingId);
+        String queryString = MANIFESTATION_ID_FIELD + ":(" +
+                             relationIds.stream()
+                                     .map(ClientUtils::escapeQueryChars)
+                                     .collect(joining(" OR ")) +
+                             ")";
+        return pullSolrManifestations(queryString, filterQuery, maxExpectedManifestations,
+                                      "Error requesting relationIds from solr");
+    }
+
+    private Set<String> pullSolrManifestations(String queryString, String filterQuery, int maxExpectedManifestations, String logMessage) {
         SolrClient solrClient = config.getSolrClient();
         int requestedRows = 16 + maxExpectedManifestations + maxExpectedManifestations / 16;  // Room in resultset for unexpected manifestations
         try {
             HashSet<String> manifestationIds = new HashSet<>();
             SolrCallback callback = new SolrCallback(manifestationIds);
-            SolrQuery query = new SolrQuery(WORK_ID_FIELD + ":" + ClientUtils.escapeQueryChars(workId));
+            SolrQuery query = new SolrQuery(queryString);
             query.addFilterQuery(filterQuery);
             query.add("appId", config.getAppId());
-            query.setFields(MANIFESTATION_ID);
+            query.setFields(MANIFESTATION_ID_FIELD);
             int start = 0;
             for (;;) {
                 query.setStart(start);
@@ -103,8 +148,8 @@ public class Solr {
                 requestedRows = extraRows + 16; // Estimate how many rows to fetch in next loop
             }
         } catch (SolrServerException | IOException ex) {
-            log.error("Error requesting manifstationIds from solr for: {}: {}", workId, ex.getMessage());
-            log.debug("Error requesting manifstationIds from solr for: {}: ", workId, ex);
+            log.error(logMessage + ": {}", ex.getMessage());
+            log.debug(logMessage, ex);
             throw new InternalServerErrorException();
         }
     }
@@ -146,7 +191,7 @@ public class Solr {
 
         @Override
         public void streamSolrDocument(SolrDocument sd) {
-            sd.getFieldValues(MANIFESTATION_ID)
+            sd.getFieldValues(MANIFESTATION_ID_FIELD)
                     .stream()
                     .map(String::valueOf)
                     .forEach(manifestationIds::add);

@@ -20,6 +20,7 @@ package dk.dbc.search.work.presentation.service.response;
 
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -57,6 +58,9 @@ public class WorkInformationResponse {
 
     @Schema(implementation = ManifestationInformationResponse.Array.class)
     public Set<ManifestationInformationResponse> records;
+
+    @Schema(implementation = RelationInformationResponse.Array.class)
+    public List<RelationInformationResponse> relations;
 
     public static WorkInformationResponse from(WorkInformation wi) {
         WorkInformationResponse wir = new WorkInformationResponse();
