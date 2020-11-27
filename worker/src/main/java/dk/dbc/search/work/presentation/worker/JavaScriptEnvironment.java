@@ -29,6 +29,7 @@ import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +66,7 @@ public class JavaScriptEnvironment {
         }
     }
 
+    @Timed(reusable = true)
     public ManifestationInformation cacheBuild(CacheContentBuilder dataBuilder) {
         try {
             return jsWorkers
