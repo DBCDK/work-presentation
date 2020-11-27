@@ -84,7 +84,7 @@ public class JpaBase extends dk.dbc.search.work.presentation.api.jpa.JpaBase<Bea
 
     @Override
     public BeanFactory createBeanFactory(Map<String, String> env, EntityManager em, EntityManagerFactory emf) {
-        return new BeanFactory(env, em, corepoDataSource);
+        return new BeanFactory(env, em, emf, corepoDataSource);
     }
 
     public void waitForQueue(int seconds) throws SQLException, InterruptedException {

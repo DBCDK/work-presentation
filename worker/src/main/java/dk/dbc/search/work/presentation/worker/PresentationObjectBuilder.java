@@ -50,9 +50,6 @@ public class PresentationObjectBuilder {
     WorkTreeBuilder workTreeBuilder;
 
     @Inject
-    ParallelCacheContentBuilder parallelCacheContentBuilder;
-
-    @Inject
     WorkConsolidator workConsolidator;
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
@@ -78,8 +75,6 @@ public class PresentationObjectBuilder {
             try {
                 WorkTree tree = workTreeBuilder.buildTree(corepoWorkId);
                 tree.prettyPrint(log::trace);
-                parallelCacheContentBuilder.updateCache(tree); // Needs to be before .updateWorkContains(tree)
-                parallelCacheContentBuilder.updateWorkContains(tree);
                 if (tree.isEmpty()) {
                     workConsolidator.deleteWork(corepoWorkId);
                 } else {

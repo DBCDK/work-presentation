@@ -18,8 +18,8 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
-import dk.dbc.search.work.presentation.worker.tree.NoCacheObjectException;
 import dk.dbc.search.work.presentation.api.jpa.CacheEntity;
+import dk.dbc.search.work.presentation.api.jpa.WorkContainsEntity;
 import dk.dbc.search.work.presentation.api.jpa.WorkObjectEntity;
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import dk.dbc.search.work.presentation.api.pojo.RelationInformation;
@@ -42,12 +42,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.ejb.EJBException;
+import javax.inject.Inject;
+import org.slf4j.MDC;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.Collections.EMPTY_LIST;
+import static java.util.stream.Collectors.*;
 
 /**
  *
@@ -64,6 +70,9 @@ public class WorkConsolidator {
     @PersistenceContext(unitName = "workPresentation_PU")
     public EntityManager em;
 
+    @Inject
+    AsyncCacheContentBuilder asyncCacheContentBuilder;
+
     /**
      * Remove a work record from the database
      *
@@ -72,8 +81,16 @@ public class WorkConsolidator {
     @Timed(reusable = true)
     public void deleteWork(String corepoWorkId) {
         WorkObjectEntity work = WorkObjectEntity.fromCorepoWorkId(em, corepoWorkId);
-        if (work != null)
+        if (work != null) {
+            WorkContainsEntity.listFrom(em, corepoWorkId)
+                    .stream()
+                    .map(WorkContainsEntity::getManifestationId)
+                    .forEach(manifestationId -> {
+                        CacheEntity.from(em, manifestationId).delete();
+                    });
+            WorkContainsEntity.updateToList(em, corepoWorkId, EMPTY_LIST);
             work.delete();
+        }
     }
 
     /**
@@ -124,11 +141,14 @@ public class WorkConsolidator {
     public WorkInformation buildWorkInformation(WorkTree tree) {
         WorkInformation work = new WorkInformation();
 
+        setWorkContains(tree);
+        Map<String, ManifestationInformation> manifestationCache = buildManifestationCache(tree);
+
         work.workId = tree.getPersistentWorkId();
 
         // Copy from owner
         String ownerId = tree.getPrimaryManifestationId();
-        ManifestationInformation primary = getCacheContentFor(ownerId);
+        ManifestationInformation primary = manifestationCache.get(ownerId);
         work.creators = TypedValue.distinctSet(primary.creators);
         work.description = primary.description;
         work.fullTitle = primary.fullTitle;
@@ -143,19 +163,19 @@ public class WorkConsolidator {
             List<ManifestationInformation> fullManifestations = unit.values().stream() // All ObjectTree from a unit
                     .map(ObjectTree::values) // Find manifestationIds
                     .flatMap(Collection::stream) // as a stream of manifestation references
-                    .filter(not(CacheContentBuilder::isDeleted)) // only those not deleted
                     .map(CacheContentBuilder::getManifestationId)
-                    .map(this::getCacheContentFor)
-                    .collect(toList()); // Lookup manifestation data
+                    .map(manifestationCache::get) // Lookup manifestation data
+                    .filter(notNull()) // Not deleted
+                    .collect(toList());
             fullManifestations.stream()
                     .map(m -> m.subjects) // as a stream of Set<String>
-                    .filter(WorkConsolidator::notNull)
+                    .filter(notNull())
                     .flatMap(Collection::stream) // as a stream of String
                     .forEach(subjects::add);
 
             Set<ManifestationInformation> manifestations = fullManifestations.stream()
                     .map(ManifestationInformation::onlyPresentationFields)
-                    .collect(Collectors.toSet());
+                    .collect(toSet());
             work.dbUnitInformation.put(unitId, manifestations);
 
             HashSet<RelationInformation> relationsForUnit = new HashSet<>();
@@ -163,16 +183,15 @@ public class WorkConsolidator {
                 tree.getRelations().get(tr).values().stream()
                         .map(ObjectTree::values) // Find manifestationIds
                         .flatMap(Collection::stream) // as a stream of manifestation references
-                        .filter(not(CacheContentBuilder::isDeleted)) // only those not deleted
                         .map(CacheContentBuilder::getManifestationId)
-                        .map(this::getCacheContentFor) // Lookup manifestation data
+                        .map(manifestationCache::get) // Lookup manifestation data
+                        .filter(notNull()) // Not deleted
                         .map(RelationInformation.mapperWith(tr.getType().getName()))
                         .map(RelationInformation::onlyPresentationFields)
                         .forEach(relationsForUnit::add);
             });
 
             work.dbRelUnitInformation.put(unitId, relationsForUnit);
-
         });
 
         work.subjects = TypedValue.distinctSet(subjects);
@@ -180,17 +199,64 @@ public class WorkConsolidator {
         return work;
     }
 
-    /**
-     * Cache fetching (mockable)
-     *
-     * @param id manifestation id, to fetch cached data for
-     * @return ManifestationInformation
-     */
-    ManifestationInformation getCacheContentFor(String id) {
-        ManifestationInformation content = CacheEntity.from(em, id).getContent();
-        if (content == null)
-            throw new NoCacheObjectException(id);
-        return content;
+    Map<String, ManifestationInformation> buildManifestationCache(WorkTree tree) {
+        Map<String, String> mdc = MDC.getCopyOfContextMap();
+
+        // All manifestations as future ManiInfo (delete should be removed from cache)
+        Stream<Future<ManifestationInformation>> manifestationStream = tree.values().stream()
+                .map(Map::values)
+                .flatMap(Collection::stream)
+                .map(Map::values)
+                .flatMap(Collection::stream)
+                .map(cacheContentBuilder -> asyncCacheContentBuilder.getFromCache(cacheContentBuilder, mdc, true));
+        // All distinct relations as future ManiInfo (deletes should be retained in cache)
+        Stream<Future<ManifestationInformation>> relationStream = tree.getRelations().values().stream()
+                .map(Map::values)
+                .flatMap(Collection::stream)
+                .map(Map::values)
+                .flatMap(Collection::stream)
+                .collect(toMap(CacheContentBuilder::getManifestationId, c -> c)) // Distinct by manifestationId
+                .values()
+                .stream()
+                .map(cacheContentBuilder -> asyncCacheContentBuilder.getFromCache(cacheContentBuilder, mdc, false));
+
+        List<Future<ManifestationInformation>> allManifestations = Stream.concat(manifestationStream, relationStream)
+                .collect(toList());
+
+
+        // Collect all manifestations - allow for saving
+        // Even if one before has produced an exception
+        // This speeds up next try, in case of cache (write) collision
+        HashMap<String, ManifestationInformation> manifestations = new HashMap<>();
+        EJBException exception = null;
+        for (Future<ManifestationInformation> future : allManifestations) {
+            try {
+                ManifestationInformation maniInfo = future.get();
+                if (maniInfo != null) {
+                    manifestations.put(maniInfo.manifestationId, maniInfo);
+                }
+            } catch (ExecutionException ex) {
+                if (ex.getCause() instanceof EJBException) {
+                    exception = (EJBException) ex.getCause();
+                } else {
+                    exception = new EJBException("Could not build cache entry", ex);
+                }
+            } catch (InterruptedException ex) {
+                exception = new EJBException("Could not build cache entry", ex);
+            }
+        }
+        if (exception != null)
+            throw exception;
+        return manifestations;
+    }
+
+    void setWorkContains(WorkTree tree) {
+        String corepoWorkId = tree.getCorepoWorkId();
+        Set<String> activeManifestationIds = tree.extractManifestationIds();
+        List<WorkContainsEntity> workContains = activeManifestationIds.stream()
+                .map(m -> WorkContainsEntity.from(em, corepoWorkId, m))
+                .collect(toList());
+        WorkContainsEntity.updateToList(em, corepoWorkId, workContains);
     }
 
     private static int instantCmp(Instant a, Instant b) {
@@ -208,11 +274,7 @@ public class WorkConsolidator {
         return (int) l;
     }
 
-    private static boolean notNull(Object o) {
-        return o != null;
-    }
-
-    private static <T> Predicate<T> not(Predicate<T> p) {
-        return t -> !p.test(t);
+    private static <T> Predicate<T> notNull() {
+        return o -> o != null;
     }
 }

@@ -18,17 +18,27 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
+import dk.dbc.search.work.presentation.api.jpa.CacheEntity;
+import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
+import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import javax.sql.DataSource;
 import javax.ws.rs.client.ClientBuilder;
 import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -36,11 +46,15 @@ import org.glassfish.jersey.client.JerseyClientBuilder;
  */
 public class BeanFactory implements AutoCloseable {
 
+    private static final Logger log = LoggerFactory.getLogger(BeanFactory.class);
+
     private final EntityManager entityManager;
+    private final EntityManagerFactory entityManagerFactory;
     private final DataSource corepoDataSource;
     private final Config config;
-    private final Bean<ParallelCacheContentBuilder> parallelCacheContentBuilder = new Bean<>(new ParallelCacheContentBuilder(), this::setupParallelCacheContentBuilder);
+    private final Bean<AsyncCacheContentBuilder> asyncCacheContentBuilder = new Bean<>(new AsyncCacheContentBuilderImpl(), this::setupAsyncCacheContentBuilder);
     private final Bean<CorepoContentServiceConnector> corepoContentService = new Bean<>(new CorepoContentServiceConnector(), this::setupCorepoContentService);
+    private final Bean<JavaScriptEnvironment> javaScriptEnvironment = new Bean<>(new JavaScriptEnvironment(), this::setupJavaScriptEnvironment);
     private final Bean<ObjectTimestamp> objectTimestamp = new Bean<>(new ObjectTimestamp(), this::setupObjectTimestamp);
     private final Bean<PresentationObjectBuilder> presentationObjectBuilder = new Bean<>(new PresentationObjectBuilder(), this::setupPresentationObjectBuilder);
     private final Bean<WorkConsolidator> workConsolidator = new Bean<>(new WorkConsolidator(), this::setupWorkConsolidator);
@@ -48,8 +62,9 @@ public class BeanFactory implements AutoCloseable {
     private final Bean<WorkTreeBuilder> workTreeBuilder = new Bean<>(new WorkTreeBuilder(), this::setupWorkTreeBuilder);
     private final ArrayList<Runnable> cleanup = new ArrayList<>();
 
-    public BeanFactory(Map<String, String> envs, EntityManager em, DataSource corepoDataSource) {
+    public BeanFactory(Map<String, String> envs, EntityManager em, EntityManagerFactory emf, DataSource corepoDataSource) {
         this.entityManager = em;
+        this.entityManagerFactory = emf;
         this.corepoDataSource = corepoDataSource;
         this.config = makeConfig(envs);
     }
@@ -89,21 +104,13 @@ public class BeanFactory implements AutoCloseable {
         return config;
     }
 
-    public BeanFactory withPresentationObjectBuilder(PresentationObjectBuilder pob) {
-        presentationObjectBuilder.set(pob);
-        return this;
+    public AsyncCacheContentBuilder getAsyncCacheContentBuilder() {
+        return asyncCacheContentBuilder.get();
     }
 
-    public ParallelCacheContentBuilder getParallelCacheContentBuilder() {
-        return parallelCacheContentBuilder.get();
-    }
-
-    private void setupParallelCacheContentBuilder(ParallelCacheContentBuilder bean) {
+    private void setupAsyncCacheContentBuilder(AsyncCacheContentBuilder bean) {
         bean.em = entityManager;
-        bean.config = config;
-        bean.corepoContentService = corepoContentService.get();
-        bean.init();
-        cleanup.add(bean::destroy);
+        bean.jsEnv = getJavaScriptEnvironment();
     }
 
     public BeanFactory withCorepoContentServiceConnector(CorepoContentServiceConnector ccsc) {
@@ -119,6 +126,16 @@ public class BeanFactory implements AutoCloseable {
         bean.config = config;
     }
 
+    public JavaScriptEnvironment getJavaScriptEnvironment() {
+        return javaScriptEnvironment.get();
+    }
+
+    private void setupJavaScriptEnvironment(JavaScriptEnvironment bean) {
+        bean.config = config;
+        bean.corepoContentService = getCorepoContentService();
+        bean.init();
+    }
+
     public ObjectTimestamp getObjectTimestamp() {
         return objectTimestamp.get();
     }
@@ -132,9 +149,13 @@ public class BeanFactory implements AutoCloseable {
     }
 
     private void setupPresentationObjectBuilder(PresentationObjectBuilder bean) {
-        bean.parallelCacheContentBuilder = parallelCacheContentBuilder.get();
-        bean.workConsolidator = workConsolidator.get();
-        bean.workTreeBuilder = workTreeBuilder.get();
+        bean.workConsolidator = getWorkConsolidator();
+        bean.workTreeBuilder = getWorkTreeBuilder();
+    }
+
+    public BeanFactory withPresentationObjectBuilder(PresentationObjectBuilder pob) {
+        presentationObjectBuilder.set(pob);
+        return this;
     }
 
     public WorkConsolidator getWorkConsolidator() {
@@ -143,6 +164,7 @@ public class BeanFactory implements AutoCloseable {
 
     private void setupWorkConsolidator(WorkConsolidator bean) {
         bean.em = entityManager;
+        bean.asyncCacheContentBuilder = getAsyncCacheContentBuilder();
     }
 
     public Worker getWorker() {
@@ -154,7 +176,7 @@ public class BeanFactory implements AutoCloseable {
         bean.executor = Executors.newCachedThreadPool();
         bean.dataSource = corepoDataSource;
         bean.metrics = null;
-        bean.presentationObjectBuilder = presentationObjectBuilder.get();
+        bean.presentationObjectBuilder = getPresentationObjectBuilder();
     }
 
     public BeanFactory withWorkTreeBuilder(WorkTreeBuilder bean) {
@@ -167,7 +189,7 @@ public class BeanFactory implements AutoCloseable {
     }
 
     private void setupWorkTreeBuilder(WorkTreeBuilder bean) {
-        bean.contentService = corepoContentService.get();
+        bean.contentService = getCorepoContentService();
         bean.em = entityManager;
     }
 
@@ -200,4 +222,42 @@ public class BeanFactory implements AutoCloseable {
         }
     }
 
+    <R> R newTransaction(Function<EntityManager, R> scope) {
+        EntityManager em = entityManagerFactory.createEntityManager();
+        try {
+            EntityTransaction transaction = em.getTransaction();
+            transaction.begin();
+            try {
+                R ret = scope.apply(em);
+                transaction.commit();
+                return ret;
+            } catch (Exception err) {
+                if (transaction.isActive()) {
+                    try {
+                        transaction.rollback();
+                    } catch (Exception e) {
+                        log.error("Error rolling back transaction: {}", e.getMessage());
+                        log.debug("Error rolling back transaction: ", e);
+                    }
+                }
+                if (err instanceof RuntimeException)
+                    throw (RuntimeException) err;
+                throw new RuntimeException(err);
+            }
+        } finally {
+            em.close();
+            entityManagerFactory.getCache().evictAll();
+        }
+    }
+
+    class AsyncCacheContentBuilderImpl extends AsyncCacheContentBuilder {
+
+        @Override
+        public Future<ManifestationInformation> getFromCache(CacheContentBuilder dataBuilder, Map<String, String> mdc, boolean delete) {
+            return newTransaction(em -> {
+                this.em = em;
+                return super.getFromCache(dataBuilder, mdc, delete);
+            });
+        }
+    }
 }
