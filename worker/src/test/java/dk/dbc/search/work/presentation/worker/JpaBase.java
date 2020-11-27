@@ -29,6 +29,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -82,7 +83,7 @@ public class JpaBase extends dk.dbc.search.work.presentation.api.jpa.JpaBase<Bea
     }
 
     @Override
-    public BeanFactory createBeanFactory(Map<String, String> env, EntityManager em) {
+    public BeanFactory createBeanFactory(Map<String, String> env, EntityManager em, EntityManagerFactory emf) {
         return new BeanFactory(env, em, corepoDataSource);
     }
 

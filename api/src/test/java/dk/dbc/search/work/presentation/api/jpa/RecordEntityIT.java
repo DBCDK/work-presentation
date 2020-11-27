@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -115,7 +116,7 @@ public class RecordEntityIT extends JpaBase<AutoCloseable> {
     }
 
     @Override
-    public AutoCloseable createBeanFactory(Map<String, String> env, EntityManager em) {
+    public AutoCloseable createBeanFactory(Map<String, String> env, EntityManager em, EntityManagerFactory emf) {
         return () -> {
         };
     }
