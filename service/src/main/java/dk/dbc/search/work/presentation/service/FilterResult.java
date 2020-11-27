@@ -103,7 +103,7 @@ public class FilterResult {
         wir.relations = relationIndexes.getRelationList();
         dbUnitInformation.values().stream()
                 .flatMap(Collection::stream)
-                .sorted((l, r) -> l.id.compareTo(r.id))
+                .sorted()
                 .forEach(wir.records::add);
         return wir;
     }

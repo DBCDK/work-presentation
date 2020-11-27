@@ -33,7 +33,7 @@ import java.util.Objects;
  */
 @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
 @Schema(name = ManifestationInformationResponse.NAME)
-public class ManifestationInformationResponse {
+public class ManifestationInformationResponse implements Comparable<ManifestationInformationResponse> {
 
     public static final String NAME = "manifestation";
 
@@ -58,6 +58,11 @@ public class ManifestationInformationResponse {
         mir.id = mi.manifestationId;
         mir.types = mi.materialTypes;
         return mir;
+    }
+
+    @Override
+    public int compareTo(ManifestationInformationResponse o) {
+        return id.compareTo(o.id);
     }
 
     @Override
