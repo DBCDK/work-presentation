@@ -1,0 +1,17 @@
+{
+  "id": "d1087b59-06ae-393a-a792-6ed0c6636daa",
+  "request": {
+    "url": "/corepo-content-service/rest/objects/873310-katalog:90171321/datastreams/RELS-SYS",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "body-873310-katalog-90171321_RELS-SYS.xml",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/xml",
+      "X-Frame-Options": "SAMEORIGIN"
+    }
+  },
+  "uuid": "d1087b59-06ae-393a-a792-6ed0c6636daa"
+}

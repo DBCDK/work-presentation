@@ -1,0 +1,17 @@
+{
+  "id": "1f9699a6-22d6-3033-a0f2-8c8474f7f9be",
+  "request": {
+    "url": "/corepo-content-service/rest/objects/873310-katalog:90171321/datastreams/localData.870970-forsk",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "body-873310-katalog-90171321_870970-forsk.xml",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/xml",
+      "X-Frame-Options": "SAMEORIGIN"
+    }
+  },
+  "uuid": "1f9699a6-22d6-3033-a0f2-8c8474f7f9be"
+}

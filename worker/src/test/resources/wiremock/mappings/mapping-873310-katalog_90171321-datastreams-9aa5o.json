@@ -1,0 +1,17 @@
+{
+  "id" : "24b18cf1-3a95-30c2-a051-587a3ee0383a",
+  "request" : {
+    "url" : "/corepo-content-service/rest/objects/873310-katalog:90171321/datastreams",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-873310-katalog_90171321-datastreams-9aa5o.xml",
+    "headers" : {
+      "Server" : "Payara Micro #badassfish",
+      "Content-Type" : "application/xml",
+      "X-Frame-Options" : "SAMEORIGIN"
+    }
+  },
+  "uuid" : "24b18cf1-3a95-30c2-a051-587a3ee0383a"
+}
