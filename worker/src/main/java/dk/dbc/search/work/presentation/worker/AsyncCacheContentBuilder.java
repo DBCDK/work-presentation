@@ -55,7 +55,7 @@ public class AsyncCacheContentBuilder {
      *
      * @param dataBuilder The content provider
      * @param mdc         the log mdc values
-     * @param delete      if the databuilder is tagged as deelted, should we
+     * @param delete      if the databuilder is tagged as deleted, should we
      *                    delete from the database
      * @return null if deleted otherwise the content from the cache
      */
@@ -66,7 +66,7 @@ public class AsyncCacheContentBuilder {
         try {
             MDC.setContextMap(mdc == null ? Collections.EMPTY_MAP : mdc);
             String manifestationId = dataBuilder.getManifestationId();
-            CacheEntity cacheObj = CacheEntity.detachedFrom(em, manifestationId); // null if none exsistant
+            CacheEntity cacheObj = CacheEntity.detachedFrom(em, manifestationId); // null if none existant
 
             if (delete && dataBuilder.isDeleted()) {
                 if (cacheObj != null) { // delete entry in database

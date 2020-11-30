@@ -46,7 +46,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.function.BinaryOperator;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import javax.ejb.EJBException;
@@ -203,9 +202,9 @@ public class WorkConsolidator {
     /**
      * Construct a cache, with all the documents used by this tree
      * <p>
-     * This tries to build all cache obejcts, even if one fails, it keeps going
+     * This tries to build all cache objects, even if one fails, it keeps going
      * on, failing at the very end. Trying to put every object into the cache,
-     * so that, during next run cache build collission errors are less likely
+     * so that, during next run cache build collision errors are less likely
      *
      * @param tree the tree structure
      * @return map of manifestation-id to content

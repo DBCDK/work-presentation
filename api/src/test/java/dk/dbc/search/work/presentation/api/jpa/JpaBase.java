@@ -47,12 +47,12 @@ import static org.eclipse.persistence.config.PersistenceUnitProperties.JDBC_USER
  * Transaction oriented helper for integration-tests
  * <p>
  * Implement the method
- * {@link #createBeanFactory(java.util.Map, javax.persistence.EntityManager)} to
+ * {@link #createBeanFactory(java.util.Map, javax.persistence.EntityManager, javax.persistence.EntityManagerFactory)} to
  * make beans for calls to .withConfigEnv(...).jpaWithBeans(beanFactory -> {})
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  * @param <BF> a beanFactory as produced by
- *             {@link #createBeanFactory(java.util.Map, javax.persistence.EntityManager)}
+ *             {@link #createBeanFactory(java.util.Map, javax.persistence.EntityManager, javax.persistence.EntityManagerFactory)}
  */
 public abstract class JpaBase<BF extends AutoCloseable> {
 

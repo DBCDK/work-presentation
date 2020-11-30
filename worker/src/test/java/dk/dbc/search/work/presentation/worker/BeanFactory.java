@@ -59,7 +59,6 @@ public class BeanFactory implements AutoCloseable {
     private final Bean<WorkConsolidator> workConsolidator = new Bean<>(new WorkConsolidator(), this::setupWorkConsolidator);
     private final Bean<Worker> worker = new Bean<>(new Worker(), this::setupWorker);
     private final Bean<WorkTreeBuilder> workTreeBuilder = new Bean<>(new WorkTreeBuilder(), this::setupWorkTreeBuilder);
-    private final ArrayList<Runnable> cleanup = new ArrayList<>();
 
     public BeanFactory(Map<String, String> envs, EntityManager em, EntityManagerFactory emf, DataSource corepoDataSource) {
         this.entityManager = em;
@@ -69,8 +68,7 @@ public class BeanFactory implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
-        cleanup.forEach(Runnable::run);
+    public void close() {
     }
 
     private static Config makeConfig(Map<String, String> envs) {
@@ -222,6 +220,18 @@ public class BeanFactory implements AutoCloseable {
         }
     }
 
+    /**
+     * This wraps a function in a transaction
+     * <p>
+     * This is intended to help running things that are annotated with
+     * {@code
+     * @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+     * }
+     *
+     * @param <R>   Return value type
+     * @param scope the function
+     * @return value from the scope
+     */
     <R> R newTransaction(Function<EntityManager, R> scope) {
         EntityManager em = entityManagerFactory.createEntityManager();
         try {
@@ -262,6 +272,7 @@ public class BeanFactory implements AutoCloseable {
     }
 
     private static class MockCounter implements Counter {
+
         private long cnt;
 
         public MockCounter() {
