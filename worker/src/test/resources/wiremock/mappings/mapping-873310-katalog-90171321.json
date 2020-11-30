@@ -1,0 +1,17 @@
+{
+  "id": "986f356a-a1c7-3ac8-bca3-f49bdbd71daf",
+  "request": {
+    "url": "/corepo-content-service/rest/objects/873310-katalog:90171321",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "body-873310-katalog-90171321.xml",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/xml",
+      "X-Frame-Options": "SAMEORIGIN"
+    }
+  },
+  "uuid": "986f356a-a1c7-3ac8-bca3-f49bdbd71daf"
+}
