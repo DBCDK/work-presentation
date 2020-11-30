@@ -170,6 +170,9 @@ var ManifestationInfo = (function() {
             } else if ( type.startsWith( "dkdcplus:" ) ) {
                 Log.trace( "ManifestationInfo.getSubjects type is: dkdcplus" );
                 type = type.substr( 9 );
+            } else if ( type.startsWith( "dcterms:" ) ) {
+                Log.trace( "ManifestationInfo.getSubjects type is: dcterms" );
+                type = type.substr( 8 );
             } else {
                 Log.warn( "ManifestationInfo.getSubjects type is: " + type );
             }
