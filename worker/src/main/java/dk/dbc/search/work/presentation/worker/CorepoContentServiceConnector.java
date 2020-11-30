@@ -27,6 +27,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import javax.ejb.BeforeCompletion;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -56,10 +57,10 @@ public class CorepoContentServiceConnector {
     /**
      * Transactional cache of http requests
      * <p>
-     * This is to fake, that there's no {@link @BeforeCompletion} on
-     * {@link @Stateless} beans, to clear up the transaction based cache.
+     * This is to fake, that there's no @{@link javax.ejb.BeforeCompletion} on
+     * @{@link javax.ejb.Stateless} beans, to clear up the transaction based cache.
      * <p>
-     * The bean cannot be {@link @Stateful}, since there's no transaction to
+     * The bean cannot be @{@link javax.ejb.Stateful}, since there's no transaction to
      * bind it to.
      *
      * @return AutoClosable cache scope
