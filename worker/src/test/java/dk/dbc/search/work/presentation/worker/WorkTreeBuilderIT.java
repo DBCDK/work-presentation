@@ -19,10 +19,9 @@
 package dk.dbc.search.work.presentation.worker;
 
 import dk.dbc.search.work.presentation.worker.tree.WorkTree;
+import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -32,8 +31,6 @@ import static org.hamcrest.Matchers.*;
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
 public class WorkTreeBuilderIT extends JpaBase {
-
-    private static final Logger log = LoggerFactory.getLogger(WorkTreeBuilderIT.class);
 
     @Test
     public void testAWork() throws Exception {
@@ -50,13 +47,14 @@ public class WorkTreeBuilderIT extends JpaBase {
     @Test
     public void testWorkDoesNotExist() throws Exception {
         System.out.println("testWorkDoesNotExist");
-        RuntimeException ex = Assertions.assertThrows(RuntimeException.class, () -> {
-        withConfigEnv()
-                .jpaWithBeans(bf -> {
-                    WorkTreeBuilder workTreeBuilder = bf.getWorkTreeBuilder();
-                    WorkTree tree = workTreeBuilder.buildTree("work:3");
-                    tree.prettyPrint(System.out::println);
-                });
+        RuntimeException ex = Assertions.assertThrows(
+                RuntimeException.class, () -> {
+            withConfigEnv()
+                    .jpaWithBeans(bf -> {
+                        WorkTreeBuilder workTreeBuilder = bf.getWorkTreeBuilder();
+                        WorkTree tree = workTreeBuilder.buildTree("work:3");
+                        tree.prettyPrint(System.out::println);
+                    });
         });
         assertThat(ex.getMessage(), containsString("HTTP 404 Not Found"));
         assertThat(ex.getMessage(), containsString("/rest/objects/work:3"));
@@ -74,7 +72,6 @@ public class WorkTreeBuilderIT extends JpaBase {
                 });
     }
 
-
     @Test
     public void testRelationIsFound() throws Exception {
         System.out.println("testRelationIsFound");
@@ -88,6 +85,19 @@ public class WorkTreeBuilderIT extends JpaBase {
                 });
     }
 
+    @Test
+    public void onlyCommonDataObject() throws Exception {
+        System.out.println("onlyCommonDataObject");
+        withConfigEnv()
+                .jpaWithBeans(bf -> {
+                    WorkTreeBuilder workTreeBuilder = bf.getWorkTreeBuilder();
+                    WorkTree tree = workTreeBuilder.buildTree("work:1573470");
+                    tree.prettyPrint(System.out::println);
+                    Set<String> extractManifestationIds = tree.extractManifestationIds();
+                    System.out.println("extractManifestationIds = " + extractManifestationIds);
+                    assertThat(extractManifestationIds, containsInAnyOrder("873310-katalog:90171321", "870970-forsk:90171321"));
+                });
+    }
 
     public void testTraekopFuglen() throws Exception {
         System.out.println("testTraekopFuglen");
