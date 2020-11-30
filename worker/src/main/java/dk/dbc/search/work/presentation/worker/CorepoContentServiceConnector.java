@@ -58,7 +58,7 @@ public class CorepoContentServiceConnector {
      * Transactional cache of http requests
      * <p>
      * This is to fake, that there's no @{@link javax.ejb.BeforeCompletion} on
-     * @{@link javax.ejb.Stateless} beans, to clear up the transaction based cache.
+     * \@{@link javax.ejb.Stateless} beans, to clear up the transaction based cache.
      * <p>
      * The bean cannot be @{@link javax.ejb.Stateful}, since there's no transaction to
      * bind it to.
