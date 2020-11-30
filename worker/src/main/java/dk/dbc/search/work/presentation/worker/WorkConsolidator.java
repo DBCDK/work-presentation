@@ -200,6 +200,16 @@ public class WorkConsolidator {
         return work;
     }
 
+    /**
+     * Construct a cache, with all the documents used by this tree
+     * <p>
+     * This tries to build all cache obejcts, even if one fails, it keeps going
+     * on, failing at the very end. Trying to put every object into the cache,
+     * so that, during next run cache build collission errors are less likely
+     *
+     * @param tree the tree structure
+     * @return map of manifestation-id to content
+     */
     Map<String, ManifestationInformation> buildManifestationCache(WorkTree tree) {
         Map<String, String> mdc = MDC.getCopyOfContextMap();
 

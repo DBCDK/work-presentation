@@ -66,6 +66,12 @@ public class JavaScriptEnvironment {
         }
     }
 
+    /**
+     * Call the JavaScript environment to build a cache document
+     *
+     * @param dataBuilder document builder.
+     * @return The content to store in the database
+     */
     @Timed(reusable = true)
     public ManifestationInformation cacheBuild(CacheContentBuilder dataBuilder) {
         try {

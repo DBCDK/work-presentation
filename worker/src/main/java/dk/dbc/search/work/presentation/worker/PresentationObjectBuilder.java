@@ -30,6 +30,8 @@ import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import org.eclipse.microprofile.metrics.Counter;
+import org.eclipse.microprofile.metrics.annotation.Metric;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +54,10 @@ public class PresentationObjectBuilder {
     @Inject
     WorkConsolidator workConsolidator;
 
+    @Inject
+    @Metric(name = "success")
+    Counter successes;
+
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     @Timed(reusable = true)
     public void processJob(Connection connection, QueueJob job, JobMetaData metaData) throws FatalQueueError {
@@ -60,6 +66,7 @@ public class PresentationObjectBuilder {
                 .pid(corepoWorkId);) {
             if (corepoWorkId.startsWith("work:")) {
                 process(corepoWorkId);
+                successes.inc();
             }
         } catch (RuntimeException ex) {
             throw ex;

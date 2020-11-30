@@ -18,10 +18,8 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
-import dk.dbc.search.work.presentation.api.jpa.CacheEntity;
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,6 +34,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.sql.DataSource;
 import javax.ws.rs.client.ClientBuilder;
+import org.eclipse.microprofile.metrics.Counter;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -151,6 +150,7 @@ public class BeanFactory implements AutoCloseable {
     private void setupPresentationObjectBuilder(PresentationObjectBuilder bean) {
         bean.workConsolidator = getWorkConsolidator();
         bean.workTreeBuilder = getWorkTreeBuilder();
+        bean.successes = new MockCounter();
     }
 
     public BeanFactory withPresentationObjectBuilder(PresentationObjectBuilder pob) {
@@ -258,6 +258,29 @@ public class BeanFactory implements AutoCloseable {
                 this.em = em;
                 return super.getFromCache(dataBuilder, mdc, delete);
             });
+        }
+    }
+
+    private static class MockCounter implements Counter {
+        private long cnt;
+
+        public MockCounter() {
+            this.cnt = 0;
+        }
+
+        @Override
+        public void inc() {
+            cnt++;
+        }
+
+        @Override
+        public void inc(long n) {
+            cnt += n;
+        }
+
+        @Override
+        public long getCount() {
+            return cnt;
         }
     }
 }
