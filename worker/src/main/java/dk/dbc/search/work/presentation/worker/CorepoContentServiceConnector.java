@@ -23,6 +23,7 @@ import dk.dbc.search.work.presentation.worker.corepo.DataStreams;
 import dk.dbc.search.work.presentation.worker.corepo.ObjectMetaData;
 import dk.dbc.search.work.presentation.worker.corepo.RelsExt;
 import dk.dbc.search.work.presentation.worker.corepo.RelsSys;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -49,6 +50,24 @@ public class CorepoContentServiceConnector {
 
     @Inject
     public Config config;
+
+    private final CorepoCache cache = new CorepoCache();
+
+    /**
+     * Transactional cache of http requests
+     * <p>
+     * This is to fake, that there's no @{@link javax.ejb.BeforeCompletion} on
+     * \@{@link javax.ejb.Stateless} beans, to clear up the transaction based cache.
+     * <p>
+     * The bean cannot be @{@link javax.ejb.Stateful}, since there's no transaction to
+     * bind it to.
+     *
+     * @return AutoClosable cache scope
+     */
+    public CorepoCacheScope cacheScope() {
+        cache.clear();
+        return new CorepoCacheScope(cache);
+    }
 
     /**
      * Fetch a RELS-SYS stream from corepo-content-service
@@ -170,11 +189,11 @@ public class CorepoContentServiceConnector {
     }
 
     private <R> R callUrl(URI uri, Callback<R> callback, boolean nullOn404) {
-        try (InputStream is = config.getHttpClient()
-                .target(uri)
-                .request(MediaType.APPLICATION_XML_TYPE)
-                .get(InputStream.class)) {
-            return callback.call(is);
+        try {
+            byte[] content = cache.computeIfAbsent(uri, this::getHttpContent);
+            try (InputStream is = new ByteArrayInputStream(content)) {
+                return callback.call(is);
+            }
         } catch (WebApplicationException | IOException ex) {
             if (ex instanceof NotFoundException && nullOn404) {
                 return null;
@@ -184,4 +203,12 @@ public class CorepoContentServiceConnector {
             throw new RuntimeException("Error requesting: " + uri + ": " + ex.getMessage(), ex);
         }
     }
+
+    private byte[] getHttpContent(URI uri) {
+        return config.getHttpClient()
+                .target(uri)
+                .request(MediaType.APPLICATION_XML_TYPE)
+                .get(byte[].class);
+    }
+
 }
