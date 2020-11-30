@@ -49,6 +49,9 @@ public class PresentationObjectBuilder {
     private static final Logger log = LoggerFactory.getLogger(PresentationObjectBuilder.class);
 
     @Inject
+    CorepoContentServiceConnector corepoContent;
+
+    @Inject
     WorkTreeBuilder workTreeBuilder;
 
     @Inject
@@ -79,7 +82,7 @@ public class PresentationObjectBuilder {
         log.info("Processing job: {}", corepoWorkId);
 
         try {
-            try {
+            try (CorepoCacheScope cacheScope = corepoContent.cacheScope()) { // Ensure no objects live from older job
                 WorkTree tree = workTreeBuilder.buildTree(corepoWorkId);
                 tree.prettyPrint(log::trace);
                 if (tree.isEmpty()) {

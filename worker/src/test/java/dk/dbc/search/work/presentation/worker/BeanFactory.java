@@ -148,6 +148,7 @@ public class BeanFactory implements AutoCloseable {
     private void setupPresentationObjectBuilder(PresentationObjectBuilder bean) {
         bean.workConsolidator = getWorkConsolidator();
         bean.workTreeBuilder = getWorkTreeBuilder();
+        bean.corepoContent = getCorepoContentService();
         bean.successes = new MockCounter();
     }
 
