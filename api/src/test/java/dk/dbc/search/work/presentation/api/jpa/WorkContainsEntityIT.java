@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.Test;
 
 import static java.util.stream.Collectors.toList;
@@ -75,7 +76,7 @@ public class WorkContainsEntityIT extends JpaBase<AutoCloseable> {
     }
 
     @Override
-    public AutoCloseable createBeanFactory(Map<String, String> env, EntityManager em) {
+    public AutoCloseable createBeanFactory(Map<String, String> env, EntityManager em, EntityManagerFactory emf) {
         return () -> {
         };
     }

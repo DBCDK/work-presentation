@@ -39,8 +39,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+import javax.ejb.AsyncResult;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -68,11 +70,15 @@ public class WorkConsolidatorTest {
 
         WorkConsolidator workConsolidator = new WorkConsolidator() {
             @Override
-            ManifestationInformation getCacheContentFor(String id) {
-                System.out.println("getCacheContentFor( " + id + ")");
-                ManifestationInformation manifestationInformation = source.getManifestationInformation(id);
+            void setWorkContains(WorkTree tree) {
+            }
+        };
+        workConsolidator.asyncCacheContentBuilder = new AsyncCacheContentBuilder() {
+            @Override
+            public Future<ManifestationInformation> getFromCache(CacheContentBuilder dataBuilder, Map<String, String> mdc, boolean delete) {
+                ManifestationInformation manifestationInformation = source.getManifestationInformation(dataBuilder.getManifestationId());
                 System.out.println("manifestationInformation = " + manifestationInformation);
-                return manifestationInformation;
+                return new AsyncResult<>(manifestationInformation);
             }
         };
 

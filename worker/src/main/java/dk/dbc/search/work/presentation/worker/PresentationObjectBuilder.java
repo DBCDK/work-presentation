@@ -30,6 +30,8 @@ import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import org.eclipse.microprofile.metrics.Counter;
+import org.eclipse.microprofile.metrics.annotation.Metric;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,10 +52,11 @@ public class PresentationObjectBuilder {
     WorkTreeBuilder workTreeBuilder;
 
     @Inject
-    ParallelCacheContentBuilder parallelCacheContentBuilder;
+    WorkConsolidator workConsolidator;
 
     @Inject
-    WorkConsolidator workConsolidator;
+    @Metric(name = "success")
+    Counter successes;
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     @Timed(reusable = true)
@@ -63,6 +66,7 @@ public class PresentationObjectBuilder {
                 .pid(corepoWorkId);) {
             if (corepoWorkId.startsWith("work:")) {
                 process(corepoWorkId);
+                successes.inc();
             }
         } catch (RuntimeException ex) {
             throw ex;
@@ -78,8 +82,6 @@ public class PresentationObjectBuilder {
             try {
                 WorkTree tree = workTreeBuilder.buildTree(corepoWorkId);
                 tree.prettyPrint(log::trace);
-                parallelCacheContentBuilder.updateCache(tree); // Needs to be before .updateWorkContains(tree)
-                parallelCacheContentBuilder.updateWorkContains(tree);
                 if (tree.isEmpty()) {
                     workConsolidator.deleteWork(corepoWorkId);
                 } else {

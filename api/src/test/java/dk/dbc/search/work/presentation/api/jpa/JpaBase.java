@@ -47,12 +47,12 @@ import static org.eclipse.persistence.config.PersistenceUnitProperties.JDBC_USER
  * Transaction oriented helper for integration-tests
  * <p>
  * Implement the method
- * {@link #createBeanFactory(java.util.Map, javax.persistence.EntityManager)} to
+ * {@link #createBeanFactory(java.util.Map, javax.persistence.EntityManager, javax.persistence.EntityManagerFactory)} to
  * make beans for calls to .withConfigEnv(...).jpaWithBeans(beanFactory -> {})
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  * @param <BF> a beanFactory as produced by
- *             {@link #createBeanFactory(java.util.Map, javax.persistence.EntityManager)}
+ *             {@link #createBeanFactory(java.util.Map, javax.persistence.EntityManager, javax.persistence.EntityManagerFactory)}
  */
 public abstract class JpaBase<BF extends AutoCloseable> {
 
@@ -142,7 +142,7 @@ public abstract class JpaBase<BF extends AutoCloseable> {
         return new WithEnv(env);
     }
 
-    public abstract BF createBeanFactory(Map<String, String> env, EntityManager em);
+    public abstract BF createBeanFactory(Map<String, String> env, EntityManager em, EntityManagerFactory emf);
 
     public class WithEnv {
 
@@ -154,7 +154,7 @@ public abstract class JpaBase<BF extends AutoCloseable> {
 
         public void jpaWithBeans(JpaBeanVoidExecution<BF> execution) {
             jpa(em -> {
-                try (BF bf = createBeanFactory(env, em)) {
+                try (BF bf = createBeanFactory(env, em, entityManagerFactory)) {
                     execution.execute(bf);
                 }
             });
