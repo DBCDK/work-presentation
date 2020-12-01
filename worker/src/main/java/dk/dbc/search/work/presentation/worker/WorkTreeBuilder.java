@@ -133,9 +133,10 @@ public class WorkTreeBuilder {
             timestamps.accept(dc.getCreated());
         }
         DataStreamMetaData commonData = streamMetaDatas.get("commonData");
-        if (commonData != null) {
-            timestamps.accept(commonData.getCreated());
+        if (commonData == null) {
+            throw new IllegalStateException("Object: " + object + " has no commonData stream");
         }
+        timestamps.accept(commonData.getCreated());
         Instant sharedDataModified = timestamps.build()
                 .reduce(WorkTreeBuilder::latestOf)
                 .orElse(Instant.MIN);
@@ -147,6 +148,10 @@ public class WorkTreeBuilder {
                 objectTree.put(stream, new CacheContentBuilder(object, stream, streamModified, !streamMetaData.isActive()));
             }
         });
+        if (!objectTree.containsKey(object)) {
+            log.info("object: {} has no localData stream for owner", object);
+            objectTree.put("commonData", new CacheContentBuilder(object, sharedDataModified, false));
+        }
         return objectTree;
     }
 

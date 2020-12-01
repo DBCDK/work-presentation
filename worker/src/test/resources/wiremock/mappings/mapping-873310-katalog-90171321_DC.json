@@ -1,0 +1,17 @@
+{
+  "id": "dac2f249-1c55-308b-b2ad-1a001541e51b",
+  "request": {
+    "url": "/corepo-content-service/rest/objects/873310-katalog:90171321/datastreams/DC",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "body-873310-katalog-90171321_DC.xml",
+    "headers": {
+      "Server": "Payara Micro #badassfish",
+      "Content-Type": "application/xml",
+      "X-Frame-Options": "SAMEORIGIN"
+    }
+  },
+  "uuid": "dac2f249-1c55-308b-b2ad-1a001541e51b"
+}

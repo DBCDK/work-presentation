@@ -47,6 +47,29 @@ public class CacheContentBuilder {
     private final String manifestationId;
     private final Instant modified;
 
+    /**
+     * Constructor for object that hasn't got its own localData stream
+     *
+     * @param corepoId Id of the object
+     * @param modified newest date of the parts of the consolidated object
+     * @param deleted  if the manifestation is deleted
+     */
+    public CacheContentBuilder(String corepoId, Instant modified, boolean deleted) {
+        this.corepoId = corepoId;
+        this.localStream = null;
+        this.modified = modified;
+        this.deleted = deleted;
+        this.manifestationId = corepoId;
+    }
+
+    /**
+     * Constructor for localData based object variant
+     *
+     * @param corepoId    Id of the object
+     * @param localStream name of the local stream
+     * @param modified    newest date of the parts of the consolidated object
+     * @param deleted     if the manifestation is deleted
+     */
     public CacheContentBuilder(String corepoId, String localStream, Instant modified, boolean deleted) {
         if (!localStream.startsWith(LOCAL_DATA)) {
             throw new IllegalStateException("Trying to build a CacheDataBuilder for stream: " + localStream);
@@ -81,7 +104,10 @@ public class CacheContentBuilder {
      * @throws Exception Threwn by JavaScript engine
      */
     public ManifestationInformation generateContent(CorepoContentServiceConnector corepoContentService, JavascriptCacheObjectBuilder js) throws Exception {
-        String localData = corepoContentService.datastreamContent(corepoId, localStream).trim();
+        String localData = "";
+        if (localStream != null) {
+            localData = corepoContentService.datastreamContent(corepoId, localStream).trim();
+        }
         String commonData = corepoContentService.datastreamContent(corepoId, "commonData").trim();
         String dc = corepoContentService.datastreamContent(corepoId, "DC").trim();
         log.debug("has localData: {}, commonData: {}, DC: {}", !localData.isEmpty(), !commonData.isEmpty(), !dc.isEmpty());
