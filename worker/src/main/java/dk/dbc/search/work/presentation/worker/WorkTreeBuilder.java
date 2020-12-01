@@ -148,10 +148,15 @@ public class WorkTreeBuilder {
                 objectTree.put(stream, new CacheContentBuilder(object, stream, streamModified, !streamMetaData.isActive()));
             }
         });
-        if (!objectTree.containsKey(object)) {
+        String objectDeafultStream = CacheContentBuilder.LOCAL_DATA + object.substring(0, object.indexOf(':'));
+        if (!objectTree.containsKey(objectDeafultStream)) {
             log.info("object: {} has no localData stream for owner", object);
             objectTree.put("commonData", new CacheContentBuilder(object, sharedDataModified, false));
         }
+        if(!objectTree.values().stream().allMatch(ccb -> !ccb.isDeleted())) {
+            throw new IllegalStateException("Object: " + object + " is not deleted but has no live datastreams");
+        }
+
         return objectTree;
     }
 
