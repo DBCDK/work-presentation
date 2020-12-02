@@ -22,14 +22,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Pojo to represent the root of a work tree, when extracting from corepo
@@ -50,22 +48,6 @@ public class WorkTree extends HashMap<String, UnitTree> {
         this.corepoWorkId = corepoWorkId;
         this.modified = modified;
         this.relations = new HashMap<>();
-    }
-
-    /**
-     * Get all cache-content-builders that are used in this work-tree
-     * <p>
-     * This includes both manifestations, and relations
-     *
-     * @return cache-content-builders
-     */
-    public List<CacheContentBuilder> extractActiveCacheContentBuilders() {
-        return Stream.concat(this.values().stream(),
-                             relations.values().stream())
-                .flatMap(u -> u.values().stream())
-                .flatMap(o -> o.values().stream())
-                .filter(builder -> !builder.isDeleted())
-                .collect(Collectors.toList());
     }
 
     /**
