@@ -153,7 +153,7 @@ public class WorkTreeBuilder {
             log.info("object: {} has no localData stream for owner", object);
             objectTree.put("commonData", new CacheContentBuilder(object, sharedDataModified, false));
         }
-        if(!objectTree.values().stream().allMatch(ccb -> !ccb.isDeleted())) {
+        if(objectTree.values().stream().allMatch(ccb -> ccb.isDeleted())) {
             throw new IllegalStateException("Object: " + object + " is not deleted but has no live datastreams");
         }
 
