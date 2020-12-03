@@ -148,8 +148,8 @@ public class WorkTreeBuilder {
                 objectTree.put(stream, new CacheContentBuilder(object, stream, streamModified, !streamMetaData.isActive()));
             }
         });
-        String objectDeafultStream = CacheContentBuilder.LOCAL_DATA + object.substring(0, object.indexOf(':'));
-        if (!objectTree.containsKey(objectDeafultStream)) {
+        String objectDefaultStream = CacheContentBuilder.LOCAL_DATA + object.substring(0, object.indexOf(':'));
+        if (!objectTree.containsKey(objectDefaultStream)) {
             log.info("object: {} has no localData stream for owner", object);
             objectTree.put("commonData", new CacheContentBuilder(object, sharedDataModified, false));
         }
