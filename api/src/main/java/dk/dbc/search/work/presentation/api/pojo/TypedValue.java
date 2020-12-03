@@ -29,6 +29,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
+import static java.util.Collections.EMPTY_SET;
+
 /**
  * A value with a declared type
  *
@@ -86,6 +88,8 @@ public class TypedValue implements Serializable {
      * @return collection of values without duplicates
      */
     public static Set<TypedValue> distinctSet(Collection<TypedValue> typedValues) {
+        if(typedValues == null)
+            return EMPTY_SET;
         HashMap<String, HashMap<String, String>> completeCollection = new HashMap<>();
         typedValues.forEach(typedValue -> {
             String safeType = typedValue.type == null || typedValue.type.isEmpty() ? fallbackType : typedValue.type;
