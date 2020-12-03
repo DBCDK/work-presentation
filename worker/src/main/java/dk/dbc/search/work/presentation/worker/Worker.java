@@ -107,28 +107,36 @@ public class Worker implements HealthCheck {
     public void processJob(Connection connection, QueueJob job, JobMetaData metaData) throws FatalQueueError, PostponedNonFatalQueueError {
         try {
             presentationObjectBuilder.processJob(connection, job, metaData);
-        } catch (EJBException ex) {
+        } catch (RuntimeException ex) {
             Throwable cause = ex.getCause();
-            if (cause != null) {
-                if (cause instanceof FatalQueueError) {
-                    throw (FatalQueueError) cause;
-                }
-                if (cause instanceof PersistenceException) {
-                    PersistenceException pex = (PersistenceException) cause;
-                    long postpone = config.postponeDuration();
-                    log.error("PersistenceException, postponing: {}: {}", postpone, pex.getMessage());
-                    log.debug("PersistenceException, postponing: {}: ", postpone, pex);
-                    throw new PostponedNonFatalQueueError(postpone, cause);
-                }
-                if (cause instanceof DatabaseException) {
-                    DatabaseException pex = (DatabaseException) cause;
-                    long postpone = config.postponeDuration();
-                    log.error("DatabaseException, postponing: {}: {}", postpone, pex.getMessage());
-                    log.debug("DatabaseException, postponing: {}: ", postpone, pex);
-                    throw new PostponedNonFatalQueueError(postpone, cause);
-                }
+            FatalQueueError fex = findCauseOfType(cause, FatalQueueError.class);
+            if (fex != null) {
+                throw fex;
+            }
+            PersistenceException pex = findCauseOfType(cause, PersistenceException.class);
+            if (pex != null) {
+                long postpone = config.postponeDuration();
+                log.error("PersistenceException, postponing: {}: {}", postpone, pex.getMessage());
+                log.debug("PersistenceException, postponing: {}: ", postpone, pex);
+                throw new PostponedNonFatalQueueError(postpone, cause);
+            }
+            DatabaseException dex = findCauseOfType(cause, DatabaseException.class);
+            if (dex != null) {
+                long postpone = config.postponeDuration();
+                log.error("DatabaseException, postponing: {}: {}", postpone, dex.getMessage());
+                log.debug("DatabaseException, postponing: {}: ", postpone, dex);
+                throw new PostponedNonFatalQueueError(postpone, cause);
             }
             throw ex;
         }
+    }
+
+    private static <T extends Exception> T findCauseOfType(Throwable t, Class<T> c) {
+        while (t != null) {
+            if (c.isAssignableFrom(t.getClass()))
+                return (T) t;
+            t = t.getCause();
+        }
+        return null;
     }
 }
