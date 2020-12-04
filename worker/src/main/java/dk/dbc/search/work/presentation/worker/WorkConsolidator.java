@@ -149,6 +149,9 @@ public class WorkConsolidator {
         // Copy from owner
         String ownerId = tree.getPrimaryManifestationId();
         ManifestationInformation primary = manifestationCache.get(ownerId);
+        if(primary == null) {
+            throw new IllegalStateException("primary: " + ownerId + " could not be resolved");
+        }
         work.creators = TypedValue.distinctSet(primary.creators);
         work.description = primary.description;
         work.fullTitle = primary.fullTitle;
