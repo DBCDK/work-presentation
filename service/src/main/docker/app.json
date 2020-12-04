@@ -11,32 +11,32 @@
         "clusterName": "${project.parent.artifactId}-${SYSTEM_NAME}",
         "cacheConfig": {
             "*": {
-                "timeout": "10",
-                "timeUnit": "Minutes"
+                "timeout": "${CACHE_DEFAULT}",
+                "timeUnit": "${CACHE_DEFAULT_UNIT}"
             },
             "vip-core": {
-                "timeout": "3",
-                "timeUnit": "Hours"
+                "timeout": "${CACHE_VIPCORE}",
+                "timeUnit": "${CACHE_VIPCORE_UNIT}"
             },
             "vip-core-error": {
-                "timeout": "3",
-                "timeUnit": "Minutes"
+                "timeout": "${CACHE_VIPCORE_ERROR}",
+                "timeUnit": "${CACHE_VIPCORE_ERROR_UNIT}"
             },
             "solr-manifestations": {
-                "timeout": "5",
-                "timeUnit": "Minutes"
+                "timeout": "${CACHE_SOLR}",
+                "timeUnit": "${CACHE_SOLR_UNIT}"
             },
             "solr-manifestations-error": {
-                "timeout": "10",
-                "timeUnit": "Seconds"
+                "timeout": "${CACHE_SOLR_ERROR}",
+                "timeUnit": "${CACHE_SOLR_ERROR_UNIT}"
             },
             "solr-relations": {
-                "timeout": "5",
-                "timeUnit": "Minutes"
+                "timeout": "${CACHE_SOLR}",
+                "timeUnit": "${CACHE_SOLR_UNIT}"
             },
             "solr-relations-error": {
-                "timeout": "10",
-                "timeUnit": "Seconds"
+                "timeout": "${CACHE_SOLR_ERROR}",
+                "timeUnit": "${CACHE_SOLR_ERROR_UNIT}"
             }
         }
     }
