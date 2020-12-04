@@ -33,7 +33,7 @@ LABEL \
       CACHE_SOLR="Caching timeout for SolR success" \
       CACHE_SOLR_UNIT="Caching unit (Seconds/Minutes/Hours) for SolR success" \
       CACHE_SOLR_ERROR="Caching timeout for SolR error" \
-      CACHE_SOLR_ERROR_UNIT="Caching unit (Seconds/Minutes/Hours) for SolR error" \
+      CACHE_SOLR_ERROR_UNIT="Caching unit (Seconds/Minutes/Hours) for SolR error"
 
 COPY target/docker/*.jar /opt/payara5/jars/
 
