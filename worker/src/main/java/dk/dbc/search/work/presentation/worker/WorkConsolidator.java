@@ -82,7 +82,9 @@ public class WorkConsolidator {
     public void deleteWork(String corepoWorkId) {
         WorkObjectEntity work = WorkObjectEntity.fromCorepoWorkId(em, corepoWorkId);
         if (work != null) {
-            WorkContainsEntity.listFrom(em, corepoWorkId)
+            List<WorkContainsEntity> oldWorkContainsList = WorkContainsEntity.listFrom(em, corepoWorkId);
+            log.warn("oldWorkContainsList = {}", oldWorkContainsList);
+            oldWorkContainsList
                     .stream()
                     .map(WorkContainsEntity::getManifestationId)
                     .forEach(manifestationId -> {

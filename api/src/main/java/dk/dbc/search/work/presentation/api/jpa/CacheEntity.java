@@ -38,6 +38,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 import org.postgresql.util.PGobject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -46,6 +48,8 @@ import org.postgresql.util.PGobject;
 @Entity
 @Table(name = "cacheV" + JsonSchemaVersion.VERSION)
 public class CacheEntity implements Serializable {
+
+    private static final Logger log = LoggerFactory.getLogger(CacheEntity.class);
 
     private static final long serialVersionUID = 0x8b861b42b964b770L;
 
@@ -71,6 +75,7 @@ public class CacheEntity implements Serializable {
 
     public static CacheEntity from(EntityManager em, String manifestationId) {
         CacheEntity entity = em.find(CacheEntity.class, manifestationId, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+        log.warn("manifestationId = {} pulled: entity = {}", manifestationId, entity);
         if (entity == null) {
             entity = new CacheEntity(manifestationId);
         }
@@ -136,6 +141,7 @@ public class CacheEntity implements Serializable {
 
     public void delete() {
         if (!persist) {
+            log.warn("remove: this = {}", this);
             em.remove(this);
             em.flush();
         }
