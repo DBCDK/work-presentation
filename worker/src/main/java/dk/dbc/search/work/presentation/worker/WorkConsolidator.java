@@ -83,7 +83,6 @@ public class WorkConsolidator {
         WorkObjectEntity work = WorkObjectEntity.fromCorepoWorkId(em, corepoWorkId);
         if (work != null) {
             List<WorkContainsEntity> oldWorkContainsList = WorkContainsEntity.listFrom(em, corepoWorkId);
-            log.warn("oldWorkContainsList = {}", oldWorkContainsList);
             oldWorkContainsList
                     .stream()
                     .map(WorkContainsEntity::getManifestationId)
@@ -106,6 +105,9 @@ public class WorkConsolidator {
      */
     @Timed(reusable = true)
     public void saveWork(String corepoWorkId, WorkTree tree, WorkInformation content) {
+
+        setWorkContains(tree);
+
         String persistentWorkId = tree.getPersistentWorkId();
         WorkObjectEntity work = WorkObjectEntity.from(em, persistentWorkId);
         WorkObjectEntity workByWorkId = WorkObjectEntity.fromCorepoWorkId(em, corepoWorkId);
@@ -143,7 +145,6 @@ public class WorkConsolidator {
     public WorkInformation buildWorkInformation(WorkTree tree) {
         WorkInformation work = new WorkInformation();
 
-        setWorkContains(tree);
         Map<String, ManifestationInformation> manifestationCache = buildManifestationCache(tree);
 
         work.workId = tree.getPersistentWorkId();
@@ -151,7 +152,7 @@ public class WorkConsolidator {
         // Copy from owner
         String ownerId = tree.getPrimaryManifestationId();
         ManifestationInformation primary = manifestationCache.get(ownerId);
-        if(primary == null) {
+        if (primary == null) {
             throw new IllegalStateException("primary: " + ownerId + " could not be resolved");
         }
         work.creators = TypedValue.distinctSet(primary.creators);
@@ -245,9 +246,21 @@ public class WorkConsolidator {
         return manifestationCollection.getManifestations();
     }
 
+    /**
+     * Given a tree, set the workcontains list, and remove orphaned cache
+     * entries
+     *
+     * @param tree current work description
+     */
     void setWorkContains(WorkTree tree) {
         String corepoWorkId = tree.getCorepoWorkId();
         Set<String> activeManifestationIds = tree.extractManifestationIds();
+
+        WorkContainsEntity.listFrom(em, corepoWorkId).stream()
+                .map(WorkContainsEntity::getManifestationId)
+                .filter(m -> !activeManifestationIds.contains(m))
+                .forEach(m -> CacheEntity.from(em, corepoWorkId).delete());
+
         List<WorkContainsEntity> workContains = activeManifestationIds.stream()
                 .map(m -> WorkContainsEntity.from(em, corepoWorkId, m))
                 .collect(toList());
