@@ -74,7 +74,7 @@ public class WorkPresentationBeanIT extends JpaBase {
             });
             WorkPresentationBean wpb = bf.getWorkPresentationBean();
             try {
-                WorkInformationResponse actual = wpb.processRequest(args.workId, "190102", "danbib", "track-me");
+                WorkInformationResponse actual = wpb.processRequest(args.workId, "190102", "danbib", args.includeRelations, "track-me");
                 System.out.println("actual = " + actual);
                 O.writeValue(dir.resolve("actual.json").toFile(), actual);
                 WorkInformationResponse expected;
@@ -144,6 +144,7 @@ public class WorkPresentationBeanIT extends JpaBase {
     public static class CallArguments {
 
         public String workId;
+        public boolean includeRelations;
         public Set<String> accessibleManifestations;
         public Set<String> accessibleRelations;
     }

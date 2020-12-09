@@ -56,15 +56,19 @@ public class FilterResult {
      * <p>
      * Flatten the unit to manifestation tree
      *
-     * @param work       the work as stored in the database
-     * @param agencyId   the 1st part of the filter specification
-     * @param profile    The 2nd part of the filter specification
-     * @param trackingId The tracking id for the request
+     * @param work             the work as stored in the database
+     * @param agencyId         The 1st part of the filter specification
+     * @param profile          The 2nd part of the filter specification
+     * @param includeRelations If relations should be included in the answer
+     * @param trackingId       The tracking id for the request
      * @return the work as presented to the user
      */
     @Timed(reusable = true)
-    public WorkInformationResponse processWork(WorkInformation work, String agencyId, String profile, String trackingId) {
+    public WorkInformationResponse processWork(WorkInformation work, String agencyId, String profile, boolean includeRelations, String trackingId) {
         log.debug("work = {}", work);
+
+        WorkInformationResponse wir = WorkInformationResponse.from(work);
+
         int manifestationCount = work.dbUnitInformation.values()
                 .stream()
                 .mapToInt(Set::size)
@@ -84,28 +88,28 @@ public class FilterResult {
                         .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
         log.debug("dbUnitInformation = {}", dbUnitInformation);
 
-        Set<String> possibleRelations = work.dbRelUnitInformation.values()
-                .stream()
-                .flatMap(Collection::stream)
-                .map(r -> r.manifestationId)
-                .collect(toSet());
-        Set<String> accessibleRelations = solr.getAccessibleRelations(possibleRelations, agencyId, profile, trackingId);
+        if (includeRelations) {
+            Set<String> possibleRelations = work.dbRelUnitInformation.values()
+                    .stream()
+                    .flatMap(Collection::stream)
+                    .map(r -> r.manifestationId)
+                    .collect(toSet());
+            Set<String> accessibleRelations = solr.getAccessibleRelations(possibleRelations, agencyId, profile, trackingId);
 
-        RelationIndexComputer relationIndexes = new RelationIndexComputer(accessibleRelations, work.dbRelUnitInformation);
-        dbUnitInformation.forEach((unitId, manifestations) -> {
-            int[] indexes = relationIndexes.unitRelationIndexes(unitId);
-            manifestations.forEach(m -> m.relations = indexes);
-        });
+            RelationIndexComputer relationIndexes = new RelationIndexComputer(accessibleRelations, work.dbRelUnitInformation);
+            dbUnitInformation.forEach((unitId, manifestations) -> {
+                int[] indexes = relationIndexes.unitRelationIndexes(unitId);
+                manifestations.forEach(m -> m.relations = indexes);
+            });
+            wir.relations = relationIndexes.getRelationList();
+        }
 
-        WorkInformationResponse wir = WorkInformationResponse.from(work);
         // Flatten the manifestations - with predictable order
         wir.records = new LinkedHashSet<>();
-        wir.relations = relationIndexes.getRelationList();
         dbUnitInformation.values().stream()
                 .flatMap(Collection::stream)
                 .sorted()
                 .forEach(wir.records::add);
         return wir;
     }
-
 }
