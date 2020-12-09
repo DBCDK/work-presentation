@@ -19,26 +19,28 @@
 package dk.dbc.search.work.presentation.service.response;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
+//import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
  * Error response
  *
+ * No description due to: https://github.com/payara/Payara/issues/4955
+ *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
 @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-@Schema(name = ErrorResponse.NAME)
+//@Schema(name = ErrorResponse.NAME)
 public class ErrorResponse {
 
     public static final String NAME = "error";
 
-    @Schema(ref = ErrorCode.NAME)
+//    @Schema(ref = ErrorCode.NAME)
     public ErrorCode errorCode;
 
-    @Schema(example = "? is not allowed")
+//    @Schema(example = "? is not allowed")
     public String message;
 
-    @Schema(example = "some-uuid")
+//    @Schema(example = "some-uuid")
     public String trackingId;
 
     public ErrorResponse(ErrorCode errorCode, String message, String trackingId) {
