@@ -1,3 +1,4 @@
 {
-    "workId": "not-a-work-id"
+    "workId": "not-a-work-id",
+    "includeRelations": true
 }

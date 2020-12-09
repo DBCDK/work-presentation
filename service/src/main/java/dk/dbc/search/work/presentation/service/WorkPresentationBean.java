@@ -35,6 +35,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
@@ -98,6 +99,7 @@ public class WorkPresentationBean {
                           " and all the manifestations that this work covers." +
                           " These are not ordered/grouped by anything.")
     @APIResponses({
+        //        https://github.com/payara/Payara/issues/4955
         @APIResponse(name = "Success",
                      responseCode = "200",
                      description = "A work with the given workId has been located",
@@ -128,12 +130,15 @@ public class WorkPresentationBean {
         @Parameter(name = "profile",
                    description = "The name of the search profile the agency uses",
                    required = true),
+        @Parameter(name = "includeRelations",
+                   description = "Include references to related records (this will slow down the request)"),
         @Parameter(name = "trackingId",
                    description = "Useful for tracking a request in log files")
     })
     public Response get(@LogAs("workId") @QueryParam("workId") String workId,
                         @QueryParam("agencyId") String agencyId,
                         @QueryParam("profile") String profile,
+                        @QueryParam("includeRelations") @DefaultValue("false") boolean includeRelations,
                         @LogAs("trackingId") @GenerateTrackingId @QueryParam("trackingId") String trackingId,
                         @Context UriInfo uriInfo) {
         LinkedList<String> missing = new LinkedList<>();
@@ -159,13 +164,13 @@ public class WorkPresentationBean {
         try {
             WorkPresentationResponse resp = new WorkPresentationResponse();
             resp.trackingId = trackingId;
-            resp.work = ExceptionSafe.wrap(() -> processRequest(workId, agencyId, profile, trackingId))
+            resp.work = ExceptionSafe.wrap(() -> processRequest(workId, agencyId, profile, includeRelations, trackingId))
                     .raise(NewWorkIdException.class)
                     .raise(NotFoundException.class)
                     .raise(NoSuchProfileException.class)
                     .raise(WebApplicationException.class)
                     .get();
-            log.info("WorkId: {} for: {}/{}", workId, agencyId, profile);
+            log.info("WorkId: {} for: {}/{} {} relations", workId, agencyId, profile, includeRelations ? "with" : "without");
             return Response.ok(resp, MediaType.APPLICATION_JSON)
                     .build();
         } catch (NewWorkIdException ex) {
@@ -198,18 +203,19 @@ public class WorkPresentationBean {
     /**
      * Find a work and filter it
      *
-     * @param workId     which identified to get from the database
-     * @param agencyId   the 1st part of the filter specification
-     * @param profile    The 2nd part of the filter specification
-     * @param trackingId The tracking id for the request
+     * @param workId           Which identified to get from the database
+     * @param agencyId         The 1st part of the filter specification
+     * @param profile          The 2nd part of the filter specification
+     * @param includeRelations If relations should be included in the answer
+     * @param trackingId       The tracking id for the request
      * @return WorkInformation for the work
      * @throws NewWorkIdException if the work had become part of another
      * @throws NotFoundException  if the work couldn't be found
      */
-    WorkInformationResponse processRequest(String workId, String agencyId, String profile, String trackingId) {
+    WorkInformationResponse processRequest(String workId, String agencyId, String profile, boolean includeRelations, String trackingId) {
         WorkObjectEntity work = WorkObjectEntity.readOnlyFrom(em, workId);
         if (work != null) {
-            return filterResult.processWork(work.getContent(), agencyId, profile, trackingId);
+            return filterResult.processWork(work.getContent(), agencyId, profile, includeRelations, trackingId);
         }
         if (workId.startsWith(WORK_OF)) {
             WorkContainsEntity wc = WorkContainsEntity.readOnlyFrom(em, workId.substring(WORK_OF_LEN));
