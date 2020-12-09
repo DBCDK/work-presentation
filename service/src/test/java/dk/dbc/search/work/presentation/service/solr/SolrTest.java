@@ -18,8 +18,8 @@
  */
 package dk.dbc.search.work.presentation.service.solr;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.Matchers.*;
@@ -34,7 +34,7 @@ public class SolrTest {
     @Test
     public void testSliceCollection() throws Exception {
         System.out.println("testSliceCollection");
-        List<String> in = Arrays.asList("1", "2", "3", "4", "5", "6", "7");
+        Stream<String> in = Stream.of("1", "2", "3", "4", "5", "6", "7");
         List<List<String>> slices = Solr.sliceCollection(in, 3);
         assertThat(slices, contains(contains("1", "2", "3"),
                                     contains("4", "5", "6"),

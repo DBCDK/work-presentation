@@ -23,7 +23,6 @@ import dk.dbc.search.work.presentation.service.vipcore.ProfileService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -31,6 +30,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import javax.cache.annotation.CacheKey;
 import javax.cache.annotation.CacheResult;
 import javax.ejb.Lock;
@@ -52,9 +52,9 @@ import org.slf4j.LoggerFactory;
 
 import static dk.dbc.search.work.presentation.service.vipcore.ProfileService.ProfileDomain.*;
 import static java.util.Collections.EMPTY_SET;
-import static java.util.stream.Collectors.joining;
 
 /**
+ * Accessing SolR for profile validation of access to manifestations
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
@@ -93,8 +93,10 @@ public class Solr {
     public Set<String> getAccessibleManifestations(@CacheKey String workId, @CacheKey String agencyId, @CacheKey String profile, int maxExpectedManifestations, String trackingId) {
         String filterQuery = profileService.filterQueryFor(SEARCH, agencyId, profile, trackingId);
         String queryString = WORK_ID_FIELD + ":" + ClientUtils.escapeQueryChars(workId);
-        return pullSolrManifestations(queryString, filterQuery, maxExpectedManifestations,
-                                      "Error requesting manifstationIds from solr for: " + workId);
+        Set<String> manifestationIds = new HashSet<>();
+        pullSolrManifestations(queryString, filterQuery, maxExpectedManifestations, manifestationIds,
+                               "Error requesting manifstationIds from solr for: " + workId);
+        return manifestationIds;
     }
 
     /**
@@ -114,30 +116,31 @@ public class Solr {
             return EMPTY_SET;
 
         String filterQuery = profileService.filterQueryFor(PRESENT, agencyId, profile, trackingId);
-        Set<String> all = new HashSet<>();
-        sliceCollection(relationIds, SOLR_MAX_MANIFESTATIONS_PR_QUERY)
+        Set<String> manifestationIds = new HashSet<>();
+        Stream<String> relationsStream = relationIds.stream()
+                .map(ClientUtils::escapeQueryChars);
+        sliceCollection(relationsStream,
+                        SOLR_MAX_MANIFESTATIONS_PR_QUERY)
                 .forEach(group -> {
                     String queryString = MANIFESTATION_ID_FIELD + ":(" +
-                                         group.stream()
-                                                 .map(ClientUtils::escapeQueryChars)
-                                                 .collect(joining(" OR ")) +
+                                         String.join(" OR ", group) +
                                          ")";
-                    pullSolrManifestations(queryString, filterQuery, group.size(), all,
+                    pullSolrManifestations(queryString, filterQuery, group.size(), manifestationIds,
                                            "Error requesting relationIds from solr");
                 });
-        return all;
+        return manifestationIds;
     }
 
     /**
      * Slice a collection into lists of a given length
      *
-     * @param in        the collection of elements
+     * @param in        the elements to group
      * @param groupSize how many to have at most in a list
      * @return list of lists of elements
      */
-    static <T> List<List<T>> sliceCollection(Collection<T> in, int groupSize) {
-        ArrayList<List<T>> list = new ArrayList<>(in.size() / groupSize + 1);
-        for (Iterator<T> iterator = in.iterator() ; iterator.hasNext() ;) {
+    static <T> List<List<T>> sliceCollection(Stream<T> str, int groupSize) {
+        ArrayList<List<T>> list = new ArrayList<>();
+        for (Iterator<T> iterator = str.iterator() ; iterator.hasNext() ;) {
             ArrayList<T> current = new ArrayList<>();
             list.add(current);
             for (int i = 0 ; i < groupSize && iterator.hasNext() ; i++) {
@@ -145,12 +148,6 @@ public class Solr {
             }
         }
         return list;
-    }
-
-    private Set<String> pullSolrManifestations(String queryString, String filterQuery, int maxExpectedManifestations, String logMessage) {
-        Set<String> manifestationIds = new HashSet<>();
-        pullSolrManifestations(queryString, filterQuery, maxExpectedManifestations, manifestationIds, logMessage);
-        return manifestationIds;
     }
 
     private void pullSolrManifestations(String queryString, String filterQuery, int maxExpectedManifestations, Set<String> manifestationIds, String logMessage) throws InternalServerErrorException {
