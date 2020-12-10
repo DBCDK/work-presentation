@@ -134,7 +134,7 @@ public class Solr {
     /**
      * Slice a collection into lists of a given length
      *
-     * @param in        the elements to group
+     * @param str       the elements to group
      * @param groupSize how many to have at most in a list
      * @return list of lists of elements
      */
