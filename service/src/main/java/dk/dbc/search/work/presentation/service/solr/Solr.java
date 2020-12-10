@@ -119,8 +119,7 @@ public class Solr {
         Set<String> manifestationIds = new HashSet<>();
         Stream<String> relationsStream = relationIds.stream()
                 .map(ClientUtils::escapeQueryChars);
-        sliceCollection(relationsStream,
-                        SOLR_MAX_MANIFESTATIONS_PR_QUERY)
+        sliceCollection(relationsStream, SOLR_MAX_MANIFESTATIONS_PR_QUERY)
                 .forEach(group -> {
                     String queryString = MANIFESTATION_ID_FIELD + ":(" +
                                          String.join(" OR ", group) +
