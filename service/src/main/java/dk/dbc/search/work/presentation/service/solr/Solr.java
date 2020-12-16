@@ -20,24 +20,6 @@ package dk.dbc.search.work.presentation.service.solr;
 
 import dk.dbc.search.work.presentation.service.Config;
 import dk.dbc.search.work.presentation.service.vipcore.ProfileService;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
-import javax.cache.annotation.CacheKey;
-import javax.cache.annotation.CacheResult;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.inject.Inject;
-import javax.ws.rs.InternalServerErrorException;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -50,7 +32,27 @@ import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static dk.dbc.search.work.presentation.service.vipcore.ProfileService.ProfileDomain.*;
+import javax.cache.annotation.CacheKey;
+import javax.cache.annotation.CacheResult;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import javax.inject.Inject;
+import javax.ws.rs.InternalServerErrorException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+import static dk.dbc.search.work.presentation.service.vipcore.ProfileService.ProfileDomain.PRESENT;
+import static dk.dbc.search.work.presentation.service.vipcore.ProfileService.ProfileDomain.SEARCH;
 import static java.util.Collections.EMPTY_SET;
 
 /**
@@ -66,7 +68,6 @@ public class Solr {
 
     private static final String WORK_ID_FIELD = "rec.persistentWorkId";
     private static final String MANIFESTATION_ID_FIELD = "rec.manifestationId";
-    private static final int SOLR_MAX_MANIFESTATIONS_PR_QUERY = 150;
 
     private static final Pattern ZK = Pattern.compile("zk://([^/]*)(/.*)?/([^/]*)");
 
@@ -119,7 +120,7 @@ public class Solr {
         Set<String> manifestationIds = new HashSet<>();
         Stream<String> relationsStream = relationIds.stream()
                 .map(ClientUtils::escapeQueryChars);
-        sliceCollection(relationsStream, SOLR_MAX_MANIFESTATIONS_PR_QUERY)
+        sliceCollection(relationsStream, config.getSolrMaxManifestationsPerQuery())
                 .forEach(group -> {
                     String queryString = MANIFESTATION_ID_FIELD + ":(" +
                                          String.join(" OR ", group) +

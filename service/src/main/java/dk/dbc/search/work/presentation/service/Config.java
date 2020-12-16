@@ -19,7 +19,10 @@
 package dk.dbc.search.work.presentation.service;
 
 import dk.dbc.search.work.presentation.service.solr.Solr;
-import java.util.Map;
+import org.apache.solr.client.solrj.SolrClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.EJBException;
 import javax.ejb.Lock;
@@ -31,9 +34,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.UriBuilder;
-import org.apache.solr.client.solrj.SolrClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Map;
 
 /**
  *
@@ -51,6 +52,7 @@ public class Config {
     private Client httpClient;
     private UriBuilder vipCore;
     private SolrClient solrClient;
+    private int solrMaxManifestationsPerQuery;
 
     public Config() {
         this(System.getenv());
@@ -73,6 +75,7 @@ public class Config {
         this.appId = getOrFail("SOLR_APPID");
         this.vipCore = UriBuilder.fromPath(getOrFail("VIP_CORE_URL"));
         this.solrClient = Solr.makeSolrClient(getOrFail("COREPO_SOLR_URL"));
+        this.solrMaxManifestationsPerQuery = Integer.max(15, Integer.parseInt(getOrDefault("SOLR_MAX_MANIFESTATIONS_PER_QUERY", "15")));
     }
 
     public String getAppId() {
@@ -118,4 +121,7 @@ public class Config {
         return ClientBuilder.newBuilder();
     }
 
+    public int getSolrMaxManifestationsPerQuery() {
+        return solrMaxManifestationsPerQuery;
+    }
 }

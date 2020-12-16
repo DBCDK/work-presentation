@@ -3,6 +3,7 @@ FROM docker.dbc.dk/payara5-micro:latest
 ENV \
     MAX_POOL_SIZE=16 \
     USER_AGENT="WorkPresentationService/1.0" \
+    SOLR_MAX_MANIFESTATIONS_PER_QUERY="15" \
     CACHE_DEFAULT="5" \
     CACHE_DEFAULT_UNIT="Minutes" \
     CACHE_VIPCORE="3" \
@@ -23,6 +24,7 @@ LABEL \
       \
       USER_AGENT="Http request header value for 'User-Agent' (default: WorkPresentationWorker/1.0)" \
       MAX_POOL_SIZE="Number of database connections to allocate (default: 16)" \
+      SOLR_MAX_MANIFESTATIONS_PER_QUERY="Maximum manifestations to fetch from solr per query (default: 15)" \
       \
       CACHE_DEFAULT="Caching timeout for for unspecified caching" \
       CACHE_DEFAULT_UNIT="Caching unit (Seconds/Minutes/Hours) for unspecified caching" \
