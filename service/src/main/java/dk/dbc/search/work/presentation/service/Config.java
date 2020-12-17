@@ -51,6 +51,7 @@ public class Config {
     private Client httpClient;
     private UriBuilder vipCore;
     private SolrClient solrClient;
+    private int solrQuerySize;
 
     public Config() {
         this(System.getenv());
@@ -73,6 +74,7 @@ public class Config {
         this.appId = getOrFail("SOLR_APPID");
         this.vipCore = UriBuilder.fromPath(getOrFail("VIP_CORE_URL"));
         this.solrClient = Solr.makeSolrClient(getOrFail("COREPO_SOLR_URL"));
+        this.solrQuerySize = Integer.parseUnsignedInt(getOrDefault("SOLR_MAX_QUERY_SIZE", "7168"));
     }
 
     public String getAppId() {
@@ -95,6 +97,10 @@ public class Config {
 
     public SolrClient getSolrClient() {
         return solrClient;
+    }
+
+    public int getSolrQuerySize() {
+        return solrQuerySize;
     }
 
     private String getOrFail(String var) {
