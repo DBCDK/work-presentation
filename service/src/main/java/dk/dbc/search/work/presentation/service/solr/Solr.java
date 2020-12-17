@@ -63,7 +63,6 @@ public class Solr {
 
     private static final String WORK_ID_FIELD = "rec.persistentWorkId";
     private static final String MANIFESTATION_ID_FIELD = "rec.manifestationId";
-    private static final int SOLR_MAX_MANIFESTATIONS_PR_QUERY = 550;
 
     private static final Pattern ZK = Pattern.compile("zk://([^/]*)(/.*)?/([^/]*)");
 
