@@ -3,6 +3,7 @@ FROM docker.dbc.dk/payara5-micro:latest
 ENV \
     MAX_POOL_SIZE=16 \
     USER_AGENT="WorkPresentationService/1.0" \
+    SOLR_MAX_QUERY_SIZE=7168 \
     CACHE_DEFAULT="5" \
     CACHE_DEFAULT_UNIT="Minutes" \
     CACHE_VIPCORE="3" \
@@ -18,6 +19,7 @@ LABEL \
       SYSTEM_NAME="environment in which it runs for hazelcast naming (required)" \
       COREPO_SOLR_URL="Solr searcher url (http://host:port/solr/searcher | zk://cluster/[chroot/]collection) (required)" \
       SOLR_APPID="Application ID pass to SOLR, for logging in SOLR (required)" \
+      SOLR_MAX_QUERY_SIZE="Maximum characters (before url encoding, that filterQuery and relation ids can take up) (default: 7168)" \
       VIP_CORE_URL="Vip-Core rest url (including /api/ path) (http) (required)" \
       WORK_PRESENTATION_POSTGRES_URL="database url (required: user:pass@host:port/database)" \
       \

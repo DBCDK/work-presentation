@@ -21,7 +21,6 @@ package dk.dbc.search.work.presentation.service.solr;
 import dk.dbc.search.work.presentation.service.Config;
 import dk.dbc.search.work.presentation.service.vipcore.ProfileService;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,7 +29,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 import javax.cache.annotation.CacheKey;
 import javax.cache.annotation.CacheResult;
 import javax.ejb.Lock;
@@ -44,7 +42,6 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.StreamingResponseCallback;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
-import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocument;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
@@ -66,7 +63,6 @@ public class Solr {
 
     private static final String WORK_ID_FIELD = "rec.persistentWorkId";
     private static final String MANIFESTATION_ID_FIELD = "rec.manifestationId";
-    private static final int SOLR_MAX_MANIFESTATIONS_PR_QUERY = 150;
 
     private static final Pattern ZK = Pattern.compile("zk://([^/]*)(/.*)?/([^/]*)");
 
@@ -92,7 +88,7 @@ public class Solr {
     @Timed(reusable = true)
     public Set<String> getAccessibleManifestations(@CacheKey String workId, @CacheKey String agencyId, @CacheKey String profile, int maxExpectedManifestations, String trackingId) {
         String filterQuery = profileService.filterQueryFor(SEARCH, agencyId, profile, trackingId);
-        String queryString = WORK_ID_FIELD + ":" + ClientUtils.escapeQueryChars(workId);
+        String queryString = "{!terms f=\"" + WORK_ID_FIELD + "\"}" + workId;
         Set<String> manifestationIds = new HashSet<>();
         pullSolrManifestations(queryString, filterQuery, maxExpectedManifestations, manifestationIds,
                                "Error requesting manifstationIds from solr for: " + workId);
@@ -112,41 +108,31 @@ public class Solr {
                  exceptionCacheName = "solr-relations-error")
     @Timed(reusable = true)
     public Set<String> getAccessibleRelations(@CacheKey Set<String> relationIds, @CacheKey String agencyId, @CacheKey String profile, String trackingId) {
+        log.info("getAccessibleRelations({})", relationIds);
         if (relationIds.isEmpty())
             return EMPTY_SET;
 
         String filterQuery = profileService.filterQueryFor(PRESENT, agencyId, profile, trackingId);
         Set<String> manifestationIds = new HashSet<>();
-        Stream<String> relationsStream = relationIds.stream()
-                .map(ClientUtils::escapeQueryChars);
-        sliceCollection(relationsStream, SOLR_MAX_MANIFESTATIONS_PR_QUERY)
-                .forEach(group -> {
-                    String queryString = MANIFESTATION_ID_FIELD + ":(" +
-                                         String.join(" OR ", group) +
-                                         ")";
-                    pullSolrManifestations(queryString, filterQuery, group.size(), manifestationIds,
-                                           "Error requesting relationIds from solr");
-                });
-        return manifestationIds;
-    }
+        Iterator<String> relations = relationIds.iterator();
 
-    /**
-     * Slice a collection into lists of a given length
-     *
-     * @param str       the elements to group
-     * @param groupSize how many to have at most in a list
-     * @return list of lists of elements
-     */
-    static <T> List<List<T>> sliceCollection(Stream<T> str, int groupSize) {
-        ArrayList<List<T>> list = new ArrayList<>();
-        for (Iterator<T> iterator = str.iterator() ; iterator.hasNext() ;) {
-            ArrayList<T> current = new ArrayList<>();
-            list.add(current);
-            for (int i = 0 ; i < groupSize && iterator.hasNext() ; i++) {
-                current.add(iterator.next());
+        int max = config.getSolrQuerySize() - filterQuery.length();
+        log.debug("max = {}", max);
+
+        while (relations.hasNext()) {
+            StringBuilder query = new StringBuilder("{!terms f=\"" + MANIFESTATION_ID_FIELD + "\"}")
+                    .append(relations.next());
+            int count = 1;
+            while (relations.hasNext() && query.length() < max) {
+                query.append(",")
+                        .append(relations.next());
+                count++;
             }
+            log.debug("count = {}, query = {}", count, query.toString());
+            pullSolrManifestations(query.toString(), filterQuery, count, manifestationIds,
+                                   "Error requesting relationIds from solr");
         }
-        return list;
+        return manifestationIds;
     }
 
     private void pullSolrManifestations(String queryString, String filterQuery, int maxExpectedManifestations, Set<String> manifestationIds, String logMessage) throws InternalServerErrorException {

@@ -56,16 +56,16 @@ pipeline {
 
                     def java = scanForIssues tool: [$class: 'Java']
                     def javadoc = scanForIssues tool: [$class: 'JavaDoc']
-                    publishIssues issues:[java, javadoc]
+                    publishIssues issues:[java, javadoc], failedTotalAll: 1
 
-                    def pmd = scanForIssues tool: [$class: 'Pmd'], pattern: '**/target/pmd.xml'
-                    publishIssues issues:[pmd]
+                    def pmd = scanForIssues tool: [$class: 'Pmd', pattern: '**/target/pmd.xml']
+                    publishIssues issues:[pmd], failedTotalAll: 1
 
-                    def cpd = scanForIssues tool: [$class: 'Cpd'], pattern: '**/target/cpd.xml'
-                    publishIssues issues:[cpd]
+                    def cpd = scanForIssues tool: [$class: 'Cpd', pattern: '**/target/cpd.xml']
+                    publishIssues issues:[cpd], failedTotalAll: 1
 
-                    def spotbugs = scanForIssues tool: [$class: 'SpotBugs'], pattern: '**/target/spotbugsXml.xml'
-                    publishIssues issues:[spotbugs]
+                    def spotbugs = scanForIssues tool: [$class: 'SpotBugs', pattern: '**/target/spotbugsXml.xml']
+                    publishIssues issues:[spotbugs], failedTotalAll: 1
 
                     step([$class: 'JacocoPublisher',
                           execPattern: 'target/*.exec,**/target/*.exec',
@@ -81,7 +81,7 @@ pipeline {
                          failedTotalAll: "0"
 
                     if ( status != 0 ) {
-                        currentBuild.result = Result.FAILURE
+                        error("Build failed")
                     }
                 }
             }
