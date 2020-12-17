@@ -81,7 +81,7 @@ pipeline {
                          failedTotalAll: "0"
 
                     if ( status != 0 ) {
-                        currentBuild.result = Result.FAILURE
+                        error("Build failed")
                     }
                 }
             }
