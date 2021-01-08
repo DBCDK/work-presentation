@@ -73,12 +73,8 @@ public class QuickPool<T> extends GenericObjectPool<T> {
     /**
      * Don't use this
      * <p>
-     * Use one of:
-     * {@link #voidCall(java.util.function.Consumer)},
-     * {@link #valueCall(java.util.function.Function)},
-     * {@link #voidExec(dk.dbc.search.work.presentation.worker.pool.QuickPool.ScopeWithException)}
-     * or
-     * {@link #valueExec(dk.dbc.search.work.presentation.worker.pool.QuickPool.ScopeWithExceptionAndValue)};
+     * Use:
+     * {@link #exec(dk.dbc.search.work.presentation.worker.pool.QuickPool.ScopeWithExceptionAndValue)};
      *
      * @return N/A
      * @throws Exception N/A
@@ -92,12 +88,8 @@ public class QuickPool<T> extends GenericObjectPool<T> {
     /**
      * Don't use this
      * <p>
-     * Use one of:
-     * {@link #voidCall(java.util.function.Consumer)},
-     * {@link #valueCall(java.util.function.Function)},
-     * {@link #voidExec(dk.dbc.search.work.presentation.worker.pool.QuickPool.ScopeWithException)}
-     * or
-     * {@link #valueExec(dk.dbc.search.work.presentation.worker.pool.QuickPool.ScopeWithExceptionAndValue)};
+     * Use:
+     * {@link #exec(dk.dbc.search.work.presentation.worker.pool.QuickPool.ScopeWithExceptionAndValue)};
      *
      * @param ms N/A
      * @return N/A
@@ -117,7 +109,7 @@ public class QuickPool<T> extends GenericObjectPool<T> {
      * @return An exception wrapper or code block value
      */
     @CheckReturnValue
-    public <R> ExceptionResult<R> valueExec(ScopeWithExceptionAndValue<T, R> scope) {
+    public <R> ExceptionResult<R> exec(ScopeWithExceptionAndValue<T, R> scope) {
         try {
             T t = super.borrowObject();
             R value;

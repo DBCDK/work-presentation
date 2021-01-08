@@ -78,7 +78,7 @@ public class JavaScriptEnvironment {
     public ManifestationInformation cacheBuild(CacheContentBuilder dataBuilder) {
         try {
             return jsWorkers
-                    .valueExec(js -> dataBuilder.generateContent(corepoContentService, js))
+                    .exec(js -> dataBuilder.generateContent(corepoContentService, js))
                     .raise(Exception.class)
                     .value();
         } catch (Exception ex) {

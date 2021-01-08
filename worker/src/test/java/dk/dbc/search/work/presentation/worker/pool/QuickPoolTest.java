@@ -50,7 +50,7 @@ public class QuickPoolTest {
                   for (int n = 0 ; n < 12 ; n++) {
                       ex.submit(() -> {
                           try {
-                              pool.valueExec(i -> {
+                              pool.exec(i -> {
                                   objectCalls.computeIfAbsent(i, x -> new AtomicInteger(0)).incrementAndGet();
                                   Thread.sleep(10);
                                   if (i == 2) // Object 2 we don't like
