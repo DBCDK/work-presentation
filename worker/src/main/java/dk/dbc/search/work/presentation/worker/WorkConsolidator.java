@@ -158,6 +158,7 @@ public class WorkConsolidator {
         work.creators = TypedValue.distinctSet(primary.creators);
         work.description = primary.description;
         work.fullTitle = primary.fullTitle;
+        work.series = primary.series;
         work.title = primary.title;
 
         // Map into unit->manifestations and unit->relationType->relationManifestation
