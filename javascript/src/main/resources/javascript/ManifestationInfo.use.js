@@ -29,6 +29,7 @@ var ManifestationInfo = (function() {
                 "pid": manifestationId,
                 "title": null, //from dc stream string, must be present
                 "fullTitle": null, //from commonData stream or localData stream if title element present, string, must be present
+                "series": null, //from commonData stream or localData stream if title/dkdcplus:series is present
                 "creators": [], //from commonData stream creator - array, empty array if no data
                 "description": null, //from commonData stream dcterms:abstract - string, null if no data
                 "subjects": [], //from common and local stream if subject element present, array, empty array if no data
@@ -51,6 +52,7 @@ var ManifestationInfo = (function() {
         }
         manifestationObject.title = getTitle( commonDataXml, localDataXml );
         manifestationObject.fullTitle = getFullTitle( commonDataXml, localDataXml );
+        manifestationObject.series = getSeries( commonDataXml, localDataXml );
         manifestationObject.creators = getCreators( commonDataXml, localDataXml );
         manifestationObject.description = getAbstract( commonDataXml, localDataXml );
         manifestationObject.subjects = getSubjects( commonDataXml, localDataXml );
@@ -134,6 +136,56 @@ var ManifestationInfo = (function() {
         Log.trace( "Leaving: ManifestationInfo.getFullTitle function" );
 
         return titleFull;
+    }
+
+    /**
+     * Function that extracts the series title and sequence number from either
+     * the local data stream or if not present there the common data stream
+     *
+     * @type {function}
+     * @syntax ManifestationInfo.getSeries( commonData, localData )
+     * @param {Document} commonData the common stream as xml
+     * @param {Document} localData the local stream as xml
+     * @return {Object|null} the extracted and processed series title (keys: title, sequence) or null if none is found
+     * @function
+     * @name ManifestationInfo.getSeries
+     */
+
+    function getSeries( commonData, localData ) {
+
+        Log.trace( "Entering: ManifestationInfo.getSeries function" );
+
+        //first check if localData has a full title
+        var series = XPath.selectText( '/ting:localData/dkabm:record/dc:title[@xsi:type="dkdcplus:series"]', localData );
+        series = series.trim();
+
+        if ( "" === series ) {
+            series = XPath.selectText( '/ting:container/dkabm:record/dc:title[@xsi:type="dkdcplus:series"]', commonData );
+            series = series.trim();
+        }
+
+        if ( "" === series ) {
+            return null;
+        }
+
+        Log.debug( "ManifestationInfo.getSeries title found=", series );
+
+        var m = series.match( '^(.+) ; (.+)$' );
+        if ( m === null ) {
+            Log.warn( "Found series title=", series, ", but is of invalid format");
+            return null;
+        }
+
+        var seriesTitle = m[1];
+        var seriesSequence = m[2];
+
+
+        Log.trace( "Leaving: ManifestationInfo.getSeries function" );
+
+        return {
+            "title": seriesTitle,
+            "sequence": seriesSequence
+        };
     }
 
     /**
@@ -325,6 +377,7 @@ var ManifestationInfo = (function() {
         getManifestationInfoFromXmlObjects: getManifestationInfoFromXmlObjects,
         getTitle: getTitle,
         getFullTitle: getFullTitle,
+        getSeries: getSeries,
         getCreators: getCreators,
         getTypes: getTypes,
         getAbstract: getAbstract,

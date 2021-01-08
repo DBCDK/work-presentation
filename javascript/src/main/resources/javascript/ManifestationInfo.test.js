@@ -113,6 +113,7 @@ UnitTest.addFixture( "ManifestationInfo.getManifestationInfoFromXmlObjects", fun
             "pid": "870970-basis:08021473",
             "title": "Værkstedstekniske beregninger", //from dc stream string, must be present
             "fullTitle": "Værkstedstekniske beregninger. M2, Boring", //from commonData stream or localData stream if title element present, string, must be present
+            "series": null, //from commonData stream or localData stream if title/dkdcplus:series is present
             "creators": [], //from commonData stream creator - array, empty array if no data
             "description": null, //from commonData stream dcterms:abstract - string, null if no data
             "subjects": [], //from dc stream if subject element present, array, empty array if no data
@@ -133,6 +134,7 @@ UnitTest.addFixture( "ManifestationInfo.getManifestationInfoFromXmlObjects", fun
             "pid": "870970-basis:08021473-no-local-data",
             "title": "Værkstedstekniske beregninger",
             "fullTitle": "Værkstedstekniske beregninger. M2, Boring",
+            "series": null, //from commonData stream or localData stream if title/dkdcplus:series is present
             "creators": [],
             "description": null,
             "subjects": [],
@@ -593,6 +595,174 @@ UnitTest.addFixture( "ManifestationInfo.getFullTitle", function() {
     Assert.exception( "Stop processing if dc has no title", function() {
         ManifestationInfo.getFullTitle( commonData, localData );
     }, Packages.dk.dbc.javascript.recordprocessing.FailRecord );
+
+} );
+
+
+UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
+
+    var commonDataString = '<empty/>';
+    var localDataString = 
+        '<ting:localData' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<ac:identifier>25912233|870970</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Djævelens lærling</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:series">Den store djævlekrig ; 1</dc:title>' +
+        '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
+        '</dkabm:record>' +
+        '</ting:localData>';
+
+    var commonData = XmlUtil.fromString( commonDataString );
+    var localData = XmlUtil.fromString( localDataString );
+
+    var expected = {
+        "title": "Den store djævlekrig",
+        "sequence": "1"
+    };
+
+    Assert.equalValue( "get series title from common or local ", ManifestationInfo.getSeries( commonData, localData ), expected );
+
+
+    var commonDataString =
+        '<ting:container' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<ac:identifier>25912233|870970</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Djævelens lærling</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:series">Den store djævlekrig ; 1</dc:title>' +
+        '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
+        '</dkabm:record>' +
+        '</ting:container>';
+    var localDataString = '<empty/>';
+        
+    var commonData = XmlUtil.fromString( commonDataString );
+    var localData = XmlUtil.fromString( localDataString );
+
+    var expected = {
+        "title": "Den store djævlekrig",
+        "sequence": "1"
+    };
+
+    Assert.equalValue( "get series title from common or local ", ManifestationInfo.getSeries( commonData, localData ), expected );
+
+
+    var commonDataString =
+        '<ting:container' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<ac:identifier>25912233|870970</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Djævelens lærling</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:series">NOT THIS Den store djævlekrig ; 1</dc:title>' +
+        '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
+        '</dkabm:record>' +
+        '</ting:container>';
+    var localDataString = 
+        '<ting:localData' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<ac:identifier>25912233|870970</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Djævelens lærling</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:series">THIS Den store djævlekrig ; 1</dc:title>' +
+        '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
+        '</dkabm:record>' +
+        '</ting:localData>';
+
+    var commonData = XmlUtil.fromString( commonDataString );
+    var localData = XmlUtil.fromString( localDataString );
+
+    var expected = {
+        "title": "THIS Den store djævlekrig",
+        "sequence": "1"
+    };
+
+    Assert.equalValue( "get series title from common or local ", ManifestationInfo.getSeries( commonData, localData ), expected );
+
+
+    var commonDataString = '<empty/>';
+    var localDataString =  '<empty/>';
+
+    var commonData = XmlUtil.fromString( commonDataString );
+    var localData = XmlUtil.fromString( localDataString );
+
+    var expected = null;
+
+    Assert.equal( "get series title from common or local - none found ", ManifestationInfo.getSeries( commonData, localData ), expected );
+
+
+    var commonDataString = '<empty/>';
+    var localDataString = 
+        '<ting:localData' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<ac:identifier>25912233|870970</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Djævelens lærling</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:series">Den store djævlekrig --- 1</dc:title>' +
+        '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
+        '</dkabm:record>' +
+        '</ting:localData>';
+
+    var commonData = XmlUtil.fromString( commonDataString );
+    var localData = XmlUtil.fromString( localDataString );
+
+    var expected = null;
+
+    Assert.equal( "get series title from common or local - wrong format ", ManifestationInfo.getSeries( commonData, localData ), expected );
 
 } );
 
