@@ -629,7 +629,7 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
 
     var expected = {
         "title": "Den store djævlekrig",
-        "sequence": "1"
+        "instalment": "1"
     };
 
     Assert.equalValue( "get series title from common or local ", ManifestationInfo.getSeries( commonData, localData ), expected );
@@ -663,7 +663,7 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
 
     var expected = {
         "title": "Den store djævlekrig",
-        "sequence": "1"
+        "instalment": "1"
     };
 
     Assert.equalValue( "get series title from common or local ", ManifestationInfo.getSeries( commonData, localData ), expected );
@@ -717,7 +717,7 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
 
     var expected = {
         "title": "THIS Den store djævlekrig",
-        "sequence": "1"
+        "instalment": "1"
     };
 
     Assert.equalValue( "get series title from common or local ", ManifestationInfo.getSeries( commonData, localData ), expected );
@@ -762,10 +762,10 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
 
     var expected = {
         "title": "Den store djævlekrig",
-        "sequence": null
+        "instalment": null
     };
 
-    Assert.equalValue( "get series title from common or local - no sequence number ", ManifestationInfo.getSeries( commonData, localData ), expected );
+    Assert.equalValue( "get series title from common or local - no instalment number ", ManifestationInfo.getSeries( commonData, localData ), expected );
 
 } );
 

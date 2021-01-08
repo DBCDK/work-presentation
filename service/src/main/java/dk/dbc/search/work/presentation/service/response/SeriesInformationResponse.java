@@ -37,12 +37,12 @@ public class SeriesInformationResponse {
     public String title;
 
     @Schema(example = "1", required = false)
-    public String sequence;
+    public String instalment;
 
     public static SeriesInformationResponse from(SeriesInformation sr) {
         SeriesInformationResponse ret = new SeriesInformationResponse();
         ret.title = sr.title;
-        ret.sequence = sr.sequence;
+        ret.instalment = sr.instalment;
         return ret;
     }
 
@@ -54,19 +54,19 @@ public class SeriesInformationResponse {
             return false;
         SeriesInformationResponse that = (SeriesInformationResponse) o;
         return Objects.equals(title, that.title) &&
-               Objects.equals(sequence, that.sequence);
+               Objects.equals(instalment, that.instalment);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, sequence);
+        return Objects.hash(title, instalment);
     }
 
     @Override
     public String toString() {
         return "TypedValueResponse{" +
                "title=" + title +
-               ", sequence=" + sequence +
+               ", instalment=" + instalment +
                '}';
     }
 }

@@ -139,14 +139,14 @@ var ManifestationInfo = (function() {
     }
 
     /**
-     * Function that extracts the series title and sequence number from either
+     * Function that extracts the series title and instalment number from either
      * the local data stream or if not present there the common data stream
      *
      * @type {function}
      * @syntax ManifestationInfo.getSeries( commonData, localData )
      * @param {Document} commonData the common stream as xml
      * @param {Document} localData the local stream as xml
-     * @return {Object|null} the extracted and processed series title (keys: title, sequence) or null if none is found
+     * @return {Object|null} the extracted and processed series title (keys: title, instalment) or null if none is found
      * @function
      * @name ManifestationInfo.getSeries
      */
@@ -171,19 +171,19 @@ var ManifestationInfo = (function() {
         Log.debug( "ManifestationInfo.getSeries title found=", series );
 
         var seriesTitle = series;
-        var seriesSequence = null;
+        var seriesInstalment = null;
 
         var m = series.match( '^(.+) ; (.+)$' );
         if ( m !== null ) {
             seriesTitle = m[1];
-            seriesSequence = m[2];
+            seriesInstalment = m[2];
         }
 
         Log.trace( "Leaving: ManifestationInfo.getSeries function" );
 
         return {
             "title": seriesTitle,
-            "sequence": seriesSequence
+            "instalment": seriesInstalment
         };
     }
 

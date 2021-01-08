@@ -33,7 +33,7 @@ public class SeriesInformation implements Serializable {
 
     public String title;
 
-    public String sequence;
+    public String instalment;
 
     @Override
     public boolean equals(Object o) {
@@ -43,19 +43,19 @@ public class SeriesInformation implements Serializable {
             return false;
         SeriesInformation that = (SeriesInformation) o;
         return Objects.equals(title, that.title) &&
-               Objects.equals(sequence, that.sequence);
+               Objects.equals(instalment, that.instalment);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, sequence);
+        return Objects.hash(title, instalment);
     }
 
     @Override
     public String toString() {
         return "SeriesInformation{" +
                ", title='" + title + '\'' +
-               ", sequence='" + sequence + '\'' +
+               ", instalment='" + instalment + '\'' +
                '}';
     }
 }
