@@ -170,15 +170,14 @@ var ManifestationInfo = (function() {
 
         Log.debug( "ManifestationInfo.getSeries title found=", series );
 
+        var seriesTitle = series;
+        var seriesSequence = null;
+
         var m = series.match( '^(.+) ; (.+)$' );
-        if ( m === null ) {
-            Log.warn( "Found series title=", series, ", but is of invalid format");
-            return null;
+        if ( m !== null ) {
+            seriesTitle = m[1];
+            seriesSequence = m[2];
         }
-
-        var seriesTitle = m[1];
-        var seriesSequence = m[2];
-
 
         Log.trace( "Leaving: ManifestationInfo.getSeries function" );
 

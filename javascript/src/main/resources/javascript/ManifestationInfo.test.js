@@ -751,7 +751,7 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
         '<ac:source>Bibliotekskatalog</ac:source>' +
         '<dc:title>Djævelens lærling</dc:title>' +
         '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
-        '<dc:title xsi:type="dkdcplus:series">Den store djævlekrig --- 1</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:series">Den store djævlekrig</dc:title>' +
         '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
         '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
         '</dkabm:record>' +
@@ -760,9 +760,12 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
     var commonData = XmlUtil.fromString( commonDataString );
     var localData = XmlUtil.fromString( localDataString );
 
-    var expected = null;
+    var expected = {
+        "title": "Den store djævlekrig",
+        "sequence": null
+    };
 
-    Assert.equal( "get series title from common or local - wrong format ", ManifestationInfo.getSeries( commonData, localData ), expected );
+    Assert.equalValue( "get series title from common or local - no sequence number ", ManifestationInfo.getSeries( commonData, localData ), expected );
 
 } );
 

@@ -36,7 +36,7 @@ public class SeriesInformationResponse {
     @Schema(example = "Den store djævlekrig", required = true)
     public String title;
 
-    @Schema(example = "1", required = true)
+    @Schema(example = "1", required = false)
     public String sequence;
 
     public static SeriesInformationResponse from(SeriesInformation sr) {
