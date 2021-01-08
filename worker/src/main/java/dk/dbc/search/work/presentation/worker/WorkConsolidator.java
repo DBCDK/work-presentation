@@ -23,6 +23,7 @@ import dk.dbc.search.work.presentation.api.jpa.WorkContainsEntity;
 import dk.dbc.search.work.presentation.api.jpa.WorkObjectEntity;
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import dk.dbc.search.work.presentation.api.pojo.RelationInformation;
+import dk.dbc.search.work.presentation.api.pojo.SeriesInformation;
 import dk.dbc.search.work.presentation.api.pojo.TypedValue;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
@@ -46,6 +47,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import javax.ejb.EJBException;
@@ -165,6 +167,8 @@ public class WorkConsolidator {
         work.dbUnitInformation = new HashMap<>();
         work.dbRelUnitInformation = new HashMap<>();
 
+        HashMap<SeriesInformation, AtomicInteger> allSI = new HashMap<>();
+
         Set<TypedValue> subjects = new HashSet<>();
         tree.forEach((unitId, unit) -> {
             List<ManifestationInformation> fullManifestations = unit.values().stream() // All ObjectTree from a unit
@@ -174,6 +178,12 @@ public class WorkConsolidator {
                     .map(manifestationCache::get) // Lookup manifestation data
                     .filter(notNull()) // Not deleted
                     .collect(toList());
+
+            fullManifestations.forEach(m -> {
+                if (m.series != null)
+                    allSI.computeIfAbsent(m.series, k -> new AtomicInteger()).incrementAndGet();
+            });
+
             fullManifestations.stream()
                     .map(m -> m.subjects) // as a stream of Set<String>
                     .filter(notNull())
@@ -200,6 +210,16 @@ public class WorkConsolidator {
 
             work.dbRelUnitInformation.put(unitId, relationsForUnit);
         });
+
+        if (work.series == null && !allSI.isEmpty()) {
+            log.debug("allSI = {}", allSI);
+            work.series = allSI.entrySet().stream()
+                    .reduce((l, r) -> {
+                        return l.getValue().get() > r.getValue().get() ? l : r;
+                    })
+                    .get()
+                    .getKey();
+        }
 
         work.subjects = TypedValue.distinctSet(subjects);
 
