@@ -68,8 +68,6 @@ public class QuickPool<T> extends GenericObjectPool<T> {
         super.returnObject(obj);
     }
 
-
-
     /**
      * Don't use this
      * <p>
