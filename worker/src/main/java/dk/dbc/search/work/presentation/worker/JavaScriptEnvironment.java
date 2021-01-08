@@ -57,6 +57,8 @@ public class JavaScriptEnvironment {
         try {
             jsWorkers = new QuickPool<>(JavascriptCacheObjectBuilder.builder()
                     .build());
+            jsWorkers.setMinIdle(0);
+            jsWorkers.setMaxIdle(config.getJsPoolSize());
             jsWorkers.setMaxTotal(config.getJsPoolSize());
             jsWorkers.addObjects(config.getJsPoolSize());
         } catch (Exception ex) {
