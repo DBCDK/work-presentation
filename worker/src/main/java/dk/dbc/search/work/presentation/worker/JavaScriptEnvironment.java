@@ -57,6 +57,8 @@ public class JavaScriptEnvironment {
         try {
             jsWorkers = new QuickPool<>(JavascriptCacheObjectBuilder.builder()
                     .build());
+            jsWorkers.setMinIdle(0);
+            jsWorkers.setMaxIdle(config.getJsPoolSize());
             jsWorkers.setMaxTotal(config.getJsPoolSize());
             jsWorkers.addObjects(config.getJsPoolSize());
         } catch (Exception ex) {
@@ -76,7 +78,7 @@ public class JavaScriptEnvironment {
     public ManifestationInformation cacheBuild(CacheContentBuilder dataBuilder) {
         try {
             return jsWorkers
-                    .valueExec(js -> dataBuilder.generateContent(corepoContentService, js))
+                    .exec(js -> dataBuilder.generateContent(corepoContentService, js))
                     .raise(Exception.class)
                     .value();
         } catch (Exception ex) {

@@ -18,9 +18,6 @@
  */
 package dk.dbc.search.work.presentation.worker.pool;
 
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
@@ -28,6 +25,8 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
 
 import java.util.function.Supplier;
 import javax.annotation.CheckReturnValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Use a functional approach to leasing from a pool
@@ -36,6 +35,8 @@ import javax.annotation.CheckReturnValue;
  * @param <T> Type of the pool leases
  */
 public class QuickPool<T> extends GenericObjectPool<T> {
+
+    private static final Logger log = LoggerFactory.getLogger(QuickPool.class);
 
     /**
      * Constructor for supplier
@@ -47,52 +48,31 @@ public class QuickPool<T> extends GenericObjectPool<T> {
         super(new BasePooledObjectFactory<T>() {
             @Override
             public T create() throws Exception {
-                return supplier.get();
+                log.debug("Creating object");
+                T get = supplier.get();
+                log.debug("Created object {}", get);
+                return get;
             }
 
             @Override
             public PooledObject<T> wrap(T t) {
+                log.debug("Wrapping object {}", t);
                 return new DefaultPooledObject<>(t);
             }
         });
     }
 
-    /**
-     * Constructor for supplier and validator
-     * <p>
-     * remember to use .setTestOn*(boolean)
-     *
-     * @param supplier Method that generates a T object
-     * @param validate Method that checks is an object if ok
-     */
-    public QuickPool(Supplier<T> supplier, Predicate<T> validate) {
-        super(new BasePooledObjectFactory<T>() {
-            @Override
-            public T create() throws Exception {
-                return supplier.get();
-            }
-
-            @Override
-            public PooledObject<T> wrap(T t) {
-                return new DefaultPooledObject<>(t);
-            }
-
-            @Override
-            public boolean validateObject(PooledObject<T> p) {
-                return validate.test(p.getObject());
-            }
-        });
+    @Override
+    public void returnObject(T obj) {
+        log.debug("Returning object: {}", obj);
+        super.returnObject(obj);
     }
 
     /**
      * Don't use this
      * <p>
-     * Use one of:
-     * {@link #voidCall(java.util.function.Consumer)},
-     * {@link #valueCall(java.util.function.Function)},
-     * {@link #voidExec(dk.dbc.search.work.presentation.worker.pool.QuickPool.ScopeWithException)}
-     * or
-     * {@link #valueExec(dk.dbc.search.work.presentation.worker.pool.QuickPool.ScopeWithExceptionAndValue)};
+     * Use:
+     * {@link #exec(dk.dbc.search.work.presentation.worker.pool.QuickPool.ScopeWithExceptionAndValue)};
      *
      * @return N/A
      * @throws Exception N/A
@@ -106,12 +86,8 @@ public class QuickPool<T> extends GenericObjectPool<T> {
     /**
      * Don't use this
      * <p>
-     * Use one of:
-     * {@link #voidCall(java.util.function.Consumer)},
-     * {@link #valueCall(java.util.function.Function)},
-     * {@link #voidExec(dk.dbc.search.work.presentation.worker.pool.QuickPool.ScopeWithException)}
-     * or
-     * {@link #valueExec(dk.dbc.search.work.presentation.worker.pool.QuickPool.ScopeWithExceptionAndValue)};
+     * Use:
+     * {@link #exec(dk.dbc.search.work.presentation.worker.pool.QuickPool.ScopeWithExceptionAndValue)};
      *
      * @param ms N/A
      * @return N/A
@@ -124,86 +100,6 @@ public class QuickPool<T> extends GenericObjectPool<T> {
     }
 
     /**
-     * Apply a consumer (void method) to a leased object
-     *
-     * @param consumer method to call
-     */
-    public void voidCall(Consumer<T> consumer) {
-        try {
-            T t = super.borrowObject();
-            try {
-                consumer.accept(t);
-            } catch (BadObjectException ex) {
-                invalidateObject(t);
-                throw ex;
-            } catch (Exception ex) {
-                returnObject(t);
-                throw ex;
-            }
-            returnObject(t);
-        } catch (RuntimeException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    /**
-     * Apply a function to a leased object
-     *
-     * @param <R>      Return type
-     * @param function method to convert leased object into a value
-     * @return value from function
-     */
-    public <R> R valueCall(Function<T, R> function) {
-        try {
-            T t = super.borrowObject();
-            R value;
-            try {
-                value = function.apply(t);
-            } catch (BadObjectException ex) {
-                invalidateObject(t);
-                throw ex;
-            } catch (Exception ex) {
-                returnObject(t);
-                throw ex;
-            }
-            returnObject(t);
-            return value;
-        } catch (RuntimeException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    /**
-     * Lease an object from the pool, and call a method upon it
-     *
-     * @param scope Code block to run with the leased object
-     * @return An exception wrapper or void value
-     */
-    @CheckReturnValue
-    public ExceptionResult<Void> voidExec(ScopeWithException<T> scope) {
-        try {
-            T t = super.borrowObject();
-            try {
-                scope.accept(t);
-            } catch (BadObjectException ex) {
-                invalidateObject(t);
-                return new ExceptionResultError<>(ex);
-            } catch (Exception ex) {
-                returnObject(t);
-                return new ExceptionResultError<>(ex);
-            }
-            returnObject(t);
-            return new ExceptionResultValue<>(null);
-        } catch (Exception ex) {
-            return new ExceptionResultError<>(ex);
-        }
-    }
-
-    /**
      * Lease an object from the pool, and call a method upon it
      *
      * @param <R>   Return type
@@ -211,12 +107,14 @@ public class QuickPool<T> extends GenericObjectPool<T> {
      * @return An exception wrapper or code block value
      */
     @CheckReturnValue
-    public <R> ExceptionResult<R> valueExec(ScopeWithExceptionAndValue<T, R> scope) {
+    public <R> ExceptionResult<R> exec(ScopeWithExceptionAndValue<T, R> scope) {
         try {
             T t = super.borrowObject();
             R value;
             try {
                 value = scope.accept(t);
+                returnObject(t);
+                return new ExceptionResultValue<>(value);
             } catch (BadObjectException ex) {
                 invalidateObject(t);
                 return new ExceptionResultError<>(ex);
@@ -224,17 +122,9 @@ public class QuickPool<T> extends GenericObjectPool<T> {
                 returnObject(t);
                 return new ExceptionResultError<>(ex);
             }
-            returnObject(t);
-            return new ExceptionResultValue<>(value);
         } catch (Exception ex) {
             return new ExceptionResultError<>(ex);
         }
-    }
-
-    @FunctionalInterface
-    public interface ScopeWithException<T> {
-
-        void accept(T t) throws Exception;
     }
 
     @FunctionalInterface

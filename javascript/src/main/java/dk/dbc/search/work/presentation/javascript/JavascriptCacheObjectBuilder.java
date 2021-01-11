@@ -45,6 +45,7 @@ import javax.script.Bindings;
 import jdk.nashorn.api.scripting.JSObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -234,11 +235,21 @@ public class JavascriptCacheObjectBuilder {
      *                   converted to the Java Object
      */
     public ManifestationInformation extractManifestationInformation(String manifestationId, Map<String, String> xmlObjects) throws Exception {
-        Object obj = environment.callMethod(methodName, new Object[] {manifestationId, xmlObjects});
-        JsonNode json = javaScriptObjectToJson(obj);
-        log.trace("json = {}", json);
-        return O.readValue(O.treeAsTokens(json),
-                           ManifestationInformation.class);
+        String oldManifestationId = MDC.get("manifestationId");
+        try {
+            MDC.put("manifestationId", manifestationId);
+            Object obj = environment.callMethod(methodName, new Object[] {manifestationId, xmlObjects});
+            JsonNode json = javaScriptObjectToJson(obj);
+            log.trace("json = {}", json);
+            return O.readValue(O.treeAsTokens(json),
+                               ManifestationInformation.class);
+        } finally {
+            if (oldManifestationId == null) {
+                MDC.remove("manifestationId");
+            } else {
+                MDC.put("manifestationId", oldManifestationId);
+            }
+        }
     }
 
     /**

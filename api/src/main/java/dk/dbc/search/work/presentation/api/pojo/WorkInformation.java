@@ -19,6 +19,8 @@ public class WorkInformation implements Serializable {
 
     public String fullTitle;
 
+    public SeriesInformation series;
+
     public Set<TypedValue> creators;
 
     public String description;
@@ -43,6 +45,7 @@ public class WorkInformation implements Serializable {
         return Objects.equals(workId, that.workId) &&
                Objects.equals(title, that.title) &&
                Objects.equals(fullTitle, that.fullTitle) &&
+               Objects.equals(series, that.series) &&
                Objects.equals(creators, that.creators) &&
                Objects.equals(description, that.description) &&
                Objects.equals(subjects, that.subjects) &&
@@ -52,7 +55,7 @@ public class WorkInformation implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(workId, title, fullTitle, creators, description, subjects, dbUnitInformation, dbRelUnitInformation);
+        return Objects.hash(workId, title, fullTitle, series, creators, description, subjects, dbUnitInformation, dbRelUnitInformation);
     }
 
     @Override
@@ -61,6 +64,7 @@ public class WorkInformation implements Serializable {
                "workId='" + workId + '\'' +
                ", title='" + title + '\'' +
                ", fullTitle='" + fullTitle + '\'' +
+               ", series=" + series +
                ", creators='" + creators + '\'' +
                ", description='" + description + '\'' +
                ", subjects='" + subjects + '\'' +

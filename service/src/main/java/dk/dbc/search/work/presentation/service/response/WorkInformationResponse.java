@@ -47,6 +47,9 @@ public class WorkInformationResponse {
     @Schema(example = "Necronomicon: Book of the Dead")
     public String fullTitle;
 
+    @Schema(description = "If this is part of a series this is included")
+    public SeriesInformationResponse series;
+
     @Schema(implementation = TypedValueResponse.Array.class)
     public Set<TypedValueResponse> creators;
 
@@ -67,6 +70,9 @@ public class WorkInformationResponse {
         wir.workId = wi.workId;
         wir.title = wi.title;
         wir.fullTitle = wi.fullTitle;
+        if (wi.series != null) {
+            wir.series = SeriesInformationResponse.from(wi.series);
+        }
         wir.creators = wi.creators.stream()
                 .map(TypedValueResponse::from)
                 .collect(Collectors.toSet());
@@ -88,6 +94,7 @@ public class WorkInformationResponse {
         return Objects.equals(workId, that.workId) &&
                Objects.equals(title, that.title) &&
                Objects.equals(fullTitle, that.fullTitle) &&
+               Objects.equals(series, that.series) &&
                Objects.equals(creators, that.creators) &&
                Objects.equals(description, that.description) &&
                Objects.equals(subjects, that.subjects) &&
@@ -96,7 +103,7 @@ public class WorkInformationResponse {
 
     @Override
     public int hashCode() {
-        return Objects.hash(workId, title, fullTitle, creators, description, subjects, records);
+        return Objects.hash(workId, title, fullTitle, series, creators, description, subjects, records);
     }
 
     @Override

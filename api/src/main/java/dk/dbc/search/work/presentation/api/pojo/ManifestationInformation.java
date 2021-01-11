@@ -21,6 +21,9 @@ public class ManifestationInformation implements Serializable {
 
     public String fullTitle;
 
+    // Optional NULL is not at series
+    public SeriesInformation series;
+
     public List<TypedValue> creators;
 
     public String description;
@@ -40,6 +43,7 @@ public class ManifestationInformation implements Serializable {
         return Objects.equals(manifestationId, that.manifestationId) &&
                Objects.equals(title, that.title) &&
                Objects.equals(fullTitle, that.fullTitle) &&
+               Objects.equals(series, that.series) &&
                Objects.equals(creators, that.creators) &&
                Objects.equals(description, that.description) &&
                Objects.equals(subjects, that.subjects) &&
@@ -48,7 +52,7 @@ public class ManifestationInformation implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(manifestationId, title, fullTitle, creators, description, subjects, materialTypes);
+        return Objects.hash(manifestationId, title, fullTitle, series, creators, description, subjects, materialTypes);
     }
 
     @Override
@@ -57,6 +61,7 @@ public class ManifestationInformation implements Serializable {
                "manifestationId='" + manifestationId + '\'' +
                ", title='" + title + '\'' +
                ", fullTitle='" + fullTitle + '\'' +
+               ", series=" + series +
                ", creators=" + creators +
                ", description='" + description + '\'' +
                ", subjects=" + subjects +
