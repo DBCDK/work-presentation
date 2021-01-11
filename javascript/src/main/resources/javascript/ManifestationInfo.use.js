@@ -173,10 +173,10 @@ var ManifestationInfo = (function() {
         var seriesTitle = series;
         var seriesInstalment = null;
 
-        var m = series.match( '^(.+) ; (.+)$' );
-        if ( m !== null ) {
-            seriesTitle = m[1];
-            seriesInstalment = m[2];
+        var instalmentMatch = series.match( '^(.+) ; (.+)$' );
+        if ( instalmentMatch !== null ) {
+            seriesTitle = instalmentMatch[1];
+            seriesInstalment = instalmentMatch[2];
         }
 
         Log.trace( "Leaving: ManifestationInfo.getSeries function" );
