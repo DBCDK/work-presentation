@@ -632,7 +632,7 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
         "instalment": "1"
     };
 
-    Assert.equalValue( "get series title from common or local ", ManifestationInfo.getSeries( commonData, localData ), expected );
+    Assert.equalValue( "get series title from localData ", ManifestationInfo.getSeries( commonData, localData ), expected );
 
 
     var commonDataString =
@@ -666,7 +666,7 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
         "instalment": "1"
     };
 
-    Assert.equalValue( "get series title from common or local ", ManifestationInfo.getSeries( commonData, localData ), expected );
+    Assert.equalValue( "get series title from commonData ", ManifestationInfo.getSeries( commonData, localData ), expected );
 
 
     var commonDataString =
@@ -720,7 +720,7 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
         "instalment": "1"
     };
 
-    Assert.equalValue( "get series title from common or local ", ManifestationInfo.getSeries( commonData, localData ), expected );
+    Assert.equalValue( "get series title from localData when both local and commonData is present ", ManifestationInfo.getSeries( commonData, localData ), expected );
 
 
     var commonDataString = '<empty/>';
@@ -765,7 +765,7 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
         "instalment": null
     };
 
-    Assert.equalValue( "get series title from common or local - no instalment number ", ManifestationInfo.getSeries( commonData, localData ), expected );
+    Assert.equalValue( "get series title from common or local - with no instalment ", ManifestationInfo.getSeries( commonData, localData ), expected );
 
 } );
 
