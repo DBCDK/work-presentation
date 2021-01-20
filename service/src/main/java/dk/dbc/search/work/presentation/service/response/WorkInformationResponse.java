@@ -20,11 +20,12 @@ package dk.dbc.search.work.presentation.service.response;
 
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
  * Class wrapping response - This cannot be in the api module, since the @Schema
@@ -47,7 +48,7 @@ public class WorkInformationResponse {
     @Schema(example = "Necronomicon: Book of the Dead")
     public String fullTitle;
 
-    @Schema(description = "If this is part of a series this is included")
+    @Schema(ref = SeriesInformationResponse.NAME)
     public SeriesInformationResponse series;
 
     @Schema(implementation = TypedValueResponse.Array.class)
