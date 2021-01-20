@@ -20,15 +20,17 @@ package dk.dbc.search.work.presentation.service.response;
 
 import dk.dbc.search.work.presentation.api.pojo.SeriesInformation;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.util.Objects;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+import java.util.Objects;
 
 /**
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
 @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-@Schema(name = SeriesInformationResponse.NAME)
+@Schema(description = "If the work is part of a series, this information is included",
+        name = SeriesInformationResponse.NAME)
 public class SeriesInformationResponse {
 
     public static final String NAME = "seriesinformation";
