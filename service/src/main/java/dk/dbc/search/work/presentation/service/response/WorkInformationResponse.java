@@ -47,7 +47,8 @@ public class WorkInformationResponse {
     @Schema(example = "Necronomicon: Book of the Dead")
     public String fullTitle;
 
-    @Schema(description = "If this is part of a series this is included")
+    @Schema(implementation = SeriesInformationResponse.class,
+            description = "If the work is part of a series, this information is included")
     public SeriesInformationResponse series;
 
     @Schema(implementation = TypedValueResponse.Array.class)
