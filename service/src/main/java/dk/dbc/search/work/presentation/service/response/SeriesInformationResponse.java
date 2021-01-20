@@ -64,7 +64,7 @@ public class SeriesInformationResponse {
 
     @Override
     public String toString() {
-        return "TypedValueResponse{" +
+        return "SeriesInformationResponse{" +
                "title=" + title +
                ", instalment=" + instalment +
                '}';
