@@ -1,0 +1,24 @@
+{
+    "title": "Harry Potter og Hemmelighedernes Kammer",
+    "fullTitle": "Harry Potter og Hemmelighedernes Kammer",
+    "series": {
+        "title": "2. del af: Harry Potter og De Vises Sten"
+    },
+    "creators": [
+        { "type": "aut", "value": "Joanne K. Rowling" }
+    ],
+    "description": "Fantasy. Den 12-årige Harry Potter har trolddomsevner. Derfor er han blevet optaget på troldmandsskolen Hogwarts, som ligger i en parallelverden. Men nu indtræffer der uhyggelige og mystiske hændelser på troldmandsskolen",
+    "subjects": [
+        { "type": "DK5-Text", "value": "Skønlitteratur" },
+        { "type": "DBCO", "value": "fantasy" },
+        { "type": "genre", "value": "fantasy" },
+        { "type": "DBCN", "value": "for 11 år" },
+        { "type": "DBCN", "value": "for 12 år" },
+        { "type": "DBCN", "value": "for 13 år" },
+        { "type": "DBCS", "value": "magi" },
+        { "type": "DK5", "value": "sk" },
+        { "type": "DBCS", "value": "troldmænd" }
+    ],
+    "pid": "harrypotter",
+    "types": [ "Bog" ]
+}

@@ -157,10 +157,24 @@ var ManifestationInfo = (function() {
 
         //first check if localData has a full title
         var series = XPath.selectText( '/ting:localData/dkabm:record/dc:title[@xsi:type="dkdcplus:series"]', localData );
+        Log.debug("local title=", series);
         series = series.trim();
 
         if ( "" === series ) {
+            series = XPath.selectText( '/ting:localData/dkabm:record/dc:description[@xsi:type="dkdcplus:series"]', localData );
+            Log.debug("local desc=", series);
+            series = series.trim();
+        }
+
+        if ( "" === series ) {
             series = XPath.selectText( '/ting:container/dkabm:record/dc:title[@xsi:type="dkdcplus:series"]', commonData );
+            Log.debug("common title=", series);
+            series = series.trim();
+        }
+
+        if ( "" === series ) {
+            series = XPath.selectText( '/ting:container/dkabm:record/dc:description[@xsi:type="dkdcplus:series"]', commonData );
+            Log.debug("common desc=", series);
             series = series.trim();
         }
 

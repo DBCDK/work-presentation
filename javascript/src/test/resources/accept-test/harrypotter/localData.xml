@@ -1,0 +1,26 @@
+<ting:localData
+    xmlns:ting="http://www.dbc.dk/ting"
+    xmlns:marcx="info:lc/xmlns/marcxchange-v1">
+    <marcx:record format="danMARC2" type="BibliographicLocal">
+        <marcx:datafield ind1="0" ind2="0" tag="d08">
+            <marcx:subfield code="a">BØK/SKO kode fjernet ved masserettelse og 990b tilføjet</marcx:subfield>
+        </marcx:datafield>
+        <marcx:datafield ind1="0" ind2="0" tag="d08">
+            <marcx:subfield code="a">psc( Hemmelighedernes Kammer med stort i løbende tekst)</marcx:subfield>
+            <marcx:subfield code="r">psc</marcx:subfield>
+            <marcx:subfield code="a">666 rettet fra "eventyrlige fortællinger", 504 tilf. Fantasy /0848</marcx:subfield>
+        </marcx:datafield>
+        <marcx:datafield ind1="0" ind2="0" tag="d08">
+            <marcx:subfield code="a">masserettet i forb. med konvertering af aldersnoter</marcx:subfield>
+        </marcx:datafield>
+        <marcx:datafield ind1="0" ind2="0" tag="d08">
+            <marcx:subfield code="a">masserettelse af genrer fra 666s til 666o, dec 2020</marcx:subfield>
+        </marcx:datafield>
+        <marcx:datafield ind1="0" ind2="0" tag="z98">
+            <marcx:subfield code="a">Minus korrekturprint</marcx:subfield>
+        </marcx:datafield>
+        <marcx:datafield ind1="0" ind2="0" tag="z99">
+            <marcx:subfield code="a">masseret</marcx:subfield>
+        </marcx:datafield>
+    </marcx:record>
+</ting:localData>
