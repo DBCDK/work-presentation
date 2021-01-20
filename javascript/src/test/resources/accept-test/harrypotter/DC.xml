@@ -1,0 +1,28 @@
+<oai_dc:dc
+    xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <dc:title>harry potter &amp; hemmelighedernes kammer</dc:title>
+    <dc:title>MATCHSTRING:harrypotter&amp;hemmelighederneskammerrneskammer</dc:title>
+    <dc:title>MATCH:harryp</dc:title>
+    <dc:title>MATCHADD:</dc:title>
+    <dc:creator>joanne k rowling</dc:creator>
+    <dc:creator>NOBIRTH:joanne k rowling</dc:creator>
+    <dc:creator>MATCHSTRING:rowlingj</dc:creator>
+    <dc:language>Dansk</dc:language>
+    <dc:subject>fantasy</dc:subject>
+    <dc:subject>for 11 år</dc:subject>
+    <dc:subject>for 12 år</dc:subject>
+    <dc:subject>for 13 år</dc:subject>
+    <dc:subject>magi</dc:subject>
+    <dc:subject>troldmænd</dc:subject>
+    <dc:type>Bog</dc:type>
+    <dc:type>WORK:literature</dc:type>
+    <dc:publisher>gyldendal</dc:publisher>
+    <dc:publisher>MATCHSTRING:gyldend</dc:publisher>
+    <dc:source>harry potter and the chamber of secrets</dc:source>
+    <dc:date>1999</dc:date>
+    <dc:identifier>870970-basis:22375733</dc:identifier>
+    <dc:identifier>ISBN:8700372641</dc:identifier>
+    <dc:identifier>MATCH:ISBN:8700372641</dc:identifier>
+</oai_dc:dc>

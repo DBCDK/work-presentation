@@ -1,0 +1,201 @@
+<ting:container
+    xmlns:ting="http://www.dbc.dk/ting"
+    xmlns:ac="http://biblstandard.dk/ac/namespace/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"
+    xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"
+    xmlns:docbook="http://docbook.org/ns/docbook"
+    xmlns:oss="http://oss.dbc.dk/ns/osstypes"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <dkabm:record>
+        <ac:identifier>22375733|870970</ac:identifier>
+        <ac:source>Bibliotekskatalog</ac:source>
+        <dc:title>Harry Potter og Hemmelighedernes Kammer</dc:title>
+        <dc:title xsi:type="dkdcplus:full">Harry Potter og Hemmelighedernes Kammer</dc:title>
+        <dc:creator xsi:type="dkdcplus:aut">Joanne K. Rowling</dc:creator>
+        <dc:creator xsi:type="oss:sort">Rowling, Joanne K.</dc:creator>
+        <dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>
+        <dc:subject xsi:type="dkdcplus:DBCO">fantasy</dc:subject>
+        <dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>
+        <dc:subject xsi:type="dkdcplus:DBCN">for 11 år</dc:subject>
+        <dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>
+        <dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>
+        <dc:subject xsi:type="dkdcplus:DBCS">magi</dc:subject>
+        <dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>
+        <dc:subject xsi:type="dkdcplus:DBCS">troldmænd</dc:subject>
+        <dcterms:abstract>Fantasy. Den 12-årige Harry Potter har trolddomsevner. Derfor er han blevet optaget på troldmandsskolen Hogwarts, som ligger i en parallelverden. Men nu indtræffer der uhyggelige og mystiske hændelser på troldmandsskolen</dcterms:abstract>
+        <dc:description xsi:type="dkdcplus:series">2. del af: Harry Potter og De Vises Sten</dc:description>
+        <dcterms:audience xsi:type="dkdcplus:age">fra 11 år</dcterms:audience>
+        <dcterms:audience>børnematerialer</dcterms:audience>
+        <dc:publisher>Gyldendal</dc:publisher>
+        <dc:date>1999</dc:date>
+        <dc:type xsi:type="dkdcplus:BibDK-Type">Bog</dc:type>
+        <dcterms:extent>338 sider</dcterms:extent>
+        <dc:identifier xsi:type="dkdcplus:ISBN">87-00-37264-1</dc:identifier>
+        <dc:source>Harry Potter and the Chamber of Secrets</dc:source>
+        <dc:language xsi:type="dcterms:ISO639-2">dan</dc:language>
+        <dc:language>Dansk</dc:language>
+    </dkabm:record>
+    <marcx:collection
+        xmlns:marcx="info:lc/xmlns/marcxchange-v1">
+        <marcx:record format="danMARC2" type="Bibliographic">
+            <marcx:leader>00000name 22000000  4500</marcx:leader>
+            <marcx:datafield ind1="0" ind2="0" tag="001">
+                <marcx:subfield code="a">22375733</marcx:subfield>
+                <marcx:subfield code="b">870970</marcx:subfield>
+                <marcx:subfield code="c">20201209212840</marcx:subfield>
+                <marcx:subfield code="d">19990222</marcx:subfield>
+                <marcx:subfield code="f">a</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="004">
+                <marcx:subfield code="r">n</marcx:subfield>
+                <marcx:subfield code="a">e</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="008">
+                <marcx:subfield code="t">m</marcx:subfield>
+                <marcx:subfield code="u">f</marcx:subfield>
+                <marcx:subfield code="a">1999</marcx:subfield>
+                <marcx:subfield code="b">dk</marcx:subfield>
+                <marcx:subfield code="d">x</marcx:subfield>
+                <marcx:subfield code="j">f</marcx:subfield>
+                <marcx:subfield code="l">dan</marcx:subfield>
+                <marcx:subfield code="o">b</marcx:subfield>
+                <marcx:subfield code="v">0</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="009">
+                <marcx:subfield code="a">a</marcx:subfield>
+                <marcx:subfield code="g">xx</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="021">
+                <marcx:subfield code="a">87-00-37264-1</marcx:subfield>
+                <marcx:subfield code="c">hf.</marcx:subfield>
+                <marcx:subfield code="d">kr. 248,00</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="032">
+                <marcx:subfield code="a">DBF199911</marcx:subfield>
+                <marcx:subfield code="x">SFD199911</marcx:subfield>
+                <marcx:subfield code="x">DAT201518</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="041">
+                <marcx:subfield code="a">dan</marcx:subfield>
+                <marcx:subfield code="c">eng</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="100">
+                <marcx:subfield code="5">870979</marcx:subfield>
+                <marcx:subfield code="6">68889189</marcx:subfield>
+                <marcx:subfield code="a">Rowling</marcx:subfield>
+                <marcx:subfield code="h">Joanne K.</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="241">
+                <marcx:subfield code="a">Harry Potter and the Chamber of Secrets</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="245">
+                <marcx:subfield code="a">Harry Potter og Hemmelighedernes Kammer</marcx:subfield>
+                <marcx:subfield code="e">J.K. Rowling</marcx:subfield>
+                <marcx:subfield code="f">på dansk ved Hanna Lützen</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="260">
+                <marcx:subfield code="a">[Kbh.]</marcx:subfield>
+                <marcx:subfield code="b">Gyldendal</marcx:subfield>
+                <marcx:subfield code="c">1999</marcx:subfield>
+                <marcx:subfield code="k">Nørhaven, Viborg</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="300">
+                <marcx:subfield code="a">338 sider</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="504">
+                <marcx:subfield code="a">Fantasy. Den 12-årige Harry Potter har trolddomsevner. Derfor er han blevet optaget på troldmandsskolen Hogwarts, som ligger i en parallelverden. Men nu indtræffer der uhyggelige og mystiske hændelser på troldmandsskolen</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="520">
+                <marcx:subfield code="a">Originaludgave: 1998</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="526">
+                <marcx:subfield code="i">2. del af</marcx:subfield>
+                <marcx:subfield code="t">Harry Potter og De Vises Sten</marcx:subfield>
+                <marcx:subfield code="b">. Seriens indhold se denne</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="652">
+                <marcx:subfield code="n">83</marcx:subfield>
+                <marcx:subfield code="z">296</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="652">
+                <marcx:subfield code="o">sk</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="o">fantasy</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="s">troldmænd</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="s">magi</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="u">for 11 år</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="u">for 12 år</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="666">
+                <marcx:subfield code="0"/>
+                <marcx:subfield code="u">for 13 år</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="900">
+                <marcx:subfield code="a">Rowling</marcx:subfield>
+                <marcx:subfield code="h">J. K.</marcx:subfield>
+                <marcx:subfield code="x">se</marcx:subfield>
+                <marcx:subfield code="w">Rowling, Joanne K.</marcx:subfield>
+                <marcx:subfield code="z">100</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="900">
+                <marcx:subfield code="a">Galbraith</marcx:subfield>
+                <marcx:subfield code="h">Robert</marcx:subfield>
+                <marcx:subfield code="x">se også</marcx:subfield>
+                <marcx:subfield code="w">Rowling, Joanne K.</marcx:subfield>
+                <marcx:subfield code="z">100</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="990">
+                <marcx:subfield code="a">SFD</marcx:subfield>
+                <marcx:subfield code="b">L</marcx:subfield>
+                <marcx:subfield code="b">S</marcx:subfield>
+                <marcx:subfield code="b">B</marcx:subfield>
+                <marcx:subfield code="o">199911</marcx:subfield>
+                <marcx:subfield code="c">A</marcx:subfield>
+            </marcx:datafield>
+            <marcx:datafield ind1="0" ind2="0" tag="996">
+                <marcx:subfield code="a">DBC</marcx:subfield>
+            </marcx:datafield>
+        </marcx:record>
+    </marcx:collection>
+    <ln:links
+        xmlns:ln="http://oss.dbc.dk/ns/links">
+        <ln:link>
+            <ln:access>remote</ln:access>
+            <ln:accessType/>
+            <ln:linkTo>resolver</ln:linkTo>
+            <ln:relationType>dbcaddi:hasOpenUrl</ln:relationType>
+            <ln:url>_BASEURL_url_ctx_fmt=info:ofi/fmt:kev:mtx:ctx&amp;ctx_ver=Z39.88-2004&amp;rft_val_fmt=info:ofi/fmt:kev:mtx:book&amp;rft.btitle=Harry+Potter+og+Hemmelighedernes+Kammer&amp;rft.aulast=Rowling&amp;rft.aufirst=Joanne+K.&amp;rft.auinit=JK&amp;rft.date=1999&amp;rft.isbn=87-00-37264-1&amp;rft.pub=Gyldendal&amp;rft.genre=book&amp;rfr_id=info:sid/dbc.dk:870970-basis</ln:url>
+            <ln:collectionIdentifier>870970-basis</ln:collectionIdentifier>
+            <ln:collectionIdentifier>870970-danbib</ln:collectionIdentifier>
+            <ln:collectionIdentifier>870970-bibdk</ln:collectionIdentifier>
+        </ln:link>
+    </ln:links>
+    <adminData>
+        <recordStatus>active</recordStatus>
+        <creationDate>2016-07-09</creationDate>
+        <libraryType>none</libraryType>
+        <genre>fiktion</genre>
+        <indexingAlias>danmarcxchange</indexingAlias>
+        <accessType>physical</accessType>
+        <workType>literature</workType>
+        <collectionIdentifier>870970-basis</collectionIdentifier>
+        <collectionIdentifier>870970-danbib</collectionIdentifier>
+        <collectionIdentifier>870970-bibdk</collectionIdentifier>
+    </adminData>
+</ting:container>
