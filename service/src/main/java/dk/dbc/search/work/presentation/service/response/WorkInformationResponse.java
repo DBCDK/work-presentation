@@ -47,7 +47,7 @@ public class WorkInformationResponse {
     @Schema(example = "Necronomicon: Book of the Dead")
     public String fullTitle;
 
-    @Schema(implementation = SeriesInformationResponse.class,
+    @Schema(ref = SeriesInformationResponse.NAME,
             description = "If the work is part of a series, this information is included")
     public SeriesInformationResponse series;
 
