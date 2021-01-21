@@ -160,7 +160,7 @@ public class WorkConsolidator {
         work.creators = TypedValue.distinctSet(primary.creators);
         work.description = primary.description;
         work.fullTitle = primary.fullTitle;
-        work.series = primary.series;
+        work.series = null;
         work.title = primary.title;
 
         // Map into unit->manifestations and unit->relationType->relationManifestation
@@ -211,19 +211,43 @@ public class WorkConsolidator {
             work.dbRelUnitInformation.put(unitId, relationsForUnit);
         });
 
-        if (work.series == null && !allSI.isEmpty()) {
-            log.debug("allSI = {}", allSI);
-            work.series = allSI.entrySet().stream()
-                    .reduce((l, r) -> {
-                        return l.getValue().get() > r.getValue().get() ? l : r;
-                    })
-                    .get()
-                    .getKey();
-        }
-
+        work.series = findSeriesInformation(allSI, primary.series);
         work.subjects = TypedValue.distinctSet(subjects);
 
         return work;
+    }
+
+    /**
+     * Find series information
+     *
+     * @param allSI Map of series-information -> number-of-instances
+     * @param primary which to prioritize in case of equal usage
+     * @return a series-information for the work
+     */
+    private SeriesInformation findSeriesInformation(HashMap<SeriesInformation, AtomicInteger> allSI, SeriesInformation primary) {
+        // Set series information
+        if (allSI.isEmpty()) {
+            return null;
+        } else {
+            log.debug("allSI = {}", allSI);
+            List<Map.Entry<SeriesInformation, AtomicInteger>> inOrder = allSI.entrySet().stream()
+                    .sorted((l, r) -> Integer.compare(r.getValue().get(), l.getValue().get()))
+                    .collect(toList());
+            int highValue = inOrder.get(0).getValue().get();
+            List<SeriesInformation> relevant = inOrder.stream()
+                    .filter(e -> e.getValue().get() == highValue)
+                    .map(Map.Entry::getKey)
+                    .collect(toList());
+            log.debug("relevant = {}", relevant);
+            if (relevant.size() > 1 && relevant.contains(primary)) {
+                log.debug("using from primary = {}", primary);
+                return primary;
+            } else {
+                SeriesInformation ret = relevant.get(0);
+                log.debug("work.series = {}", ret);
+                return ret;
+            }
+        }
     }
 
     /**
