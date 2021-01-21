@@ -54,7 +54,7 @@ public class SeriesInformation implements Serializable {
     @Override
     public String toString() {
         return "SeriesInformation{" +
-               ", title='" + title + '\'' +
+               "title='" + title + '\'' +
                ", instalment='" + instalment + '\'' +
                '}';
     }
