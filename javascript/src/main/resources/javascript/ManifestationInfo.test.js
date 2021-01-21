@@ -653,7 +653,7 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
         '<dc:title>Harry Potter og Hemmelighedernes Kammer</dc:title>' +
         '<dc:title xsi:type="dkdcplus:full">Harry Potter og Hemmelighedernes Kammer</dc:title>' +
         '<dcterms:abstract>Fantasy. Den 12-årige Harry Potter har trolddomsevner. Derfor er han blevet optaget på troldmandsskolen Hogwarts, som ligger i en parallelverden. Men nu indtræffer der uhyggelige og mystiske hændelser på troldmandsskolen</dcterms:abstract>' +
-        '<dc:description xsi:type="dkdcplus:series">2. del af: Harry Potter og De Vises Sten</dc:description>' +
+        '<dc:description xsi:type="dkdcplus:series">2. del af: Harry Potter og De Vises Sten ; woot-woot</dc:description>' +
         '</dkabm:record>' +
         '</ting:localData>';
 
@@ -662,11 +662,11 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
     var localData = XmlUtil.fromString( localDataString );
 
     var expected = {
-        "title": "2. del af: Harry Potter og De Vises Sten",
+        "title": "2. del af: Harry Potter og De Vises Sten ; woot-woot",
         "instalment": null
     };
 
-    Assert.equalValue( "get series description from localData ", ManifestationInfo.getSeries( commonData, localData ), expected );
+    Assert.equalValue( "get series description from localData not split by ';' ", ManifestationInfo.getSeries( commonData, localData ), expected );
 
 
     var commonDataString =
@@ -720,7 +720,7 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
         '<dc:title>Harry Potter og Hemmelighedernes Kammer</dc:title>' +
         '<dc:title xsi:type="dkdcplus:full">Harry Potter og Hemmelighedernes Kammer</dc:title>' +
         '<dcterms:abstract>Fantasy. Den 12-årige Harry Potter har trolddomsevner. Derfor er han blevet optaget på troldmandsskolen Hogwarts, som ligger i en parallelverden. Men nu indtræffer der uhyggelige og mystiske hændelser på troldmandsskolen</dcterms:abstract>' +
-        '<dc:description xsi:type="dkdcplus:series">2. del af: Harry Potter og De Vises Sten</dc:description>' +
+        '<dc:description xsi:type="dkdcplus:series">2. del af: Harry Potter og De Vises Sten ; woot-woot</dc:description>' +
         '</dkabm:record>' +
         '</ting:container>';
     var localDataString = '<empty/>';
@@ -730,11 +730,11 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
     var localData = XmlUtil.fromString( localDataString );
 
     var expected = {
-        "title": "2. del af: Harry Potter og De Vises Sten",
+        "title": "2. del af: Harry Potter og De Vises Sten ; woot-woot",
         "instalment": null
     };
 
-    Assert.equalValue( "get series description from commonData ", ManifestationInfo.getSeries( commonData, localData ), expected );
+    Assert.equalValue( "get series description from commonData not split by ';' ", ManifestationInfo.getSeries( commonData, localData ), expected );
 
 
     var commonDataString =
