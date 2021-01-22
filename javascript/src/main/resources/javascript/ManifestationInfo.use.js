@@ -157,25 +157,29 @@ var ManifestationInfo = (function() {
 
         //first check if localData has a full title
         var series = XPath.selectText( '/ting:localData/dkabm:record/dc:title[@xsi:type="dkdcplus:series"]', localData );
-        Log.debug("local title=", series);
+        Log.trace("local title=", series);
         series = series.trim();
+        var split = true;
 
         if ( "" === series ) {
             series = XPath.selectText( '/ting:localData/dkabm:record/dc:description[@xsi:type="dkdcplus:series"]', localData );
-            Log.debug("local desc=", series);
+            Log.trace("local desc=", series);
             series = series.trim();
+            split = false;
         }
 
         if ( "" === series ) {
             series = XPath.selectText( '/ting:container/dkabm:record/dc:title[@xsi:type="dkdcplus:series"]', commonData );
-            Log.debug("common title=", series);
+            Log.trace("common title=", series);
             series = series.trim();
+            split = true;
         }
 
         if ( "" === series ) {
             series = XPath.selectText( '/ting:container/dkabm:record/dc:description[@xsi:type="dkdcplus:series"]', commonData );
-            Log.debug("common desc=", series);
+            Log.trace("common desc=", series);
             series = series.trim();
+            split = false;
         }
 
         if ( "" === series ) {
@@ -187,10 +191,12 @@ var ManifestationInfo = (function() {
         var seriesTitle = series;
         var seriesInstalment = null;
 
-        var instalmentMatch = series.match( '^(.+) ; (.+)$' );
-        if ( instalmentMatch !== null ) {
-            seriesTitle = instalmentMatch[1];
-            seriesInstalment = instalmentMatch[2];
+        if(split) {
+            var instalmentMatch = series.match( '^(.+) ; (.+)$' );
+            if ( instalmentMatch !== null ) {
+                seriesTitle = instalmentMatch[1];
+                seriesInstalment = instalmentMatch[2];
+            }
         }
 
         Log.trace( "Leaving: ManifestationInfo.getSeries function" );
