@@ -81,7 +81,7 @@ public class WorkObjectEntity implements Serializable {
     public static WorkObjectEntity from(EntityManager em, String persistentWorkId) {
         WorkObjectEntity entity = em.find(WorkObjectEntity.class,
                                           persistentWorkId,
-                                          LockModeType.PESSIMISTIC_FORCE_INCREMENT);
+                                          LockModeType.OPTIMISTIC_FORCE_INCREMENT);
         if (entity == null) {
             entity = new WorkObjectEntity(persistentWorkId);
         }
@@ -101,7 +101,7 @@ public class WorkObjectEntity implements Serializable {
     public static WorkObjectEntity fromCorepoWorkId(EntityManager em, String corepoWorkId) {
         WorkObjectEntity entity = em.createNamedQuery("withCorepoWorkId", WorkObjectEntity.class)
                 .setParameter("corepoWorkId", corepoWorkId)
-                .setLockMode(LockModeType.PESSIMISTIC_FORCE_INCREMENT)
+                .setLockMode(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
                 .setMaxResults(1)
                 .getResultStream()
                 .findAny()
@@ -114,7 +114,7 @@ public class WorkObjectEntity implements Serializable {
     public static WorkObjectEntity readOnlyFromCorepoWorkId(EntityManager em, String corepoWorkId) {
         WorkObjectEntity entity = em.createNamedQuery("withCorepoWorkId", WorkObjectEntity.class)
                 .setParameter("corepoWorkId", corepoWorkId)
-                .setLockMode(LockModeType.PESSIMISTIC_FORCE_INCREMENT)
+                .setLockMode(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
                 .setMaxResults(1)
                 .getResultStream()
                 .findAny()

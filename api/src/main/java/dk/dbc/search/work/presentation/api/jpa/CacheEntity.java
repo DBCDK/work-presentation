@@ -70,7 +70,7 @@ public class CacheEntity implements Serializable {
     transient EntityManager em;
 
     public static CacheEntity from(EntityManager em, String manifestationId) {
-        CacheEntity entity = em.find(CacheEntity.class, manifestationId, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
+        CacheEntity entity = em.find(CacheEntity.class, manifestationId, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
         if (entity == null) {
             entity = new CacheEntity(manifestationId);
         }
