@@ -20,5 +20,10 @@
         { "type": "DBCS", "value": "troldmænd" }
     ],
     "pid": "harrypotter",
+    "priorityKeys": {
+        "identifier": "22375733|870970",
+        "date": "1999",
+        "version": null
+    },
     "types": [ "Bog" ]
 }
