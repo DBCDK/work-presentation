@@ -24,7 +24,7 @@ UnitTest.addFixture( "SelectOwnerPriority.computeValues", function () {
     };
 
     var expected = [
-        'b', // significantly younger
+        'b', // significantly older
         'a'
     ];
 
@@ -167,25 +167,45 @@ UnitTest.addFixture( "SelectOwnerPriority.getEditionPriorities", function () {
         },
         c: {
             priorityKeys: {
-                version: "1. udgave"
+                version: "første udgave"
             }
         },
         d: {
             priorityKeys: {
                 version: null
             }
+        },
+        e: {
+            priorityKeys: {
+                version: "First ed"
+            }
+        },
+        f: {
+            priorityKeys: {
+                version: "1st edition"
+            }
+        },
+        g: {
+            priorityKeys: {
+                version: "2nd edition"
+            }
         }
     };
 
     var expected = [
         'c',
+        'e',
+        'f',
+        'g',
         'a',
         'b', // bogklub is priotitized low
         'd' // no value is very low
     ];
     var actual = SelectOwnerPriority.getEditionPriorities( values );
 
-    Assert.equalValue( "get edition value of 1st edition", actual.c, 1.0 );
+    Assert.equalValue( "get edition value of 1. udgave", actual.c, 1.0 );
+    Assert.equalValue( "get edition value of First edition", actual.e, 1.0 );
+    Assert.equalValue( "get edition value of 1st edition", actual.f, 1.0 );
 
     var order = SelectOwnerPriority.getKeysInOrder( actual );
 

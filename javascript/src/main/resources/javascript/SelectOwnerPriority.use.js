@@ -345,6 +345,68 @@ var SelectOwnerPriority = ( function () {
         return values;
     }
 
+    var ENGLISH_NUMBERS = {
+        first: 1,
+        second: 2,
+        third: 3,
+        fourth: 4,
+        fifth: 5,
+        sixth: 6,
+        seventh: 7,
+        eigth: 8,
+        ninth: 9,
+        tenth: 10,
+        "1st": 1,
+        "2nd": 2,
+        "3rd": 3,
+        "4th": 4,
+        "5th": 5,
+        "6th": 6,
+        "7th": 7,
+        "8th": 8,
+        "9th": 9,
+        "10th": 10
+    };
+
+    var ENGLISH_NUMBERS_REGEXP = ( function englishRegexp( numbers ) {
+        var or_list = '';
+        for ( var number in numbers ) {
+            if ( or_list === '' ) {
+                or_list = number;
+            } else {
+                or_list = or_list + "|" + number;
+            }
+        }
+        var regexp = "^(" + or_list + ")\\s+ed";
+        return RegExp(regexp, 'i');
+    } )( ENGLISH_NUMBERS );
+
+    var DANISH_NUMBERS = {
+        første: 1,
+        anden: 2,
+        tredie: 3,
+        fjerde: 4,
+        femte: 5,
+        sjette: 6,
+        syvende: 7,
+        ottende: 8,
+        niende: 9,
+        tiende: 10
+    };
+
+    var DANISH_NUMBERS_REGEXP = ( function danishRegesp( numbers ) {
+        var or_list = '';
+        for ( var number in numbers ) {
+            if ( or_list === '' ) {
+                or_list = number;
+            } else {
+                or_list = or_list + "|" + number;
+            }
+        }
+        var regexp = "^(" + or_list + ")\\s+udg";
+        return RegExp(regexp, 'i');
+    } )( DANISH_NUMBERS );
+
     /**
      * Function that computes a relevance based upon the version 1st edition before 2nd
      *
@@ -366,10 +428,14 @@ var SelectOwnerPriority = ( function () {
             var edition;
             if ( version === null ) {
                 edition = 25;
-            } else if ( ( match = version.match( /^(\d+)\.? udgave/ ) ) ) {
-                var edition = parseInt( match[1] );
-            } else if ( ( match = version.match( /^(\d+)\.? bogklubudgave/ ) ) ) {
-                var edition = parseInt( match[1] ) + 12;
+            } else if ( ( match = version.match( /^(\d+)\.?\s+(udg|ed|auf)/ ) ) ) { // udg(ave)  ed(ition) auf(lage)
+                edition = parseInt( match[1] );
+            } else if ( ( match = version.match( DANISH_NUMBERS_REGEXP ) ) ) {
+                edition = DANISH_NUMBERS[match[1].toLowerCase()];
+            } else if ( ( match = version.match( ENGLISH_NUMBERS_REGEXP ) ) ) {
+                edition = ENGLISH_NUMBERS[match[1].toLowerCase()];
+            } else if ( ( match = version.match( /^(\d+)\.?\s+(bogklub|ebog|magna|genudg)/ ) ) ) {
+                edition = parseInt( match[1] ) + 12;
             } else {
                 edition = 25;
             }
