@@ -345,6 +345,16 @@ var SelectOwnerPriority = ( function () {
         return values;
     }
 
+    /**
+     * Function that computes a relevance based upon the version 1st edition before 2nd
+     *
+     * @type {function}
+     * @syntax SelectOwnerPriority.getEditionPriorities( manifestations )
+     * @param {Object} manifestations as a map from id to java-type ManifestationInformation
+     * @return {Object} map of manifestation id to relevance as owner
+     * @function
+     * @name SelectOwnerPriority.getEditionPriorities
+     */
 
     function getEditionPriorities( manifestations ) {
         Log.trace( "Entering: ManifestationInfo.getEditionPriorities function" );
