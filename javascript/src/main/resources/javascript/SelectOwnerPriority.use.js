@@ -57,8 +57,8 @@ var SelectOwnerPriority = ( function () {
      *
      * @type {function}
      * @syntax SelectOwnerPriority.computeValues( manifestations )
-     * @param {Object} manifestations as a map from id tp java-type ManifestationInformation
-     * @return {Object} map of maniferstationid to relevance as owner
+     * @param {Object} manifestations as a map from id to java-type ManifestationInformation
+     * @return {Object} map of manifestation id to relevance as owner
      * @function
      * @name SelectOwnerPriority.computeValues
      */
@@ -69,6 +69,8 @@ var SelectOwnerPriority = ( function () {
         var values = getDefaultValues( manifestations );
         var ageValues = getAgeValues( manifestations );
         multiplyValues( values, ageValues );
+        var editionValues = getEditionPriorities( manifestations );
+        multiplyValues( values, editionValues );
         var typeValues = getTypePriorities( manifestations );
         multiplyValues( values, typeValues );
         var idBonus = getIdBonus( manifestations );
@@ -81,12 +83,12 @@ var SelectOwnerPriority = ( function () {
 
 
     /**
-     * Function that finds the key with the higest value in a map
+     * Function that finds the key with the highest value in a map
      *
      * @type {function}
      * @syntax SelectOwnerPriority.getKeysInOrder( values )
-     * @param {Object} map of maniferstationid to relevance as owner
-     * @return {String} maniferstationid og most relevant
+     * @param {Object} map of manifestation id to relevance as owner
+     * @return {Array} manifestation id by most relevant
      * @function
      * @name SelectOwnerPriority.getKeysInOrder
      */
@@ -103,8 +105,8 @@ var SelectOwnerPriority = ( function () {
      *
      * @type {function}
      * @syntax SelectOwnerPriority.addValues( values , addition )
-     * @param {Object} map of maniferstationid to relevance as owner
-     * @param {Object} map of maniferstationid to relevance increment
+     * @param {Object} map of manifestation id to relevance as owner
+     * @param {Object} map of manifestation id to relevance increment
      * @function
      * @name SelectOwnerPriority.addValues
      */
@@ -123,14 +125,14 @@ var SelectOwnerPriority = ( function () {
 
 
     /**
-     * Function that multitplies the 2nd maps values to the 1st
+     * Function that multiplies the 2nd maps values to the 1st
      *
      * If no value for a key is found in 2nd map, then 1 is assumed
      *
      * @type {function}
      * @syntax SelectOwnerPriority.multiplyValues( values , multiplier )
-     * @param {Object} map of maniferstationid to relevance as owner
-     * @param {Object} map of maniferstationid to relevance in-/decrease
+     * @param {Object} map of manifestation id to relevance as owner
+     * @param {Object} map of manifestation id to relevance in-/decrease
      * @function
      * @name SelectOwnerPriority.multiplyValues
      */
@@ -153,8 +155,8 @@ var SelectOwnerPriority = ( function () {
      *
      * @type {function}
      * @syntax SelectOwnerPriority.getDefaultValues( manifestations )
-     * @param {Object} manifestations as a map from id tp java-type ManifestationInformation
-     * @return {Object} map of maniferstationid to relevance as owner
+     * @param {Object} manifestations as a map from id to java-type ManifestationInformation
+     * @return {Object} map of manifestation id to relevance as owner
      * @function
      * @name SelectOwnerPriority.getDefaultValues
      */
@@ -221,8 +223,8 @@ var SelectOwnerPriority = ( function () {
      *
      * @type {function}
      * @syntax SelectOwnerPriority.getAgeValues( manifestations )
-     * @param {Object} manifestations as a map from id tp java-type ManifestationInformation
-     * @return {Object} map of maniferstationid to relevance as owner
+     * @param {Object} manifestations as a map from id to java-type ManifestationInformation
+     * @return {Object} map of manifestation id to relevance as owner
      * @function
      * @name SelectOwnerPriority.getAgeValues
      */
@@ -261,9 +263,9 @@ var SelectOwnerPriority = ( function () {
 
 
     /**
-     * Function that that finds a priority of a type
+     * Function that finds a priority of a type
      *
-     * The list TYPE_PRIORITY is ised to determine the priority of a manifestation.
+     * The list TYPE_PRIORITY is used to determine the priority of a manifestation.
      * If multiple types are present, the highest ranked is used. Each type has
      * words removed from the right, until a rank is found. Or if no rank is found,
      * the `_default_`  value is used.
@@ -315,17 +317,17 @@ var SelectOwnerPriority = ( function () {
     }
 
     /**
-     * Function that that computes a relevance based upon the types tag in the ManifestationInformation
+     * Function that computes a relevance based upon the types tag in the ManifestationInformation
      *
-     * The list TYPE_PRIORITY is ised to determine the priority of a manifestation.
+     * The list TYPE_PRIORITY is used to determine the priority of a manifestation.
      * If multiple types are present, the highest ranked is used. Each type has
      * words removed from the right, until a rank is found. Or if no rank is found,
      * the `_default_`  value is used.
      *
      * @type {function}
      * @syntax SelectOwnerPriority.getTypePriorities( manifestations )
-     * @param {Object} manifestations as a map from id tp java-type ManifestationInformation
-     * @return {Object} map of maniferstationid to relevance as owner
+     * @param {Object} manifestations as a map from id to java-type ManifestationInformation
+     * @return {Object} map of manifestation id to relevance as owner
      * @function
      * @name SelectOwnerPriority.getTypePriorities
      */
@@ -344,6 +346,33 @@ var SelectOwnerPriority = ( function () {
     }
 
 
+    function getEditionPriorities( manifestations ) {
+        Log.trace( "Entering: ManifestationInfo.getEditionPriorities function" );
+
+        var values = {};
+        for ( var id in manifestations ) {
+            var version = manifestations[id][KEYS].version;
+            var match;
+            var edition;
+            if ( version === null ) {
+                edition = 25;
+            } else if ( ( match = version.match( /^(\d+)\.? udgave/ ) ) ) {
+                var edition = parseInt( match[1] );
+            } else if ( ( match = version.match( /^(\d+)\.? bogklubudgave/ ) ) ) {
+                var edition = parseInt( match[1] ) + 12;
+            } else {
+                edition = 25;
+            }
+            edition = edition - 1; // Editions starts with 1, make then start with 0
+            values[id] = 1 / Math.log( edition + Math.E ); // The higher edition number, from the first, the less revevant - quick decay
+        }
+
+        Log.trace( "Leaving: ManifestationInfo.getEditionPriorities function" );
+
+        return values;
+    }
+
+
     /**
      * Function that computes bonus based upon the id of the manifestations
      *
@@ -353,8 +382,8 @@ var SelectOwnerPriority = ( function () {
      *
      * @type {function}
      * @syntax SelectOwnerPriority.getIdBonus( manifestations )
-     * @param {Object} manifestations as a map from id tp java-type ManifestationInformation
-     * @return {Object} map of maniferstationid to relevance as owner
+     * @param {Object} manifestations as a map from id to java-type ManifestationInformation
+     * @return {Object} map of manifestation id to relevance as owner
      * @function
      * @name SelectOwnerPriority.getIdBonus
      */
@@ -390,6 +419,7 @@ var SelectOwnerPriority = ( function () {
         multiplyValues: multiplyValues,
         getDefaultValues: getDefaultValues,
         getAgeValues: getAgeValues,
+        getEditionPriorities: getEditionPriorities,
         getTypePriorities: getTypePriorities,
         getIdBonus: getIdBonus
     };

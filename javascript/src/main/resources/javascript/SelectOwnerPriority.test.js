@@ -1,8 +1,43 @@
-use("UnitTest");
+use( "UnitTest" );
 
-use("SelectOwnerPriority");
+use( "SelectOwnerPriority" );
 
-UnitTest.addFixture("SelectOwnerPriority.addValues", function () {
+UnitTest.addFixture( "SelectOwnerPriority.computeValues", function () {
+
+    var manifestations = {
+        a: {
+            priorityKeys: {
+                identifier: "abc|710101",
+                date: "2019",
+                version: "1. udgave"
+            },
+            types: ['Bog']
+        },
+        b: {
+            priorityKeys: {
+                identifier: "def|710101",
+                date: "2016",
+                version: "2. udgave"
+            },
+            types: ['Bog']
+        }
+    };
+
+    var expected = [
+        'b', // significantly younger
+        'a'
+    ];
+
+    var actual = SelectOwnerPriority.computeValues( manifestations );
+    // values are {a:28.675177318965037, b:38.073142980733} at inception time
+    // as tuning goes on these are likely to change
+
+    var order = SelectOwnerPriority.getKeysInOrder( actual );
+
+    Assert.equalValue( "computed values", order, expected );
+} );
+
+UnitTest.addFixture( "SelectOwnerPriority.addValues", function () {
 
     var values = {
         a: 2,
@@ -21,12 +56,12 @@ UnitTest.addFixture("SelectOwnerPriority.addValues", function () {
         c: 10
     };
 
-    SelectOwnerPriority.addValues(values, additions);
+    SelectOwnerPriority.addValues( values, additions );
 
-    Assert.equalValue("add values", values, expected);
-});
+    Assert.equalValue( "add values", values, expected );
+} );
 
-UnitTest.addFixture("SelectOwnerPriority.multiplyValues", function () {
+UnitTest.addFixture( "SelectOwnerPriority.multiplyValues", function () {
 
     var values = {
         a: 2,
@@ -45,12 +80,12 @@ UnitTest.addFixture("SelectOwnerPriority.multiplyValues", function () {
         c: -16
     };
 
-    SelectOwnerPriority.multiplyValues(values, multiplications);
+    SelectOwnerPriority.multiplyValues( values, multiplications );
 
-    Assert.equalValue("multiply values", values, expected);
-});
+    Assert.equalValue( "multiply values", values, expected );
+} );
 
-UnitTest.addFixture("SelectOwnerPriority.getAgeValues", function () {
+UnitTest.addFixture( "SelectOwnerPriority.getAgeValues", function () {
 
     var values = {
         c: {
@@ -82,13 +117,13 @@ UnitTest.addFixture("SelectOwnerPriority.getAgeValues", function () {
 
     var expected = ['a', 'd', 'e', 'c', 'b'];
 
-    var actual = SelectOwnerPriority.getAgeValues(values);
-    var sorted = SelectOwnerPriority.getKeysInOrder(actual);
+    var actual = SelectOwnerPriority.getAgeValues( values );
+    var sorted = SelectOwnerPriority.getKeysInOrder( actual );
 
-    Assert.equalValue("get age values", sorted, expected);
-});
+    Assert.equalValue( "get age values", sorted, expected );
+} );
 
-UnitTest.addFixture("SelectOwnerPriority.getTypePriorities", function () {
+UnitTest.addFixture( "SelectOwnerPriority.getTypePriorities", function () {
 
     var values = {
         a: {
@@ -112,12 +147,52 @@ UnitTest.addFixture("SelectOwnerPriority.getTypePriorities", function () {
         d: 0.5
     };
 
-    var actual = SelectOwnerPriority.getTypePriorities(values);
+    var actual = SelectOwnerPriority.getTypePriorities( values );
 
-    Assert.equalValue("get type values", actual, expected);
-});
+    Assert.equalValue( "get type values", actual, expected );
+} );
 
-UnitTest.addFixture("SelectOwnerPriority.getIdBonus", function () {
+UnitTest.addFixture( "SelectOwnerPriority.getEditionPriorities", function () {
+
+    var values = {
+        a: {
+            priorityKeys: {
+                version: "3. udgave, 13. oplag (2018)"
+            }
+        },
+        b: {
+            priorityKeys: {
+                version: "1. bogklubudgave, 1. oplag (2006)"
+            }
+        },
+        c: {
+            priorityKeys: {
+                version: "1. udgave"
+            }
+        },
+        d: {
+            priorityKeys: {
+                version: null
+            }
+        }
+    };
+
+    var expected = [
+        'c',
+        'a',
+        'b', // bogklub is priotitized low
+        'd' // no value is very low
+    ];
+    var actual = SelectOwnerPriority.getEditionPriorities( values );
+
+    Assert.equalValue( "get edition value of 1st edition", actual.c, 1.0 );
+
+    var order = SelectOwnerPriority.getKeysInOrder( actual );
+
+    Assert.equalValue( "get edition values", order, expected );
+} );
+
+UnitTest.addFixture( "SelectOwnerPriority.getIdBonus", function () {
 
     var values = {
         a: {
@@ -149,7 +224,7 @@ UnitTest.addFixture("SelectOwnerPriority.getIdBonus", function () {
         d: 0
     };
 
-    var actual = SelectOwnerPriority.getIdBonus(values);
-    Assert.equalValue("get type values", actual, expected);
-});
+    var actual = SelectOwnerPriority.getIdBonus( values );
+    Assert.equalValue( "get id-bonus values", actual, expected );
+} );
 
