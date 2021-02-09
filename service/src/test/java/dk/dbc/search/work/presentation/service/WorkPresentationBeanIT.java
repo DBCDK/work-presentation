@@ -81,9 +81,9 @@ public class WorkPresentationBeanIT extends JpaBase {
                 try {
                     expected = O.readValue(dir.resolve("expected.json").toFile(), WorkInformationResponse.class);
                 } catch (IOException ioex) {
-                    log.error("Exceprion parsing expected as response: {}", ioex.getMessage());
-                    log.debug("Exceprion parsing expected as response: ", ioex);
-                    fail("Could not parse expected.json as response");
+                    log.error("Exception parsing expected as response: {}", ioex.getMessage());
+                    log.debug("Exception parsing expected as response: ", ioex);
+                    fail(String.format("Could not parse %s as response", dir.resolve("expected.json")));
                     return; // Keep ide quiet about dereferencing null-pointer
                 }
                 if (!expected.equals(actual)) {
@@ -94,7 +94,7 @@ public class WorkPresentationBeanIT extends JpaBase {
                     O.writeValue(System.out, expected);
                     System.out.println();
                 }
-                assertThat(actual, is(expected));
+                assertThat(dir.toString(), actual, is(expected));
             } catch (IOException | RuntimeException ex) {
                 System.out.println("  Exception:" + ex.getClass().getName() + ", " + ex.getMessage());
                 log.error("Exception: {}", ex.getMessage());

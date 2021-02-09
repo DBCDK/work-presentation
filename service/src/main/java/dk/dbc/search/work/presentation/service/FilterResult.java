@@ -19,11 +19,15 @@
 package dk.dbc.search.work.presentation.service;
 
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
+import dk.dbc.search.work.presentation.api.pojo.GroupInformation;
+import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import dk.dbc.search.work.presentation.service.response.ManifestationInformationResponse;
+import dk.dbc.search.work.presentation.service.response.GroupInformationResponse;
 import dk.dbc.search.work.presentation.service.response.WorkInformationResponse;
 import dk.dbc.search.work.presentation.service.solr.Solr;
 import java.util.AbstractMap;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -87,6 +91,19 @@ public class FilterResult {
                         .filter(e -> !e.getValue().isEmpty())
                         .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
         log.debug("dbUnitInformation = {}", dbUnitInformation);
+        
+        Map<String, GroupInformationResponse> groupInformation = new HashMap<>();
+        wir.groups = new LinkedHashSet<>();
+        // TODO: stream/map
+        for (Map.Entry<String, Set<ManifestationInformationResponse>> entry : dbUnitInformation.entrySet()) {
+            GroupInformation gi = new GroupInformation();
+            gi.groupId = entry.getKey();
+            GroupInformationResponse group = GroupInformationResponse.from(gi);
+            groupInformation.put(entry.getKey(), group);
+            group.records = new LinkedHashSet<>();
+            entry.getValue().forEach(group.records::add);
+            wir.groups.add(group);
+        }
 
         if (includeRelations) {
             Set<String> possibleRelations = work.dbRelUnitInformation.values()
@@ -97,19 +114,25 @@ public class FilterResult {
             Set<String> accessibleRelations = solr.getAccessibleRelations(possibleRelations, agencyId, profile, trackingId);
 
             RelationIndexComputer relationIndexes = new RelationIndexComputer(accessibleRelations, work.dbRelUnitInformation);
-            dbUnitInformation.forEach((unitId, manifestations) -> {
+//            dbUnitInformation.forEach((unitId, manifestations) -> {
+//                int[] indexes = relationIndexes.unitRelationIndexes(unitId);
+//                manifestations.forEach(m -> m.relations = indexes);
+//            });
+            // TODO put relations in group
+            groupInformation.forEach((unitId, group) -> {
                 int[] indexes = relationIndexes.unitRelationIndexes(unitId);
-                manifestations.forEach(m -> m.relations = indexes);
+                group.relations = indexes;
             });
+
             wir.relations = relationIndexes.getRelationList();
         }
 
         // Flatten the manifestations - with predictable order
-        wir.records = new LinkedHashSet<>();
-        dbUnitInformation.values().stream()
-                .flatMap(Collection::stream)
-                .sorted()
-                .forEach(wir.records::add);
+//        wir.records = new LinkedHashSet<>();
+//        dbUnitInformation.values().stream()
+//                .flatMap(Collection::stream)
+//                .sorted()
+//                .forEach(wir.records::add);
         return wir;
     }
 }

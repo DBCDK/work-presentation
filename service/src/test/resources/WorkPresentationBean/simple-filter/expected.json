@@ -9,20 +9,23 @@
         }
     ],
     "subjects": [ ],
-    "records": [
+    "groups": [
         {
-            "id": "870970-basis:00010529",
-            "types": [ "Node" ],
-            "relations": []
-        },
-        {
-            "id": "800010-katalog:99122054413305763",
-            "types": [ "Node" ],
-            "relations": []
-        },
-        {
-            "id": "763000-katalog:00010529",
-            "types": [ "Node" ],
+            "id": "unit:64",
+            "records": [
+                {
+                    "id": "870970-basis:00010529",
+                    "types": [ "Node" ]
+                },
+                {
+                    "id": "800010-katalog:99122054413305763",
+                    "types": [ "Node" ]
+                },
+                {
+                    "id": "763000-katalog:00010529",
+                    "types": [ "Node" ]
+                }
+            ],
             "relations": []
         }
     ]
