@@ -47,7 +47,7 @@ public class JavaScriptEnvironment {
     private static final Logger log = LoggerFactory.getLogger(JavaScriptEnvironment.class);
 
     QuickPool<JavascriptCacheObjectBuilder> jsWorkers;
-    QuickPool<JavascriptCacheObjectBuilder> jsOwnerSelectors;
+    QuickPool<JavascriptWorkOwnerSelector> jsOwnerSelectors;
 
     @Inject
     Config config;
@@ -66,7 +66,7 @@ public class JavaScriptEnvironment {
             jsWorkers.addObjects(config.getJsPoolSize());
 
             int jsOwnerSelectorsCount = 1 + ( config.getThreads() / 5 ); // seldom run in parallel
-            jsOwnerSelectors = new QuickPool<>(JavascriptCacheObjectBuilder.builder()
+            jsOwnerSelectors = new QuickPool<>(JavascriptWorkOwnerSelector.builder()
                     .build());
             jsOwnerSelectors.setMinIdle(0);
             jsOwnerSelectors.setMaxIdle(jsOwnerSelectorsCount);
@@ -113,7 +113,9 @@ public class JavaScriptEnvironment {
     public String getOwnerId(HashMap<String, ManifestationInformation> potentialOwners, String corepoWorkId) {
         JavascriptWorkOwnerSelector jwos = JavascriptWorkOwnerSelector.builder().build().get();
         try {
-            return jwos.selectOwner(potentialOwners);
+            return jsOwnerSelectors.exec(js -> jwos.selectOwner(potentialOwners))
+                    .raise(Exception.class)
+                    .value();
         } catch (Exception ex) {
             log.error("Error computing owner of work: {}", ex.getMessage());
             log.debug("Error computing owner of work: ", ex);
