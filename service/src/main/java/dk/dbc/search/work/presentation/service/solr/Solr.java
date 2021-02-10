@@ -61,7 +61,7 @@ public class Solr {
 
     private static final Logger log = LoggerFactory.getLogger(Solr.class);
 
-    private static final String WORK_ID_FIELD = "rec.persistentWorkId";
+    private static final String COREPO_WORK_ID_FIELD = "rec.workId";
     private static final String MANIFESTATION_ID_FIELD = "rec.manifestationId";
 
     private static final Pattern ZK = Pattern.compile("zk://([^/]*)(/.*)?/([^/]*)");
@@ -75,7 +75,7 @@ public class Solr {
     /**
      * Extract known manifestations for a workId from SolR given a profile
      *
-     * @param workId                    The work-id to find manifestations for
+     * @param corepoWorkId              The work-id to find manifestations for
      * @param agencyId                  The agency part of the profile
      * @param profile                   The symbolic name of the profile
      * @param maxExpectedManifestations How many manifestations one would expect
@@ -86,12 +86,12 @@ public class Solr {
     @CacheResult(cacheName = "solr-manifestations",
                  exceptionCacheName = "solr-manifestations-error")
     @Timed(reusable = true)
-    public Set<String> getAccessibleManifestations(@CacheKey String workId, @CacheKey String agencyId, @CacheKey String profile, int maxExpectedManifestations, String trackingId) {
+    public Set<String> getAccessibleManifestations(@CacheKey String corepoWorkId, @CacheKey String agencyId, @CacheKey String profile, int maxExpectedManifestations, String trackingId) {
         String filterQuery = profileService.filterQueryFor(SEARCH, agencyId, profile, trackingId);
-        String queryString = "{!terms f=\"" + WORK_ID_FIELD + "\"}" + workId;
+        String queryString = "{!terms f=\"" + COREPO_WORK_ID_FIELD + "\"}" + corepoWorkId;
         Set<String> manifestationIds = new HashSet<>();
         pullSolrManifestations(queryString, filterQuery, maxExpectedManifestations, manifestationIds,
-                               "Error requesting manifstationIds from solr for: " + workId);
+                               "Error requesting manifstationIds from solr for: " + corepoWorkId);
         return manifestationIds;
     }
 
