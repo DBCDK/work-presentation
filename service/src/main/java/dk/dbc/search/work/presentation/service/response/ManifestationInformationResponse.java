@@ -49,10 +49,6 @@ public class ManifestationInformationResponse implements Comparable<Manifestatio
     @Schema(example = "ether", implementation = String.class)
     public List<String> types;
 
-    // TODO: Move to GroupInformationResponse
-//    @Schema(example = "0,2,7", implementation = int.class, description = "indexes (starting with 0) in " + WorkInformationResponse.NAME + "/relations")
-//    public int[] relations;
-
     public static ManifestationInformationResponse from(ManifestationInformation mi) {
         ManifestationInformationResponse mir = new ManifestationInformationResponse();
         mir.id = mi.manifestationId;
@@ -74,7 +70,6 @@ public class ManifestationInformationResponse implements Comparable<Manifestatio
         ManifestationInformationResponse that = (ManifestationInformationResponse) o;
         return Objects.equals(id, that.id) &&
                Objects.equals(types, that.types);
-               //Arrays.equals(relations, that.relations);
     }
 
     @Override
