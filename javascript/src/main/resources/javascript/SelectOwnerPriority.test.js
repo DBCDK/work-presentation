@@ -167,7 +167,7 @@ UnitTest.addFixture( "SelectOwnerPriority.getEditionPriorities", function () {
         },
         c: {
             priorityKeys: {
-                version: "første udgave"
+                version: "f\u00F8rste udgave"
             }
         },
         d: {

@@ -382,7 +382,7 @@ var SelectOwnerPriority = ( function () {
     } )( ENGLISH_NUMBERS );
 
     var DANISH_NUMBERS = {
-        første: 1,
+        "f\u00F8rste": 1,
         anden: 2,
         tredie: 3,
         fjerde: 4,
@@ -431,7 +431,7 @@ var SelectOwnerPriority = ( function () {
             } else if ( ( match = version.match( /^(\d+)\.?\s+(udg|ed|auf)/ ) ) ) { // udg(ave)  ed(ition) auf(lage)
                 edition = parseInt( match[1] );
             } else if ( ( match = version.match( DANISH_NUMBERS_REGEXP ) ) ) {
-                edition = DANISH_NUMBERS[match[1].toLowerCase()];
+                edition = DANISH_NUMBERS[match[1].toLocaleLowerCase()];
             } else if ( ( match = version.match( ENGLISH_NUMBERS_REGEXP ) ) ) {
                 edition = ENGLISH_NUMBERS[match[1].toLowerCase()];
             } else if ( ( match = version.match( /^(\d+)\.?\s+(bogklub|ebog|magna|genudg)/ ) ) ) {
