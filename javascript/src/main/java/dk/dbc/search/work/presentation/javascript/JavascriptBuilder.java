@@ -58,7 +58,7 @@ public abstract class JavascriptBuilder<T> {
      * @return self for chaining
      */
     public JavascriptBuilder<T> scriptFileName(String scriptFileName) {
-        this.scriptFileName = setOnce("scriptFileName", this.scriptFileName, scriptFileName);
+        this.scriptFileName = checkAndPick("scriptFileName", this.scriptFileName, scriptFileName);
         return this;
     }
 
@@ -69,7 +69,7 @@ public abstract class JavascriptBuilder<T> {
      * @return self for chaining
      */
     public JavascriptBuilder<T> manifestationInformationMethod(String methodName) {
-        this.methodName = setOnce("manifestationInformationMethod", this.methodName, methodName);
+        this.methodName = checkAndPick("manifestationInformationMethod", this.methodName, methodName);
         return this;
     }
 
@@ -80,7 +80,7 @@ public abstract class JavascriptBuilder<T> {
      * @return self for chaining
      */
     public JavascriptBuilder<T> classLoader(ClassLoader classLoader) {
-        this.classLoader = setOnce("classLoader", this.classLoader, classLoader);
+        this.classLoader = checkAndPick("classLoader", this.classLoader, classLoader);
         return this;
     }
 
@@ -152,7 +152,7 @@ public abstract class JavascriptBuilder<T> {
         };
     }
 
-    private static <T> T setOnce(String field, T oldValue, T newValue) {
+    private static <T> T checkAndPick(String field, T oldValue, T newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException("Cannot set field: " + field + " to null");
         }
