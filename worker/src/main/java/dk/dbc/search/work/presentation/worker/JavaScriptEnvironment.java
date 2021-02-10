@@ -112,7 +112,7 @@ public class JavaScriptEnvironment {
     @Timed(reusable = true)
     public String getOwnerId(HashMap<String, ManifestationInformation> potentialOwners, String corepoWorkId) {
         try {
-            return jsOwnerSelectors.exec(js -> jwos.selectOwner(potentialOwners))
+            return jsOwnerSelectors.exec(js -> js.selectOwner(potentialOwners))
                     .raise(Exception.class)
                     .value();
         } catch (Exception ex) {
