@@ -117,7 +117,12 @@ UnitTest.addFixture( "ManifestationInfo.getManifestationInfoFromXmlObjects", fun
             "creators": [], //from commonData stream creator - array, empty array if no data
             "description": null, //from commonData stream dcterms:abstract - string, null if no data
             "subjects": [], //from dc stream if subject element present, array, empty array if no data
-            "types": [ "Bog" ] //from DC stream, array, most be present
+            "types": [ "Bog" ], //from DC stream, array, most be present
+            "priorityKeys": { //from DC stream for determining owner of the work, must be present
+                "identifier": "08021473|870970",
+                "date": "1972",
+                "version": "2. udgave"
+            }
         };
 
     Assert.equalValue( "get manifestation info from record with no creators and no subjects", ManifestationInfo.getManifestationInfoFromXmlObjects( manifestationId, xmlObjects ), expected );
@@ -138,7 +143,12 @@ UnitTest.addFixture( "ManifestationInfo.getManifestationInfoFromXmlObjects", fun
             "creators": [],
             "description": null,
             "subjects": [],
-            "types": [ "Bog" ]
+            "types": [ "Bog" ],
+            "priorityKeys": {
+                "identifier": "08021473|870970",
+                "date": "1972",
+                "version": "2. udgave"
+            }
         };
 
     Assert.equalValue( "get manifestation info from record with no creators and no subjects - no local data", ManifestationInfo.getManifestationInfoFromXmlObjects( manifestationId, xmlObjects ), expected );
@@ -1715,5 +1725,234 @@ UnitTest.addFixture( "ManifestationInfo.getSubjects", function() {
     ];
 
     Assert.equalValue( "get subjects from ting stream with no types", ManifestationInfo.getSubjects( commonData, localData ), expected );
+
+} );
+
+
+UnitTest.addFixture( "ManifestationInfo.getPriorityKeys", function() {
+
+    var localDataString = '<ting:localData' +
+            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+            ' xmlns:ting="http://www.dbc.dk/ting"' +
+            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dkabm:record>' +
+            '<ac:identifier>21496782|870970</ac:identifier>' +
+            '<ac:source>Bibliotekskatalog</ac:source>' +
+            '<dc:title>Det gyldne kompas</dc:title>' +
+            '<dc:title xsi:type="dkdcplus:full">Det gyldne kompas</dc:title>' +
+            '<dc:creator xsi:type="dkdcplus:aut">Philip Pullman</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Pullman, Philip</dc:creator>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">Arktis</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">England</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">Norge</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">det gode</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">det onde</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCO">fantasy</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCN">for 14 år</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">parallelle verdener</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
+            '<dcterms:abstract>Fantasy. Lyra - 11 år og forældreløs - kommer på sporet af noget mystisk og uhyggeligt, da flere og flere børn forsvinder. Løsningen findes måske højt mod nord, mellem panserbjørne og flyvende hekse</dcterms:abstract>' +
+            '<dc:description xsi:type="dkdcplus:series">Samhørende: Det gyldne kompas ; Skyggernes kniv ; Ravkikkerten</dc:description>' +
+            '<dcterms:audience xsi:type="dkdcplus:age">fra 12 år</dcterms:audience>' +
+            '<dcterms:audience>børnematerialer</dcterms:audience>' +
+            '<dkdcplus:version>2. oplag (2001)</dkdcplus:version>' +
+            '<dc:publisher>Gyldendal</dc:publisher>' +
+            '<dc:date>1996</dc:date>' +
+            '<dc:type xsi:type="dkdcplus:BibDK-Type">Bog</dc:type>' +
+            '<dc:format>illustreret</dc:format>' +
+            '<dcterms:extent>400 sider</dcterms:extent>' +
+            '<dc:identifier xsi:type="dkdcplus:ISBN">87-00-26818-6</dc:identifier>' +
+            '<dc:source>The Golden compass</dc:source>' +
+            '<dc:language xsi:type="dcterms:ISO639-2">dan</dc:language>' +
+            '<dc:language>Dansk</dc:language>' +
+            '</dkabm:record>' +
+            '</ting:localData>';
+    var commonDataString = '<empty/>';
+
+    var localData = XmlUtil.fromString( localDataString );
+    var commonData = XmlUtil.fromString( commonDataString );
+
+    var expected = {
+        "identifier": "21496782|870970",
+        "date": "1996",
+        "version": "2. oplag (2001)"
+    };
+
+    Assert.equalValue( "get priority-keys from local stream ", ManifestationInfo.getPriorityKeys( commonData, localData ), expected );
+
+
+    localDataString = '<empty/>';
+    commonDataString = '<ting:container' +
+            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+            ' xmlns:ting="http://www.dbc.dk/ting"' +
+            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dkabm:record>' +
+            '<ac:identifier>21496782|870970</ac:identifier>' +
+            '<ac:source>Bibliotekskatalog</ac:source>' +
+            '<dc:title>Det gyldne kompas</dc:title>' +
+            '<dc:title xsi:type="dkdcplus:full">Det gyldne kompas</dc:title>' +
+            '<dc:creator xsi:type="dkdcplus:aut">Philip Pullman</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Pullman, Philip</dc:creator>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">Arktis</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">England</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">Norge</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">det gode</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">det onde</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCO">fantasy</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCN">for 14 år</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">parallelle verdener</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
+            '<dcterms:abstract>Fantasy. Lyra - 11 år og forældreløs - kommer på sporet af noget mystisk og uhyggeligt, da flere og flere børn forsvinder. Løsningen findes måske højt mod nord, mellem panserbjørne og flyvende hekse</dcterms:abstract>' +
+            '<dc:description xsi:type="dkdcplus:series">Samhørende: Det gyldne kompas ; Skyggernes kniv ; Ravkikkerten</dc:description>' +
+            '<dcterms:audience xsi:type="dkdcplus:age">fra 12 år</dcterms:audience>' +
+            '<dcterms:audience>børnematerialer</dcterms:audience>' +
+            '<dkdcplus:version>2. oplag (2001)</dkdcplus:version>' +
+            '<dc:publisher>Gyldendal</dc:publisher>' +
+            '<dc:date>1996</dc:date>' +
+            '<dc:type xsi:type="dkdcplus:BibDK-Type">Bog</dc:type>' +
+            '<dc:format>illustreret</dc:format>' +
+            '<dcterms:extent>400 sider</dcterms:extent>' +
+            '<dc:identifier xsi:type="dkdcplus:ISBN">87-00-26818-6</dc:identifier>' +
+            '<dc:source>The Golden compass</dc:source>' +
+            '<dc:language xsi:type="dcterms:ISO639-2">dan</dc:language>' +
+            '<dc:language>Dansk</dc:language>' +
+            '</dkabm:record>' +
+            '</ting:container>';
+
+    localData = XmlUtil.fromString( localDataString );
+    commonData = XmlUtil.fromString( commonDataString );
+
+    expected = {
+        "identifier": "21496782|870970",
+        "date": "1996",
+        "version": "2. oplag (2001)"
+    };
+
+    Assert.equalValue( "get priority-keys from common stream ", ManifestationInfo.getPriorityKeys( commonData, localData ), expected );
+
+
+    var localDataString = '<ting:localData' +
+            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+            ' xmlns:ting="http://www.dbc.dk/ting"' +
+            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dkabm:record>' +
+            '<ac:identifier>21496782|870970</ac:identifier>' +
+            '<ac:source>Bibliotekskatalog</ac:source>' +
+            '<dc:title>Det gyldne kompas</dc:title>' +
+            '<dc:title xsi:type="dkdcplus:full">Det gyldne kompas</dc:title>' +
+            '<dc:creator xsi:type="dkdcplus:aut">Philip Pullman</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Pullman, Philip</dc:creator>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">Arktis</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">England</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">Norge</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">det gode</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">det onde</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCO">fantasy</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCN">for 14 år</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">parallelle verdener</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
+            '<dcterms:abstract>Fantasy. Lyra - 11 år og forældreløs - kommer på sporet af noget mystisk og uhyggeligt, da flere og flere børn forsvinder. Løsningen findes måske højt mod nord, mellem panserbjørne og flyvende hekse</dcterms:abstract>' +
+            '<dc:description xsi:type="dkdcplus:series">Samhørende: Det gyldne kompas ; Skyggernes kniv ; Ravkikkerten</dc:description>' +
+            '<dcterms:audience xsi:type="dkdcplus:age">fra 12 år</dcterms:audience>' +
+            '<dcterms:audience>børnematerialer</dcterms:audience>' +
+            '<dkdcplus:version>2. oplag (2001)</dkdcplus:version>' +
+            '<dc:publisher>Gyldendal</dc:publisher>' +
+            '<dc:date>1996</dc:date>' +
+            '<dc:type xsi:type="dkdcplus:BibDK-Type">Bog</dc:type>' +
+            '<dc:format>illustreret</dc:format>' +
+            '<dcterms:extent>400 sider</dcterms:extent>' +
+            '<dc:identifier xsi:type="dkdcplus:ISBN">87-00-26818-6</dc:identifier>' +
+            '<dc:source>The Golden compass</dc:source>' +
+            '<dc:language xsi:type="dcterms:ISO639-2">dan</dc:language>' +
+            '<dc:language>Dansk</dc:language>' +
+            '</dkabm:record>' +
+            '</ting:localData>';
+    commonDataString = '<ting:container' +
+            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+            ' xmlns:ting="http://www.dbc.dk/ting"' +
+            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+            '<dkabm:record>' +
+            '<ac:identifier>not-really-this</ac:identifier>' +
+            '<ac:source>Bibliotekskatalog</ac:source>' +
+            '<dc:title>Det gyldne kompas</dc:title>' +
+            '<dc:title xsi:type="dkdcplus:full">Det gyldne kompas</dc:title>' +
+            '<dc:creator xsi:type="dkdcplus:aut">Philip Pullman</dc:creator>' +
+            '<dc:creator xsi:type="oss:sort">Pullman, Philip</dc:creator>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">Arktis</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">England</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">Norge</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">det gode</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">det onde</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCO">fantasy</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCN">for 14 år</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DBCS">parallelle verdener</dc:subject>' +
+            '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
+            '<dcterms:abstract>Fantasy. Lyra - 11 år og forældreløs - kommer på sporet af noget mystisk og uhyggeligt, da flere og flere børn forsvinder. Løsningen findes måske højt mod nord, mellem panserbjørne og flyvende hekse</dcterms:abstract>' +
+            '<dc:description xsi:type="dkdcplus:series">Samhørende: Det gyldne kompas ; Skyggernes kniv ; Ravkikkerten</dc:description>' +
+            '<dcterms:audience xsi:type="dkdcplus:age">fra 12 år</dcterms:audience>' +
+            '<dcterms:audience>børnematerialer</dcterms:audience>' +
+            '<dkdcplus:version>0. oplag (1811)</dkdcplus:version>' +
+            '<dc:publisher>Gyldendal</dc:publisher>' +
+            '<dc:date>1747</dc:date>' +
+            '<dc:type xsi:type="dkdcplus:BibDK-Type">Bog</dc:type>' +
+            '<dc:format>illustreret</dc:format>' +
+            '<dcterms:extent>400 sider</dcterms:extent>' +
+            '<dc:identifier xsi:type="dkdcplus:ISBN">87-00-26818-6</dc:identifier>' +
+            '<dc:source>The Golden compass</dc:source>' +
+            '<dc:language xsi:type="dcterms:ISO639-2">dan</dc:language>' +
+            '<dc:language>Dansk</dc:language>' +
+            '</dkabm:record>' +
+            '</ting:container>';
+
+    localData = XmlUtil.fromString( localDataString );
+    commonData = XmlUtil.fromString( commonDataString );
+
+    expected = {
+        "identifier": "21496782|870970",
+        "date": "1996",
+        "version": "2. oplag (2001)"
+    };
+
+    Assert.equalValue( "get priority-keys from local before common stream ", ManifestationInfo.getPriorityKeys( commonData, localData ), expected );
 
 } );

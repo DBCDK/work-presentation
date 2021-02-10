@@ -96,8 +96,13 @@ public class WorkTree extends HashMap<String, UnitTree> {
                     });
                 }
             });
+            throw new IllegalStateException("No primary set");
         }
         return primary;
+    }
+
+    public void setPrimaryManifestationId(String primary) {
+        this.primary = primary;
     }
 
     public String getPersistentWorkId() {
@@ -128,12 +133,12 @@ public class WorkTree extends HashMap<String, UnitTree> {
 
     @Override
     public String toString() {
-        return "WorkTree{" + "corepoWorkId=" + corepoWorkId + ", primary=" + getPrimaryManifestationId() + ", modified=" + modified + ", relations=" + relations + ", " + super.toString() + "}";
+        return "WorkTree{" + "corepoWorkId=" + corepoWorkId + ", primary=" + primary + ", modified=" + modified + ", relations=" + relations + ", " + super.toString() + "}";
     }
 
     public void prettyPrint(Consumer<String> logger) {
         println(logger, "Work: %s", corepoWorkId);
-        println(logger, " |-- primary: %s", getPrimaryManifestationId());
+        println(logger, " |-- primary: %s", primary);
         println(logger, " %s modified: %s", isEmpty() ? "`--" : "|--", modified);
         boolean hasWorkRelations = !relations.isEmpty();
         for (Iterator<Entry<String, UnitTree>> units = entrySet().iterator() ; units.hasNext() ;) {

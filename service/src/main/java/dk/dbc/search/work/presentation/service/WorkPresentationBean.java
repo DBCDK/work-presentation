@@ -215,7 +215,7 @@ public class WorkPresentationBean {
     WorkInformationResponse processRequest(String workId, String agencyId, String profile, boolean includeRelations, String trackingId) {
         WorkObjectEntity work = WorkObjectEntity.readOnlyFrom(em, workId);
         if (work != null) {
-            return filterResult.processWork(work.getContent(), agencyId, profile, includeRelations, trackingId);
+            return filterResult.processWork(work.getCorepoWorkId(), work.getContent(), agencyId, profile, includeRelations, trackingId);
         }
         if (workId.startsWith(WORK_OF)) {
             WorkContainsEntity wc = WorkContainsEntity.readOnlyFrom(em, workId.substring(WORK_OF_LEN));

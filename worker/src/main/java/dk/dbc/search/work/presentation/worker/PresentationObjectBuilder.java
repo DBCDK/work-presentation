@@ -88,7 +88,7 @@ public class PresentationObjectBuilder {
                 if (tree.isEmpty()) {
                     workConsolidator.deleteWork(corepoWorkId);
                 } else {
-                    WorkInformation content = workConsolidator.buildWorkInformation(tree);
+                    WorkInformation content = workConsolidator.buildWorkInformation(tree, corepoWorkId);
                     workConsolidator.saveWork(corepoWorkId, tree, content);
                 }
             } catch (EJBException ex) {

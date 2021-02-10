@@ -20,7 +20,6 @@ package dk.dbc.search.work.presentation.worker;
 
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -164,6 +163,7 @@ public class BeanFactory implements AutoCloseable {
     private void setupWorkConsolidator(WorkConsolidator bean) {
         bean.em = entityManager;
         bean.asyncCacheContentBuilder = getAsyncCacheContentBuilder();
+        bean.jsEnv = getJavaScriptEnvironment();
     }
 
     public Worker getWorker() {

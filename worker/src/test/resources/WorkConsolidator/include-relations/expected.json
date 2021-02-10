@@ -3,17 +3,17 @@
     "subjects": [ { "type": "KW", "value": "mice" }, { "type": "KW",
             "value": "men" }, { "type": "KW", "value": "elephants" } ],
     "title": "Two Things",
-    "workId": "work-of:870970-basis:0",
+    "workId": "work-of:870970-basis:00",
     "dbUnits": {
         "unit:1": [
             {
-                "pid": "870970-basis:0",
+                "pid": "870970-basis:00",
                 "types": [ "book" ]
             }
         ],
         "unit:2": [
             {
-                "pid": "870970-basis:1",
+                "pid": "870970-basis:10",
                 "types": [ "ebook" ]
             }
         ]

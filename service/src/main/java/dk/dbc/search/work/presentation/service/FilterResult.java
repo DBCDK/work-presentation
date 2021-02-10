@@ -52,11 +52,13 @@ public class FilterResult {
      * <p>
      * Tasks:
      * <p>
-     * Filter what is visible to the user (TODO)
+     * Filter what is visible to the user
      * <p>
      * Flatten the unit to manifestation tree
      *
-     * @param work             the work as stored in the database
+     * @param corepoWorkId     The work id as needed to limit access to its
+     *                         parts
+     * @param work             The work as stored in the database
      * @param agencyId         The 1st part of the filter specification
      * @param profile          The 2nd part of the filter specification
      * @param includeRelations If relations should be included in the answer
@@ -64,7 +66,7 @@ public class FilterResult {
      * @return the work as presented to the user
      */
     @Timed(reusable = true)
-    public WorkInformationResponse processWork(WorkInformation work, String agencyId, String profile, boolean includeRelations, String trackingId) {
+    public WorkInformationResponse processWork(String corepoWorkId, WorkInformation work, String agencyId, String profile, boolean includeRelations, String trackingId) {
         log.debug("work = {}", work);
 
         WorkInformationResponse wir = WorkInformationResponse.from(work);
@@ -73,7 +75,7 @@ public class FilterResult {
                 .stream()
                 .mapToInt(Set::size)
                 .sum();
-        Set<String> visibleManifestations = solr.getAccessibleManifestations(work.workId, agencyId, profile, manifestationCount, trackingId);
+        Set<String> visibleManifestations = solr.getAccessibleManifestations(corepoWorkId, agencyId, profile, manifestationCount, trackingId);
 
         // Filtered manifests
         Map<String, Set<ManifestationInformationResponse>> dbUnitInformation =

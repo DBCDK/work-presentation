@@ -28,5 +28,10 @@
         { "type": "DBCS", "value": "piger" },
         { "type": "DK5", "value": "sk" }
     ],
+    "priorityKeys": {
+        "identifier": "28394438|300167",
+        "date": "2010",
+        "version": "1. udgave, 11. oplag (2018)"
+    },
     "types": [ "Bog" ]
 }

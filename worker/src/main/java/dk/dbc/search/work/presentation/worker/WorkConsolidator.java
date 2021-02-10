@@ -75,6 +75,9 @@ public class WorkConsolidator {
     @Inject
     AsyncCacheContentBuilder asyncCacheContentBuilder;
 
+    @Inject
+    JavaScriptEnvironment jsEnv;
+
     /**
      * Remove a work record from the database
      *
@@ -140,19 +143,23 @@ public class WorkConsolidator {
      * This contains the sum of all the information that can be given from the
      * web-service. Which will then filter the content before presentation.
      *
-     * @param tree The structure of the entire work
+     * @param tree         The structure of the entire work
+     * @param corepoWorkId For logging
      * @return Work record
      */
     @Timed(reusable = true)
-    public WorkInformation buildWorkInformation(WorkTree tree) {
+    public WorkInformation buildWorkInformation(WorkTree tree, String corepoWorkId) {
+
         WorkInformation work = new WorkInformation();
 
         Map<String, ManifestationInformation> manifestationCache = buildManifestationCache(tree);
 
+        String ownerId = findOwnerOfWork(tree, manifestationCache, corepoWorkId);
+        tree.setPrimaryManifestationId(ownerId);
+
         work.workId = tree.getPersistentWorkId();
 
         // Copy from owner
-        String ownerId = tree.getPrimaryManifestationId();
         ManifestationInformation primary = manifestationCache.get(ownerId);
         if (primary == null) {
             throw new IllegalStateException("primary: " + ownerId + " could not be resolved");
@@ -218,9 +225,46 @@ public class WorkConsolidator {
     }
 
     /**
+     * find the most relevant manifestation, and use as owner for the work
+     *
+     * @param tree               The work tree, that describes the
+     *                           corepo-work/unit relations
+     * @param manifestationCache all the cached manifestationIds
+     * @param corepoWorkId       the corepoWorkId for logging
+     * @return the owner of the work
+     */
+    protected String findOwnerOfWork(WorkTree tree, Map<String, ManifestationInformation> manifestationCache, String corepoWorkId) {
+        HashMap<String, ManifestationInformation> potentialOwners = findPotentialOwners(tree, manifestationCache);
+        return jsEnv.getOwnerId(potentialOwners, corepoWorkId);
+    }
+
+    /**
+     * Extract the potential owners (primary object in each unit), into a map
+     *
+     * @param tree               The work tree, that describes the
+     *                           corepo-work/unit relations
+     * @param manifestationCache all the cached manifestationIds
+     * @return map of primary-objects to ManifestationInformation
+     */
+    protected HashMap<String, ManifestationInformation> findPotentialOwners(WorkTree tree, Map<String, ManifestationInformation> manifestationCache) {
+        HashMap<String, ManifestationInformation> potentialOwners = new HashMap<>();
+        tree.forEach((unitId, unit) -> {
+            Set<Map.Entry<String, ObjectTree>> entrySet = unit.entrySet();
+            String objectId = entrySet.stream()
+                    .filter(e -> e.getValue().isPrimary())
+                    .map(Map.Entry::getKey)
+                    .findAny()
+                    .orElseThrow(() -> new IllegalStateException("Cannot find primary object for unit: " + unitId));
+            ManifestationInformation mi = manifestationCache.get(objectId);
+            potentialOwners.put(objectId, mi);
+        });
+        return potentialOwners;
+    }
+
+    /**
      * Find series information
      *
-     * @param allSI Map of series-information -> number-of-instances
+     * @param allSI   Map of series-information -> number-of-instances
      * @param primary which to prioritize in case of equal usage
      * @return a series-information for the work
      */
