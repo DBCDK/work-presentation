@@ -111,7 +111,6 @@ public class JavaScriptEnvironment {
      */
     @Timed(reusable = true)
     public String getOwnerId(HashMap<String, ManifestationInformation> potentialOwners, String corepoWorkId) {
-        JavascriptWorkOwnerSelector jwos = JavascriptWorkOwnerSelector.builder().build().get();
         try {
             return jsOwnerSelectors.exec(js -> jwos.selectOwner(potentialOwners))
                     .raise(Exception.class)
