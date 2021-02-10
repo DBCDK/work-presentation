@@ -20,7 +20,6 @@ package dk.dbc.search.work.presentation.service;
 
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.api.pojo.GroupInformation;
-import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import dk.dbc.search.work.presentation.service.response.ManifestationInformationResponse;
 import dk.dbc.search.work.presentation.service.response.GroupInformationResponse;
 import dk.dbc.search.work.presentation.service.response.WorkInformationResponse;
