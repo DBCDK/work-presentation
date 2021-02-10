@@ -91,18 +91,19 @@ public class FilterResult {
                         .filter(e -> !e.getValue().isEmpty())
                         .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
         log.debug("dbUnitInformation = {}", dbUnitInformation);
-        
+
+        // Adding groups/units
         Map<String, GroupInformationResponse> groupInformation = new HashMap<>();
         wir.groups = new LinkedHashSet<>();
-        // TODO: stream/map
         for (Map.Entry<String, Set<ManifestationInformationResponse>> entry : dbUnitInformation.entrySet()) {
             GroupInformation gi = new GroupInformation();
             gi.groupId = entry.getKey();
             GroupInformationResponse group = GroupInformationResponse.from(gi);
             groupInformation.put(entry.getKey(), group);
+            wir.groups.add(group);
+            // Add manifestations for the group
             group.records = new LinkedHashSet<>();
             entry.getValue().forEach(group.records::add);
-            wir.groups.add(group);
         }
 
         if (includeRelations) {
@@ -114,25 +115,14 @@ public class FilterResult {
             Set<String> accessibleRelations = solr.getAccessibleRelations(possibleRelations, agencyId, profile, trackingId);
 
             RelationIndexComputer relationIndexes = new RelationIndexComputer(accessibleRelations, work.dbRelUnitInformation);
-//            dbUnitInformation.forEach((unitId, manifestations) -> {
-//                int[] indexes = relationIndexes.unitRelationIndexes(unitId);
-//                manifestations.forEach(m -> m.relations = indexes);
-//            });
-            // TODO put relations in group
             groupInformation.forEach((unitId, group) -> {
                 int[] indexes = relationIndexes.unitRelationIndexes(unitId);
+                log.debug("unit {}, relations = {}", unitId, indexes);
                 group.relations = indexes;
             });
 
             wir.relations = relationIndexes.getRelationList();
         }
-
-        // Flatten the manifestations - with predictable order
-//        wir.records = new LinkedHashSet<>();
-//        dbUnitInformation.values().stream()
-//                .flatMap(Collection::stream)
-//                .sorted()
-//                .forEach(wir.records::add);
         return wir;
     }
 }

@@ -21,17 +21,15 @@ package dk.dbc.search.work.presentation.service.response;
 import dk.dbc.search.work.presentation.api.pojo.GroupInformation;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 /**
  *
- * @author Morten Bøgeskov (mb@dbc.dk)
+ * @author Thomas Pii (thp@dbc.dk)
  */
 @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
 @Schema(name = GroupInformationResponse.NAME)
