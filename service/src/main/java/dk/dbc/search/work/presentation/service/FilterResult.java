@@ -99,10 +99,11 @@ public class FilterResult {
             gi.groupId = entry.getKey();
             GroupInformationResponse group = GroupInformationResponse.from(gi);
             groupInformation.put(entry.getKey(), group);
-            wir.groups.add(group);
             // Add manifestations for the group
             group.records = new LinkedHashSet<>();
             entry.getValue().forEach(group.records::add);
+            log.debug("Adding group {}", group);
+            wir.groups.add(group);
         }
 
         if (includeRelations) {
@@ -116,7 +117,7 @@ public class FilterResult {
             RelationIndexComputer relationIndexes = new RelationIndexComputer(accessibleRelations, work.dbRelUnitInformation);
             groupInformation.forEach((unitId, group) -> {
                 int[] indexes = relationIndexes.unitRelationIndexes(unitId);
-                log.debug("unit {}, relations = {}", unitId, indexes);
+                log.debug("Adding relations for unit {}, relations = {}", unitId, indexes);
                 group.relations = indexes;
             });
 

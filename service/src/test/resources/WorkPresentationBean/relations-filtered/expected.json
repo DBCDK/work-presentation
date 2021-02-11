@@ -8,7 +8,6 @@
     "subjects": [ ],
     "groups": [
         {
-            "id": "unit:64",
             "records": [
                 {
                     "id": "870970-basis:00010529",
@@ -30,7 +29,6 @@
             "relations": [ 0 ]
         },
         {
-            "id": "unit:7892641",
             "records": [
                 {
                     "id": "830520-katalog:000025251",

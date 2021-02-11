@@ -44,9 +44,6 @@ public class GroupInformationResponse implements Comparable<GroupInformationResp
         public static final String NAME = GroupInformationResponse.NAME + "_list";
     }
 
-    @Schema(example = "id-enti:fier")
-    public String id;
-
     @Schema(example = "0,2,7", implementation = int.class, description = "indexes (starting with 0) in " + WorkInformationResponse.NAME + "/relations")
     public int[] relations;
 
@@ -55,14 +52,14 @@ public class GroupInformationResponse implements Comparable<GroupInformationResp
 
     public static GroupInformationResponse from(GroupInformation gi) {
         GroupInformationResponse gir = new GroupInformationResponse();
-        gir.id = gi.groupId;
         // gir.records is computed in FilterResult.processWork()
         return gir;
     }
 
     @Override
     public int compareTo(GroupInformationResponse o) {
-        return id.compareTo(o.id);
+        // TODO compare records?
+        return 0;
     }
 
     @Override
@@ -72,17 +69,17 @@ public class GroupInformationResponse implements Comparable<GroupInformationResp
         if (o == null || getClass() != o.getClass())
             return false;
         GroupInformationResponse that = (GroupInformationResponse) o;
-        return Objects.equals(id, that.id) &&
+        return Objects.equals(records, that.records) &&
                Arrays.equals(relations, that.relations);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(records);
     }
 
     @Override
     public String toString() {
-        return "GroupInformationResponse{" + "id=" + id + '}';
+        return "GroupInformationResponse{" + "records=" + records + '}';
     }
 }
