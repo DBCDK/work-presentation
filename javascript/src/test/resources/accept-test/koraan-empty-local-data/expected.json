@@ -1,14 +1,16 @@
 {
   "title" : "Koraan Magid",
   "fullTitle" : "Koraan Magid",
-  "description" : null,
-  "pid" : "koraan-empty-local-data",
   "creators" : [ ],
-  "subjects" : [
-        {
-            "type" : "DK5",
-            "value" : "29.7"
-        }
-    ],
+  "subjects" : [ {
+    "type" : "DK5",
+    "value" : "29.7"
+  } ],
+  "priorityKeys" : {
+    "identifier" : "00121703|870970",
+    "date" : "19??",
+    "version" : null
+  },
+  "pid" : "koraan-empty-local-data",
   "types" : [ "Bog" ]
 }

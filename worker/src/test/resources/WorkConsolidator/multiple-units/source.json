@@ -2,20 +2,28 @@
     "primary": "870970-basis:0",
     "units": {
         "unit:1": {
-            "870970-basis:0": {
+            "870970-basis:00": {
                 "localData.870970-basis": {
                     "title": "Two Things",
                     "creators": [ { "type": "aut", "value": "Me" } ],
-                    "subjects": [ { "type": "KW", "value": "mice"}, { "type": "KW", "value": "men"} ]
+                    "subjects": [ { "type": "KW", "value": "mice"}, { "type": "KW", "value": "men"} ],
+                    "priorityKeys": {
+                        "identifier": "xx|000000",
+                        "date": "2020"
+                    }
                 }
             }
         },
         "unit:2": {
-            "870970-basis:1": {
+            "870970-basis:10": {
                 "localData.870970-basis": {
                     "title": "Two Things",
                     "creators": [ { "type": "aut", "value": "Me" }, { "type": "aut", "value": "You" } ],
-                    "subjects": [ { "type": "KW", "value": "mice"}, { "type": "KW", "value": "elephants"} ]
+                    "subjects": [ { "type": "KW", "value": "mice"}, { "type": "KW", "value": "elephants"} ],
+                    "priorityKeys": {
+                        "identifier": "xx|000000",
+                        "date": "2020"
+                    }
                 }
             }
         }

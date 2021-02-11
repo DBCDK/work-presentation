@@ -6,6 +6,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @SuppressFBWarnings("UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD")
@@ -33,6 +34,9 @@ public class ManifestationInformation implements Serializable {
     @JsonProperty("types")
     public List<String> materialTypes;
 
+    @JsonProperty()
+    public Map<String, String> priorityKeys;
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -47,12 +51,13 @@ public class ManifestationInformation implements Serializable {
                Objects.equals(creators, that.creators) &&
                Objects.equals(description, that.description) &&
                Objects.equals(subjects, that.subjects) &&
-               Objects.equals(materialTypes, that.materialTypes);
+               Objects.equals(materialTypes, that.materialTypes) &&
+               Objects.equals(priorityKeys, that.priorityKeys);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(manifestationId, title, fullTitle, series, creators, description, subjects, materialTypes);
+        return Objects.hash(manifestationId, title, fullTitle, series, creators, description, subjects, materialTypes, priorityKeys);
     }
 
     @Override
@@ -66,6 +71,7 @@ public class ManifestationInformation implements Serializable {
                ", description='" + description + '\'' +
                ", subjects=" + subjects +
                ", types=" + materialTypes +
+               ", priorityKeys=" + priorityKeys +
                '}';
     }
 

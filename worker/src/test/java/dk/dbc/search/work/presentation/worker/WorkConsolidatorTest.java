@@ -72,6 +72,11 @@ public class WorkConsolidatorTest {
             @Override
             void setWorkContains(WorkTree tree) {
             }
+
+            @Override
+            protected String findOwnerOfWork(WorkTree tree, Map<String, ManifestationInformation> manifestationCache, String corepoWorkId) {
+                return findPotentialOwners(tree, manifestationCache).keySet().stream().sorted().findFirst().orElse("ANY");
+            }
         };
         workConsolidator.asyncCacheContentBuilder = new AsyncCacheContentBuilder() {
             @Override
@@ -82,7 +87,7 @@ public class WorkConsolidatorTest {
             }
         };
 
-        WorkInformation actual = workConsolidator.buildWorkInformation(workTree);
+        WorkInformation actual = workConsolidator.buildWorkInformation(workTree, "corepo:any");
 
         WorkInformation expected = O.readValue(dir.resolve("expected.json").toFile(), WorkInformation.class);
 
@@ -128,16 +133,15 @@ public class WorkConsolidatorTest {
         return stream.substring(CacheContentBuilder.LOCAL_DATA_LEN) + ":" + objId.substring(objId.indexOf(':') + 1);
     }
 
+    // Any object whose id ends in 0 is primary
     public WorkTree workTreeFrom(Source source) {
         WorkTree workTree = new WorkTree("work:-1", Instant.now());
 
         source.units.forEach((unitId, unit) -> {
-            boolean primaryUnit = unit.entrySet().stream()
-                    .anyMatch(e -> objectHasPrimary(e.getValue(), e.getKey(), source.primary));
-            UnitTree unitTree = new UnitTree(primaryUnit, Instant.now());
+            UnitTree unitTree = new UnitTree(Instant.now());
             workTree.put(unitId, unitTree);
             unit.forEach((objId, obj) -> {
-                boolean primaryObj = objectHasPrimary(obj, objId, source.primary);
+                boolean primaryObj = objId.endsWith("0");
                 ObjectTree objectTree = new ObjectTree(primaryObj, Instant.now());
                 unitTree.put(objId, objectTree);
                 obj.forEach((localStream, mani) -> {

@@ -1,5 +1,5 @@
 {
-  "workId" : "work-of:870970-basis:0",
+  "workId" : "work-of:870970-basis:00",
   "title" : "Two Things",
   "creators" : [ {
     "type" : "aut",
@@ -17,10 +17,10 @@
   } ],
   "dbUnits" : {
     "unit:2" : [ {
-      "pid" : "870970-basis:1"
+      "pid" : "870970-basis:10"
     } ],
     "unit:1" : [ {
-      "pid" : "870970-basis:0"
+      "pid" : "870970-basis:00"
     } ]
   },
   "dbRelUnits" : {

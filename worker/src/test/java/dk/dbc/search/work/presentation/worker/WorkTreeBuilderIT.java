@@ -18,6 +18,7 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
+import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.worker.tree.WorkTree;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
@@ -40,6 +41,7 @@ public class WorkTreeBuilderIT extends JpaBase {
                     WorkTreeBuilder workTreeBuilder = bf.getWorkTreeBuilder();
                     WorkTree tree = workTreeBuilder.buildTree("work:62");
                     tree.prettyPrint(System.out::println);
+                    tree.setPrimaryManifestationId("870970-basis:00010529");
                     assertThat(tree.getPersistentWorkId(), is("work-of:870970-basis:00010529"));
                 });
     }
@@ -99,14 +101,31 @@ public class WorkTreeBuilderIT extends JpaBase {
                 });
     }
 
-    public void testTraekopFuglen() throws Exception {
-        System.out.println("testTraekopFuglen");
+    public void testDjaevlekrig() throws Exception {
+        System.out.println("testDjaevlekrig");
+        String corepoWorkId = "work:837840";
         withConfigEnv()
                 .jpaWithBeans(bf -> {
                     WorkTreeBuilder workTreeBuilder = bf.getWorkTreeBuilder();
-                    WorkTree tree = workTreeBuilder.buildTree("work:754877");
+                    WorkTree tree = workTreeBuilder.buildTree(corepoWorkId);
                     tree.prettyPrint(System.out::println);
+                    WorkConsolidator workConsolidator = bf.getWorkConsolidator();
+                    WorkInformation content = workConsolidator.buildWorkInformation(tree, corepoWorkId);
+                    workConsolidator.saveWork(corepoWorkId, tree, content);
                 });
     }
 
+    public void testTraekopFuglen() throws Exception {
+        System.out.println("testTraekopFuglen");
+        String corepoWorkId = "work:754877";
+        withConfigEnv()
+                .jpaWithBeans(bf -> {
+                    WorkTreeBuilder workTreeBuilder = bf.getWorkTreeBuilder();
+                    WorkTree tree = workTreeBuilder.buildTree(corepoWorkId);
+                    tree.prettyPrint(System.out::println);
+                    WorkConsolidator workConsolidator = bf.getWorkConsolidator();
+                    WorkInformation content = workConsolidator.buildWorkInformation(tree, corepoWorkId);
+                    workConsolidator.saveWork(corepoWorkId, tree, content);
+                });
+    }
 }

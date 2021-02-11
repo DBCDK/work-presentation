@@ -35,18 +35,12 @@ public class UnitTree extends HashMap<String, ObjectTree> {
 
     private static final long serialVersionUID = 0xD3F195C554AB12ACL;
 
-    private final boolean primary;
     private final Instant modified;
     private final HashSet<TypedRelation> relations;
 
-    public UnitTree(boolean primary, Instant modified) {
-        this.primary = primary;
+    public UnitTree(Instant modified) {
         this.modified = modified;
         this.relations = new HashSet<>();
-    }
-
-    public boolean isPrimary() {
-        return primary;
     }
 
     public Instant getModified() {
@@ -63,7 +57,7 @@ public class UnitTree extends HashMap<String, ObjectTree> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), primary, modified, relations);
+        return Objects.hash(super.hashCode(), modified, relations);
     }
 
     @Override
@@ -71,13 +65,12 @@ public class UnitTree extends HashMap<String, ObjectTree> {
         if (!super.equals(obj) || getClass() != obj.getClass())
             return false;
         final UnitTree other = (UnitTree) obj;
-        return this.primary == other.primary &&
-               Objects.equals(this.modified, other.modified) &&
+        return Objects.equals(this.modified, other.modified) &&
                Objects.equals(this.relations, other.relations);
     }
 
     @Override
     public String toString() {
-        return "UnitTree{" + "primary=" + primary + ", modified=" + modified + ", " + super.toString() + ", relations=" + relations + '}';
+        return "UnitTree{modified=" + modified + ", " + super.toString() + ", relations=" + relations + '}';
     }
 }

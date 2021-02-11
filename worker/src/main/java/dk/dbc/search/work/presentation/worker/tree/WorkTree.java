@@ -87,17 +87,13 @@ public class WorkTree extends HashMap<String, UnitTree> {
         if (isEmpty())
             return null;
         if (primary == null) {
-            forEach((unitK, unitV) -> {
-                if (unitV.isPrimary()) {
-                    unitV.forEach((objK, objV) -> {
-                        if (objV.isPrimary()) {
-                            primary = objK;
-                        }
-                    });
-                }
-            });
+            throw new IllegalStateException("No primary set");
         }
         return primary;
+    }
+
+    public void setPrimaryManifestationId(String primary) {
+        this.primary = primary;
     }
 
     public String getPersistentWorkId() {
@@ -128,12 +124,12 @@ public class WorkTree extends HashMap<String, UnitTree> {
 
     @Override
     public String toString() {
-        return "WorkTree{" + "corepoWorkId=" + corepoWorkId + ", primary=" + getPrimaryManifestationId() + ", modified=" + modified + ", relations=" + relations + ", " + super.toString() + "}";
+        return "WorkTree{" + "corepoWorkId=" + corepoWorkId + ", primary=" + primary + ", modified=" + modified + ", relations=" + relations + ", " + super.toString() + "}";
     }
 
     public void prettyPrint(Consumer<String> logger) {
         println(logger, "Work: %s", corepoWorkId);
-        println(logger, " |-- primary: %s", getPrimaryManifestationId());
+        println(logger, " |-- primary: %s", primary);
         println(logger, " %s modified: %s", isEmpty() ? "`--" : "|--", modified);
         boolean hasWorkRelations = !relations.isEmpty();
         for (Iterator<Entry<String, UnitTree>> units = entrySet().iterator() ; units.hasNext() ;) {
@@ -143,7 +139,6 @@ public class WorkTree extends HashMap<String, UnitTree> {
             String unitPrefix = units.hasNext() ? "|--" : "`--";
             println(logger, " %s Unit: %s", unitPrefix, nextUnit.getKey());
             unitPrefix = units.hasNext() || hasWorkRelations ? "|  " : "   ";
-            println(logger, " %s  |-- primary: %s", unitPrefix, unit.isPrimary());
             println(logger, " %s  %s modified: %s", unitPrefix, unit.isEmpty() && !hasRelations ? "`--" : "|--", unit.getModified());
 
             for (Iterator<Entry<String, ObjectTree>> objs = unit.entrySet().iterator() ; objs.hasNext() ;) {

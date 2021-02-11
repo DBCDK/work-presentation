@@ -6,14 +6,22 @@
                 "localData.870970-basis": {
                     "title": "Two Things",
                     "creators": [ { "type": "aut", "value": "Me" } ],
-                    "subjects": [ { "type": "KW", "value": "mice"}, { "type": "KW", "value": "men"} ]
+                    "subjects": [ { "type": "KW", "value": "mice"}, { "type": "KW", "value": "men"} ],
+                    "priorityKeys": {
+                        "identifier": "xx|000000",
+                        "date": "2020"
+                    }
                 }
             },
             "870970-basis:1": {
                 "localData.870970-basis": {
                     "title": "Two Things",
                     "creators": [ { "type": "aut", "value": "Me" }, { "type": "aut", "value": "You" } ],
-                    "subjects": [ { "type": "KW", "value": "mice"}, { "type": "KW", "value": "elephants"} ]
+                    "subjects": [ { "type": "KW", "value": "mice"}, { "type": "KW", "value": "elephants"} ],
+                    "priorityKeys": {
+                        "identifier": "xx|000000",
+                        "date": "2020"
+                    }
                 }
             }
         }

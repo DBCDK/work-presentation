@@ -33,7 +33,8 @@ var ManifestationInfo = (function() {
                 "creators": [], //from commonData stream creator - array, empty array if no data
                 "description": null, //from commonData stream dcterms:abstract - string, null if no data
                 "subjects": [], //from common and local stream if subject element present, array, empty array if no data
-                "types": [] //from DC stream, array, must be present
+                "types": [], //from DC stream, array, must be present
+                "priorityKeys": {} //from DC stream for determining owner of the work, must be present
             };
 
         //check that we have necessary data streams
@@ -57,6 +58,7 @@ var ManifestationInfo = (function() {
         manifestationObject.description = getAbstract( commonDataXml, localDataXml );
         manifestationObject.subjects = getSubjects( commonDataXml, localDataXml );
         manifestationObject.types = getTypes( dcStreamXml );
+        manifestationObject.priorityKeys = getPriorityKeys( commonDataXml, localDataXml );
 
         Log.trace( "Leaving: ManifestationInfo.getManifestationInfoFromXmlObjects function" );
 
@@ -345,7 +347,7 @@ var ManifestationInfo = (function() {
      * or if not present there the common data stream
      *
      * @type {function}
-     * @syntax ManifestationInfo.getSubjects( tingStreamXml )
+     * @syntax ManifestationInfo.getSubjects( commonData, localData )
      * @param {Document} commonData the common stream as xml
      * @param {Document} localData the local stream as xml
      * @return {Array} the extracted subjects
@@ -392,6 +394,97 @@ var ManifestationInfo = (function() {
     }
 
 
+    /**
+     * Function that creates a function, which in turn extracts data from the
+     * dkabm part or the localData (if such exists) or alternatively from the
+     * commonData, falling back to null if no value could be extracted. Note
+     * that the value is trimmed (leading/trailing whitespace is removed), and
+     * once that is done, it is considered missing if it is empty
+     *
+     * This is not exposed beyond the module
+     *
+     * @type {function}
+     * @syntax dkabmGetterFunction( commonData, localData )
+     * @param {Document} commonData the common stream as xml
+     * @param {Document} localData the local stream as xml
+     * @return {function} that extracts text values from dkabm
+     * @function
+     */
+
+    function dkabmGetterFunction( commonData, localData ) {
+        Log.trace( "Entering: ManifestationInfo.getSubjects function" );
+
+        var localDkabm = XPath.selectNode( "/ting:localData/dkabm:record", localData );
+        var commonDkabm = XPath.selectNode( "/ting:container/dkabm:record", commonData );
+
+        /**
+         * Function that creates a function, which in turn extracts data from the
+         * dkabm part or the localData (if such exists) or alternatively from the
+         * commonData, falling back to null if no value could be extracted. Note
+         * that the value is trimmed (leading/trailing whitespace is removed), and
+         * once that is done, it is considered missing if it is empty
+         *
+         * @type {function}
+         * @syntax dkabmGetterFunction( commonData, localData )( xpath )
+         * @param {String} xpath Expression to extract data by
+         * @return {String} content of xpath of either localData og commonDatas dkabm
+         * @function
+         */
+        var func = function dkabmGetter( xpath ) {
+
+            var value = "";
+
+            if ( value === "" && localDkabm !== undefined ) {
+                value = XPath.selectText( xpath, localDkabm ).trim();
+            }
+            if ( value === "" && commonDkabm !== undefined ) {
+                value = XPath.selectText( xpath, commonDkabm ).trim();
+            }
+
+            if ( value === "" ) {
+                return null;
+            }
+
+            return value;
+        };
+
+        Log.trace( "Leaving: ManifestationInfo.getSubjects function" );
+
+        return func;
+    }
+
+
+    /**
+     * Function that extracts priority-keys, for determining which manifestation
+     * should be the owner of the work
+     *
+     * @type {function}
+     * @syntax ManifestationInfo.getPriorityKeys( commonData, localData )
+     * @param {Document} commonData the common stream as xml
+     * @param {Document} localData the local stream as xml
+     * @return {Object} String-to-String of selected fields from the dkabm
+     * @function
+     * @name ManifestationInfo.getPriorityKeys
+     */
+
+    function getPriorityKeys( commonData, localData ) {
+
+        Log.trace( "Entering: ManifestationInfo.getPriorityKeys function" );
+
+        var dkabmGetter = dkabmGetterFunction( commonData, localData );
+
+        var priorityKeys = {
+            "identifier": dkabmGetter( "ac:identifier" ),
+            "date": dkabmGetter( "dc:date" ),
+            "version": dkabmGetter( "dkdcplus:version" )
+        };
+
+        Log.trace( "Leaving: ManifestationInfo.getPriorityKeys function" );
+
+        return priorityKeys;
+    }
+
+
     return {
         getManifestationInfoFromXmlObjects: getManifestationInfoFromXmlObjects,
         getTitle: getTitle,
@@ -400,6 +493,7 @@ var ManifestationInfo = (function() {
         getCreators: getCreators,
         getTypes: getTypes,
         getAbstract: getAbstract,
-        getSubjects: getSubjects
+        getSubjects: getSubjects,
+        getPriorityKeys: getPriorityKeys
     };
 })();

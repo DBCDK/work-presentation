@@ -94,7 +94,7 @@ public class WorkTreeBuilder {
         }
         RelsSys unitRelsSys = contentService.relsSys(unit);
         Instant unitTs = unitMetaData.getModified();
-        UnitTree unitTree = new UnitTree(unitRelsSys.isPrimary(), unitTs);
+        UnitTree unitTree = new UnitTree(unitTs);
 
         unitRelsSys.getChildren()
                 .forEach(object -> unitTree.put(object, buildObjectTree(object)));

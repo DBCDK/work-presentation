@@ -14,5 +14,10 @@
             "value": "Regning"
         }
     ],
+    "priorityKeys": {
+        "identifier": "08021473|870970",
+        "date": "1972",
+        "version": "2. udgave"
+    },
     "types": [ "Bog" ]
 }
