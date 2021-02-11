@@ -87,15 +87,6 @@ public class WorkTree extends HashMap<String, UnitTree> {
         if (isEmpty())
             return null;
         if (primary == null) {
-            forEach((unitK, unitV) -> {
-                if (unitV.isPrimary()) {
-                    unitV.forEach((objK, objV) -> {
-                        if (objV.isPrimary()) {
-                            primary = objK;
-                        }
-                    });
-                }
-            });
             throw new IllegalStateException("No primary set");
         }
         return primary;
@@ -148,7 +139,6 @@ public class WorkTree extends HashMap<String, UnitTree> {
             String unitPrefix = units.hasNext() ? "|--" : "`--";
             println(logger, " %s Unit: %s", unitPrefix, nextUnit.getKey());
             unitPrefix = units.hasNext() || hasWorkRelations ? "|  " : "   ";
-            println(logger, " %s  |-- primary: %s", unitPrefix, unit.isPrimary());
             println(logger, " %s  %s modified: %s", unitPrefix, unit.isEmpty() && !hasRelations ? "`--" : "|--", unit.getModified());
 
             for (Iterator<Entry<String, ObjectTree>> objs = unit.entrySet().iterator() ; objs.hasNext() ;) {
