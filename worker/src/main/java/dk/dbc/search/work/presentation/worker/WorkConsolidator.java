@@ -28,6 +28,7 @@ import dk.dbc.search.work.presentation.api.pojo.TypedValue;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
 import dk.dbc.search.work.presentation.worker.tree.ObjectTree;
+import dk.dbc.search.work.presentation.worker.tree.UnitTree;
 import dk.dbc.search.work.presentation.worker.tree.WorkTree;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
@@ -154,10 +155,18 @@ public class WorkConsolidator {
 
         Map<String, ManifestationInformation> manifestationCache = buildManifestationCache(tree);
 
-        String ownerId = findOwnerOfWork(tree, manifestationCache, corepoWorkId);
+        String ownerUnitId = findOwnerOfWork(tree, manifestationCache, corepoWorkId);
+        String ownerId = tree.get(ownerUnitId).entrySet().stream() // Stream over manifestationId -> manifestationInformatio for owner unit
+                .filter(e -> e.getValue().isPrimary())
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("This cannot happen since same rule applied tor getting the Id in the first place"));
+
+
         tree.setPrimaryManifestationId(ownerId);
 
         work.workId = tree.getPersistentWorkId();
+        work.ownerUnitId = ownerUnitId;
 
         // Copy from owner
         ManifestationInformation primary = manifestationCache.get(ownerId);
@@ -234,8 +243,8 @@ public class WorkConsolidator {
      * @return the owner of the work
      */
     protected String findOwnerOfWork(WorkTree tree, Map<String, ManifestationInformation> manifestationCache, String corepoWorkId) {
-        HashMap<String, ManifestationInformation> potentialOwners = findPotentialOwners(tree, manifestationCache);
-        return jsEnv.getOwnerId(potentialOwners, corepoWorkId);
+        HashMap<String, ManifestationInformation> potentialOwnerUnits = findPotentialOwners(tree, manifestationCache);
+        return jsEnv.getOwnerId(potentialOwnerUnits, corepoWorkId);
     }
 
     /**
@@ -244,7 +253,7 @@ public class WorkConsolidator {
      * @param tree               The work tree, that describes the
      *                           corepo-work/unit relations
      * @param manifestationCache all the cached manifestationIds
-     * @return map of primary-objects to ManifestationInformation
+     * @return map of inutId to its primary objects ManifestationInformation
      */
     protected HashMap<String, ManifestationInformation> findPotentialOwners(WorkTree tree, Map<String, ManifestationInformation> manifestationCache) {
         HashMap<String, ManifestationInformation> potentialOwners = new HashMap<>();
@@ -256,7 +265,7 @@ public class WorkConsolidator {
                     .findAny()
                     .orElseThrow(() -> new IllegalStateException("Cannot find primary object for unit: " + unitId));
             ManifestationInformation mi = manifestationCache.get(objectId);
-            potentialOwners.put(objectId, mi);
+            potentialOwners.put(unitId, mi);
         });
         return potentialOwners;
     }
