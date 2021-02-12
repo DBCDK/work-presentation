@@ -138,9 +138,7 @@ public class WorkConsolidatorTest {
         WorkTree workTree = new WorkTree("work:-1", Instant.now());
 
         source.units.forEach((unitId, unit) -> {
-            boolean primaryUnit = unit.entrySet().stream()
-                    .anyMatch(e -> objectHasPrimary(e.getValue(), e.getKey(), source.primary));
-            UnitTree unitTree = new UnitTree(primaryUnit, Instant.now());
+            UnitTree unitTree = new UnitTree(Instant.now());
             workTree.put(unitId, unitTree);
             unit.forEach((objId, obj) -> {
                 boolean primaryObj = objId.endsWith("0");

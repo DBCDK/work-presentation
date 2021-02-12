@@ -31,6 +31,8 @@ public class WorkInformation implements Serializable {
     // Unit -> Manifestations
     public Map<String, Set<ManifestationInformation>> dbUnitInformation;
 
+    public String ownerUnitId;
+
     @JsonProperty("dbRelUnits")
     // Unit -> Relations
     public Map<String, Set<RelationInformation>> dbRelUnitInformation;
