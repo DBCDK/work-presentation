@@ -52,18 +52,20 @@ public class WorkInformation implements Serializable {
                Objects.equals(description, that.description) &&
                Objects.equals(subjects, that.subjects) &&
                Objects.equals(dbUnitInformation, that.dbUnitInformation) &&
+               Objects.equals(ownerUnitId, that.ownerUnitId) &&
                Objects.equals(dbRelUnitInformation, that.dbRelUnitInformation);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(workId, title, fullTitle, series, creators, description, subjects, dbUnitInformation, dbRelUnitInformation);
+        return Objects.hash(workId, title, fullTitle, series, creators, description, subjects, dbUnitInformation, ownerUnitId, dbRelUnitInformation);
     }
 
     @Override
     public String toString() {
         return "WorkInformation{" +
                "workId='" + workId + '\'' +
+               ", ownerUnitId='" + ownerUnitId + '\'' +
                ", title='" + title + '\'' +
                ", fullTitle='" + fullTitle + '\'' +
                ", series=" + series +

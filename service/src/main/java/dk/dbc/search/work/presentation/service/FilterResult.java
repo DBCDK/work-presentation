@@ -26,10 +26,12 @@ import dk.dbc.search.work.presentation.service.response.WorkInformationResponse;
 import dk.dbc.search.work.presentation.service.solr.Solr;
 import java.util.AbstractMap;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.eclipse.microprofile.metrics.annotation.Timed;
@@ -95,17 +97,17 @@ public class FilterResult {
 
         // Adding groups/units
         Map<String, GroupInformationResponse> groupInformation = new HashMap<>();
-        wir.groups = new LinkedHashSet<>();
         for (Map.Entry<String, Set<ManifestationInformationResponse>> entry : dbUnitInformation.entrySet()) {
             GroupInformation gi = new GroupInformation();
             gi.groupId = entry.getKey();
+            log.debug("Group {} has owner {}", gi.groupId, work.ownerUnitId );
+            gi.primary = gi.groupId.equals(work.ownerUnitId);
             GroupInformationResponse group = GroupInformationResponse.from(gi);
             groupInformation.put(entry.getKey(), group);
             // Add manifestations for the group
             group.records = new LinkedHashSet<>();
             entry.getValue().forEach(group.records::add);
-            log.debug("Adding group {}", group);
-            wir.groups.add(group);
+            //entry.getValue().stream().sorted().forEach(group.records::add);
         }
 
         if (includeRelations) {
@@ -125,6 +127,10 @@ public class FilterResult {
 
             wir.relations = relationIndexes.getRelationList();
         }
+
+        wir.groups = new LinkedHashSet<>();
+        groupInformation.values().stream().sorted().forEach(wir.groups::add);
+
         return wir;
     }
 }

@@ -60,9 +60,6 @@ public class WorkInformationResponse {
     @Schema(implementation = TypedValueResponse.Array.class)
     public Set<TypedValueResponse> subjects;
 
-//    @Schema(implementation = ManifestationInformationResponse.Array.class)
-//    public Set<ManifestationInformationResponse> records;
-
     @Schema(implementation = GroupInformationResponse.Array.class)
     public Set<GroupInformationResponse> groups;
 

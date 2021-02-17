@@ -14,6 +14,8 @@ public class GroupInformation implements Serializable {
 
     public String groupId;
 
+    public boolean primary;
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -26,19 +28,14 @@ public class GroupInformation implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(groupId);
+        return Objects.hash(groupId) + Boolean.hashCode(primary);
     }
 
     @Override
     public String toString() {
         return "GroupInformation{" +
                "groupId='" + groupId + '\'' +
+               ", primary='" + primary + '\'' +
                '}';
-    }
-
-    public GroupInformation onlyPresentationFields() {
-        GroupInformation res = new GroupInformation();
-        res.groupId = this.groupId;
-        return res;
     }
 }

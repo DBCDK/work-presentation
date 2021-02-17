@@ -44,6 +44,9 @@ public class GroupInformationResponse implements Comparable<GroupInformationResp
         public static final String NAME = GroupInformationResponse.NAME + "_list";
     }
 
+    @Schema(example = "true", implementation = boolean.class, description = "Primary for the work")
+    public boolean primary;
+
     @Schema(example = "0,2,7", implementation = int.class, description = "indexes (starting with 0) in " + WorkInformationResponse.NAME + "/relations")
     public int[] relations;
 
@@ -52,6 +55,7 @@ public class GroupInformationResponse implements Comparable<GroupInformationResp
 
     public static GroupInformationResponse from(GroupInformation gi) {
         GroupInformationResponse gir = new GroupInformationResponse();
+        gir.primary = gi.primary;
         // gir.records is computed in FilterResult.processWork()
         return gir;
     }
@@ -59,7 +63,7 @@ public class GroupInformationResponse implements Comparable<GroupInformationResp
     @Override
     public int compareTo(GroupInformationResponse o) {
         // TODO compare records?
-        return 0;
+        return Boolean.compare(o.primary, primary );
     }
 
     @Override
@@ -69,17 +73,18 @@ public class GroupInformationResponse implements Comparable<GroupInformationResp
         if (o == null || getClass() != o.getClass())
             return false;
         GroupInformationResponse that = (GroupInformationResponse) o;
-        return Objects.equals(records, that.records) &&
+        return primary == that.primary &&
+               Objects.equals(records, that.records) &&
                Arrays.equals(relations, that.relations);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(records);
+        return Objects.hash(records) + Boolean.hashCode(primary);
     }
 
     @Override
     public String toString() {
-        return "GroupInformationResponse{" + "records=" + records + '}';
+        return "GroupInformationResponse{" + "records=" + records + ", primary=" + primary + '}';
     }
 }

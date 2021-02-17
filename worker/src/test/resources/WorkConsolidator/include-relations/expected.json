@@ -4,6 +4,7 @@
             "value": "men" }, { "type": "KW", "value": "elephants" } ],
     "title": "Two Things",
     "workId": "work-of:870970-basis:00",
+    "ownerUnitId": "unit:1",
     "dbUnits": {
         "unit:1": [
             {
