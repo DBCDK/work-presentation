@@ -19,17 +19,16 @@
 package dk.dbc.search.work.presentation.service;
 
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
-import dk.dbc.search.work.presentation.api.pojo.GroupInformation;
 import dk.dbc.search.work.presentation.service.response.ManifestationInformationResponse;
 import dk.dbc.search.work.presentation.service.response.GroupInformationResponse;
 import dk.dbc.search.work.presentation.service.response.WorkInformationResponse;
 import dk.dbc.search.work.presentation.service.solr.Solr;
 import java.util.AbstractMap;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.eclipse.microprofile.metrics.annotation.Timed;
@@ -81,7 +80,7 @@ public class FilterResult {
         Set<String> visibleManifestations = solr.getAccessibleManifestations(corepoWorkId, agencyId, profile, manifestationCount, trackingId);
 
         // Filtered manifests
-        Map<String, Set<ManifestationInformationResponse>> dbUnitInformation =
+        Map<String, GroupInformationResponse> groupInformation =
                 work.dbUnitInformation.entrySet().stream()
                         .map(e -> new AbstractMap.SimpleEntry<>(
                                 e.getKey(),
@@ -90,23 +89,7 @@ public class FilterResult {
                                         .map(ManifestationInformationResponse::from)
                                         .collect(toSet())))
                         .filter(e -> !e.getValue().isEmpty())
-                        .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
-        log.debug("dbUnitInformation = {}", dbUnitInformation);
-
-        // Adding groups/units
-        Map<String, GroupInformationResponse> groupInformation = new HashMap<>();
-        for (Map.Entry<String, Set<ManifestationInformationResponse>> entry : dbUnitInformation.entrySet()) {
-            GroupInformation gi = new GroupInformation();
-            gi.groupId = entry.getKey();
-            log.debug("Group {} has owner {}", gi.groupId, work.ownerUnitId );
-            gi.primary = gi.groupId.equals(work.ownerUnitId);
-            GroupInformationResponse group = GroupInformationResponse.from(gi);
-            groupInformation.put(entry.getKey(), group);
-            // Add manifestations for the group
-            group.records = new LinkedHashSet<>();
-            entry.getValue().forEach(group.records::add);
-            //entry.getValue().stream().sorted().forEach(group.records::add);
-        }
+                        .collect(toMap(Map.Entry::getKey, e -> GroupInformationResponse.with(e.getValue())));
 
         if (includeRelations) {
             Set<String> possibleRelations = work.dbRelUnitInformation.values()
@@ -126,8 +109,18 @@ public class FilterResult {
             wir.relations = relationIndexes.getRelationList();
         }
 
-        wir.groups = new LinkedHashSet<>();
-        groupInformation.values().stream().sorted().forEach(wir.groups::add);
+        List<GroupInformationResponse> groups = Stream.concat(
+                Stream.ofNullable(work.ownerUnitId)
+                        .filter(unit -> unit != null),
+                groupInformation.keySet().stream()
+                        .filter(unit -> !unit.equals(work.ownerUnitId))
+                        .sorted(new NaturalSort()))
+                .map(groupInformation::get)
+                .collect(toList());
+
+        wir.groups = groups;
+        log.debug("wir = {}", wir);
+        log.debug("groups = {}", groups);
 
         return wir;
     }
