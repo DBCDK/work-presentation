@@ -60,8 +60,8 @@ public class WorkInformationResponse {
     @Schema(implementation = TypedValueResponse.Array.class)
     public Set<TypedValueResponse> subjects;
 
-    @Schema(implementation = GroupInformationResponse.Array.class)
-    public Set<GroupInformationResponse> groups;
+    @Schema(implementation = GroupInformationResponse.Array.class, description = "The first entry in the list is the representative group for this work, the rest are in random order")
+    public List<GroupInformationResponse> groups;
 
     @Schema(implementation = RelationInformationResponse.Array.class)
     public List<RelationInformationResponse> relations;

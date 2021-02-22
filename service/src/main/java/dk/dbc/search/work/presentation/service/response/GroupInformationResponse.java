@@ -18,7 +18,6 @@
  */
 package dk.dbc.search.work.presentation.service.response;
 
-import dk.dbc.search.work.presentation.api.pojo.GroupInformation;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Arrays;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
@@ -33,7 +32,7 @@ import java.util.Set;
  */
 @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
 @Schema(name = GroupInformationResponse.NAME)
-public class GroupInformationResponse implements Comparable<GroupInformationResponse> {
+public class GroupInformationResponse {
 
     public static final String NAME = "group";
 
@@ -44,26 +43,16 @@ public class GroupInformationResponse implements Comparable<GroupInformationResp
         public static final String NAME = GroupInformationResponse.NAME + "_list";
     }
 
-    @Schema(example = "true", implementation = boolean.class, description = "Primary for the work")
-    public boolean primary;
-
     @Schema(example = "0,2,7", implementation = int.class, description = "indexes (starting with 0) in " + WorkInformationResponse.NAME + "/relations")
     public int[] relations;
 
     @Schema(implementation = ManifestationInformationResponse.Array.class)
     public Set<ManifestationInformationResponse> records;
 
-    public static GroupInformationResponse from(GroupInformation gi) {
+    public static GroupInformationResponse with(Set<ManifestationInformationResponse> records) {
         GroupInformationResponse gir = new GroupInformationResponse();
-        gir.primary = gi.primary;
-        // gir.records is computed in FilterResult.processWork()
+        gir.records = records;
         return gir;
-    }
-
-    @Override
-    public int compareTo(GroupInformationResponse o) {
-        // TODO compare records?
-        return Boolean.compare(o.primary, primary );
     }
 
     @Override
@@ -73,18 +62,17 @@ public class GroupInformationResponse implements Comparable<GroupInformationResp
         if (o == null || getClass() != o.getClass())
             return false;
         GroupInformationResponse that = (GroupInformationResponse) o;
-        return primary == that.primary &&
-               Objects.equals(records, that.records) &&
+        return Objects.equals(records, that.records) &&
                Arrays.equals(relations, that.relations);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(records) + Boolean.hashCode(primary);
+        return Objects.hash(records) * 13 + Arrays.hashCode(relations);
     }
 
     @Override
     public String toString() {
-        return "GroupInformationResponse{" + "records=" + records + ", primary=" + primary + '}';
+        return "GroupInformationResponse{" + "records=" + records + ", relations=" + Arrays.toString(relations) + '}';
     }
 }
