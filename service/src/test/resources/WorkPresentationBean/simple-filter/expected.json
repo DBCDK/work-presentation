@@ -3,17 +3,15 @@
     "title": "fjeldsange",
     "fullTitle": "Fjeldsange : for 1 stemme og klaver",
     "creators": [
-        {
-            "type": "aut",
-            "value": "yrjö kilpinen"
-        }
+        { "type": "aut", "value": "yrjö kilpinen" }
     ],
     "subjects": [ ],
     "groups": [
         {
+            "relations": [ ],
             "records": [
                 {
-                    "id": "870970-basis:00010529",
+                    "id": "763000-katalog:00010529",
                     "types": [ "Node" ]
                 },
                 {
@@ -21,11 +19,11 @@
                     "types": [ "Node" ]
                 },
                 {
-                    "id": "763000-katalog:00010529",
+                    "id": "870970-basis:00010529",
                     "types": [ "Node" ]
                 }
-            ],
-            "relations": []
+            ]
         }
-    ]
+    ],
+    "relations": [ ]
 }
