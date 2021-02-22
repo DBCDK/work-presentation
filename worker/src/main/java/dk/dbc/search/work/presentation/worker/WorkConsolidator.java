@@ -154,13 +154,14 @@ public class WorkConsolidator {
 
         Map<String, ManifestationInformation> manifestationCache = buildManifestationCache(tree);
 
+        removeDeletedPrimaries(manifestationCache, tree);
+
         String ownerUnitId = findOwnerOfWork(tree, manifestationCache, corepoWorkId);
         String ownerId = tree.get(ownerUnitId).entrySet().stream() // Stream over manifestationId -> manifestationInformatio for owner unit
                 .filter(e -> e.getValue().isPrimary())
                 .map(Map.Entry::getKey)
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("This cannot happen since same rule applied tor getting the Id in the first place"));
-
 
         tree.setPrimaryManifestationId(ownerId);
 
@@ -264,7 +265,12 @@ public class WorkConsolidator {
                     .findAny()
                     .orElseThrow(() -> new IllegalStateException("Cannot find primary object for unit: " + unitId));
             ManifestationInformation mi = manifestationCache.get(objectId);
-            potentialOwners.put(unitId, mi);
+
+            if (mi == null) {
+                log.warn("Primary {} of unit {}, has deleted localData stream", objectId, unitId);
+            } else {
+                potentialOwners.put(unitId, mi);
+            }
         });
         return potentialOwners;
     }
@@ -362,6 +368,30 @@ public class WorkConsolidator {
                 .map(m -> WorkContainsEntity.from(em, corepoWorkId, m))
                 .collect(toList());
         WorkContainsEntity.updateToList(em, corepoWorkId, workContains);
+    }
+
+    /**
+     * Sometimes the localData-stream of a corepo-objects is deleted, even
+     * though it is the localData for the object id. That is not an error,
+     * however they should be removed from the output. They are needed for the
+     * structure of the tree, and cannot be removed before
+     *
+     * @param manifestationCache all the cached manifestationIds
+     * @param tree               current work description
+     */
+    private void removeDeletedPrimaries(Map<String, ManifestationInformation> manifestationCache, WorkTree tree) {
+        Set<String> deletedPrimaries = manifestationCache.entrySet().stream()
+                .filter(e -> e.getValue() == null)
+                .map(Map.Entry::getKey)
+                .collect(toSet());
+        tree.forEach((unitId, units) -> {
+            units.forEach((objId, objs) -> {
+                deletedPrimaries.forEach(objs::remove);
+            });
+        });
+
+        deletedPrimaries.forEach(manifestationCache::remove);
+
     }
 
     private static int instantCmp(Instant a, Instant b) {
