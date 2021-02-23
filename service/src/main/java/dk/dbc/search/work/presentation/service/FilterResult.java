@@ -110,8 +110,7 @@ public class FilterResult {
         }
 
         List<GroupInformationResponse> groups = Stream.concat(
-                Stream.ofNullable(work.ownerUnitId)
-                        .filter(unit -> unit != null),
+                work.ownerUnitId == null ? Stream.empty() : Stream.of(work.ownerUnitId),
                 groupInformation.keySet().stream()
                         .filter(unit -> !unit.equals(work.ownerUnitId))
                         .sorted(new NaturalSort()))
