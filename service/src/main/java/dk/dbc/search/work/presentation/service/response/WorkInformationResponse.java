@@ -99,13 +99,11 @@ public class WorkInformationResponse {
                Objects.equals(creators, that.creators) &&
                Objects.equals(description, that.description) &&
                Objects.equals(subjects, that.subjects) &&
-               //Objects.equals(records, that.records);
                Objects.equals(groups, that.groups);
     }
 
     @Override
     public int hashCode() {
-        //return Objects.hash(workId, title, fullTitle, series, creators, description, subjects, records);
         return Objects.hash(workId, title, fullTitle, series, creators, description, subjects, groups);
     }
 
