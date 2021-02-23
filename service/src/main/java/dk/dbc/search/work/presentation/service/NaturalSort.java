@@ -18,6 +18,7 @@
  */
 package dk.dbc.search.work.presentation.service;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -31,7 +32,9 @@ import java.util.regex.Pattern;
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
-public class NaturalSort implements Comparator<String> {
+public class NaturalSort implements Comparator<String>, Serializable {
+
+    private static final long serialVersionUID = 0x5EF4DBC337BA3502L;
 
     private final HashMap<String, String> sortKeys;
     private static final Pattern REGEX = Pattern.compile("0*(0|[1-9]\\d*)((?:\\.\\d+)*)");
