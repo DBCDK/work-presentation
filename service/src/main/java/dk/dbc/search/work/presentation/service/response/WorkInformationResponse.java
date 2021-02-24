@@ -60,8 +60,8 @@ public class WorkInformationResponse {
     @Schema(implementation = TypedValueResponse.Array.class)
     public Set<TypedValueResponse> subjects;
 
-    @Schema(implementation = ManifestationInformationResponse.Array.class)
-    public Set<ManifestationInformationResponse> records;
+    @Schema(implementation = GroupInformationResponse.Array.class, description = "The first entry in the list is the representative group for this work, the rest are in random order")
+    public List<GroupInformationResponse> groups;
 
     @Schema(implementation = RelationInformationResponse.Array.class)
     public List<RelationInformationResponse> relations;
@@ -99,12 +99,12 @@ public class WorkInformationResponse {
                Objects.equals(creators, that.creators) &&
                Objects.equals(description, that.description) &&
                Objects.equals(subjects, that.subjects) &&
-               Objects.equals(records, that.records);
+               Objects.equals(groups, that.groups);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(workId, title, fullTitle, series, creators, description, subjects, records);
+        return Objects.hash(workId, title, fullTitle, series, creators, description, subjects, groups);
     }
 
     @Override

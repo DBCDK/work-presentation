@@ -18,47 +18,41 @@
  */
 package dk.dbc.search.work.presentation.service.response;
 
-import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.util.Arrays;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  *
- * @author Morten Bøgeskov (mb@dbc.dk)
+ * @author Thomas Pii (thp@dbc.dk)
  */
 @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-@Schema(name = ManifestationInformationResponse.NAME)
-public class ManifestationInformationResponse implements Comparable<ManifestationInformationResponse> {
+@Schema(name = GroupInformationResponse.NAME)
+public class GroupInformationResponse {
 
-    public static final String NAME = "manifestation";
+    public static final String NAME = "group";
 
     // Ugly hack: https://github.com/eclipse/microprofile-open-api/issues/425
-    @Schema(name = ManifestationInformationResponse.Array.NAME, type = SchemaType.ARRAY, ref = ManifestationInformationResponse.NAME, hidden = true)
+    @Schema(name = GroupInformationResponse.Array.NAME, type = SchemaType.ARRAY, ref = GroupInformationResponse.NAME, hidden = true)
     public static class Array {
 
-        public static final String NAME = ManifestationInformationResponse.NAME + "_list";
+        public static final String NAME = GroupInformationResponse.NAME + "_list";
     }
 
-    @Schema(example = "id-enti:fier")
-    public String id;
+    @Schema(example = "0,2,7", implementation = int.class, description = "indexes (starting with 0) in " + WorkInformationResponse.NAME + "/relations")
+    public int[] relations;
 
-    @Schema(example = "ether", implementation = String.class)
-    public List<String> types;
+    @Schema(implementation = ManifestationInformationResponse.Array.class)
+    public Set<ManifestationInformationResponse> records;
 
-    public static ManifestationInformationResponse from(ManifestationInformation mi) {
-        ManifestationInformationResponse mir = new ManifestationInformationResponse();
-        mir.id = mi.manifestationId;
-        mir.types = mi.materialTypes;
-        return mir;
-    }
-
-    @Override
-    public int compareTo(ManifestationInformationResponse o) {
-        return id.compareTo(o.id);
+    public static GroupInformationResponse with(Set<ManifestationInformationResponse> records) {
+        GroupInformationResponse gir = new GroupInformationResponse();
+        gir.records = records;
+        return gir;
     }
 
     @Override
@@ -67,18 +61,18 @@ public class ManifestationInformationResponse implements Comparable<Manifestatio
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        ManifestationInformationResponse that = (ManifestationInformationResponse) o;
-        return Objects.equals(id, that.id) &&
-               Objects.equals(types, that.types);
+        GroupInformationResponse that = (GroupInformationResponse) o;
+        return Objects.equals(records, that.records) &&
+               Arrays.equals(relations, that.relations);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, types);
+        return Objects.hash(records) * 13 + Arrays.hashCode(relations);
     }
 
     @Override
     public String toString() {
-        return "ManifestationInformationResponse{" + "id=" + id + '}';
+        return "GroupInformationResponse{" + "records=" + records + ", relations=" + Arrays.toString(relations) + '}';
     }
 }

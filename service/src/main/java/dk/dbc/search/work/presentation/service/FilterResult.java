@@ -20,13 +20,15 @@ package dk.dbc.search.work.presentation.service;
 
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.service.response.ManifestationInformationResponse;
+import dk.dbc.search.work.presentation.service.response.GroupInformationResponse;
 import dk.dbc.search.work.presentation.service.response.WorkInformationResponse;
 import dk.dbc.search.work.presentation.service.solr.Solr;
 import java.util.AbstractMap;
 import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.eclipse.microprofile.metrics.annotation.Timed;
@@ -78,7 +80,7 @@ public class FilterResult {
         Set<String> visibleManifestations = solr.getAccessibleManifestations(corepoWorkId, agencyId, profile, manifestationCount, trackingId);
 
         // Filtered manifests
-        Map<String, Set<ManifestationInformationResponse>> dbUnitInformation =
+        Map<String, GroupInformationResponse> groupInformation =
                 work.dbUnitInformation.entrySet().stream()
                         .map(e -> new AbstractMap.SimpleEntry<>(
                                 e.getKey(),
@@ -87,8 +89,7 @@ public class FilterResult {
                                         .map(ManifestationInformationResponse::from)
                                         .collect(toSet())))
                         .filter(e -> !e.getValue().isEmpty())
-                        .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
-        log.debug("dbUnitInformation = {}", dbUnitInformation);
+                        .collect(toMap(Map.Entry::getKey, e -> GroupInformationResponse.with(e.getValue())));
 
         if (includeRelations) {
             Set<String> possibleRelations = work.dbRelUnitInformation.values()
@@ -99,19 +100,27 @@ public class FilterResult {
             Set<String> accessibleRelations = solr.getAccessibleRelations(possibleRelations, agencyId, profile, trackingId);
 
             RelationIndexComputer relationIndexes = new RelationIndexComputer(accessibleRelations, work.dbRelUnitInformation);
-            dbUnitInformation.forEach((unitId, manifestations) -> {
+            groupInformation.forEach((unitId, group) -> {
                 int[] indexes = relationIndexes.unitRelationIndexes(unitId);
-                manifestations.forEach(m -> m.relations = indexes);
+                log.debug("Adding relations for unit {}, relations = {}", unitId, indexes);
+                group.relations = indexes;
             });
+
             wir.relations = relationIndexes.getRelationList();
         }
 
-        // Flatten the manifestations - with predictable order
-        wir.records = new LinkedHashSet<>();
-        dbUnitInformation.values().stream()
-                .flatMap(Collection::stream)
-                .sorted()
-                .forEach(wir.records::add);
+        List<GroupInformationResponse> groups = Stream.concat(
+                work.ownerUnitId == null ? Stream.empty() : Stream.of(work.ownerUnitId),
+                groupInformation.keySet().stream()
+                        .filter(unit -> !unit.equals(work.ownerUnitId))
+                        .sorted(new NaturalSort()))
+                .map(groupInformation::get)
+                .collect(toList());
+
+        wir.groups = groups;
+        log.debug("wir = {}", wir);
+        log.debug("groups = {}", groups);
+
         return wir;
     }
 }
