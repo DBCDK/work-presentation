@@ -56,6 +56,8 @@ public class JavascriptWorkOwnerSelector extends AbstractJavascript {
 
     public String selectOwner(Map<String, ManifestationInformation> map) throws Exception {
         Object obj = environment.callMethod(methodName, new Object[] {map});
+        if(obj == null)
+            return null;
         return String.valueOf(obj);
     }
 }

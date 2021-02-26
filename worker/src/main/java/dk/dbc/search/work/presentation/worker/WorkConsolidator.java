@@ -157,6 +157,10 @@ public class WorkConsolidator {
         removeDeletedPrimaries(manifestationCache, tree);
 
         String ownerUnitId = findOwnerOfWork(tree, manifestationCache, corepoWorkId);
+        if (ownerUnitId == null) {
+            log.error("Error finding owner, most likely one unit, with deleted localData stream owning agency");
+            throw new IllegalStateException("Cannot find an owner for: " + tree.getCorepoWorkId());
+        }
         String ownerId = tree.get(ownerUnitId).entrySet().stream() // Stream over manifestationId -> manifestationInformatio for owner unit
                 .filter(e -> e.getValue().isPrimary())
                 .map(Map.Entry::getKey)

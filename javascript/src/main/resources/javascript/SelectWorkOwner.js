@@ -11,6 +11,6 @@ function selectWorkOwner( manifestations ) {
     var values = SelectOwnerPriority.computeValues( manifestations );
     var sorted = SelectOwnerPriority.getKeysInOrder( values );
 
-    return sorted[0];
+    return sorted.length >= 1 ? sorted[0] : null;
 }
 

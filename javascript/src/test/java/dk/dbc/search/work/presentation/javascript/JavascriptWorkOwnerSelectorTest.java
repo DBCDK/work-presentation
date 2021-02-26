@@ -38,29 +38,43 @@ public class JavascriptWorkOwnerSelectorTest {
 
     protected static final ObjectMapper O = new ObjectMapper()
             .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+    private static final TypeReference<HashMap<String, ManifestationInformation>> TYPE_REFERENCE =
+            new TypeReference<HashMap<String, ManifestationInformation>>() {
+    };
 
     @Test
     public void testOwnerMatch() throws Exception {
         System.out.println("testOwnerMatch");
 
-        try(InputStream is = getClass().getClassLoader().getResourceAsStream("select-work-870970-basis-25912233.json")) {
-            HashMap<String, ManifestationInformation> potentialOwners = O.readValue(is, new TypeReference<HashMap<String, ManifestationInformation>>(){});
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("select-work-870970-basis-25912233.json")) {
+            HashMap<String, ManifestationInformation> potentialOwners = O.readValue(is, TYPE_REFERENCE);
             Supplier<JavascriptWorkOwnerSelector> supplier = JavascriptWorkOwnerSelector.builder().build();
             JavascriptWorkOwnerSelector workOwnerSelector = supplier.get();
             String owner = workOwnerSelector.selectOwner(potentialOwners);
             assertThat(owner, is("870970-basis:25912233"));
         }
     }
+
     @Test
     public void testOwnerMatch2() throws Exception {
         System.out.println("testOwnerMatch2");
 
-        try(InputStream is = getClass().getClassLoader().getResourceAsStream("select-work-800010-katalog-99122034426005763__1.json")) {
-            HashMap<String, ManifestationInformation> potentialOwners = O.readValue(is, new TypeReference<HashMap<String, ManifestationInformation>>(){});
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("select-work-800010-katalog-99122034426005763__1.json")) {
+            HashMap<String, ManifestationInformation> potentialOwners = O.readValue(is, TYPE_REFERENCE);
             Supplier<JavascriptWorkOwnerSelector> supplier = JavascriptWorkOwnerSelector.builder().build();
             JavascriptWorkOwnerSelector workOwnerSelector = supplier.get();
             String owner = workOwnerSelector.selectOwner(potentialOwners);
             assertThat(owner, is("800010-katalog:99122034426005763__1"));
         }
+    }
+
+    @Test
+    public void testEmptyCollection() throws Exception {
+        System.out.println("testEmptyCollection");
+        HashMap<String, ManifestationInformation> potentialOwners = new HashMap<>();
+        Supplier<JavascriptWorkOwnerSelector> supplier = JavascriptWorkOwnerSelector.builder().build();
+        JavascriptWorkOwnerSelector workOwnerSelector = supplier.get();
+        String owner = workOwnerSelector.selectOwner(potentialOwners);
+        assertThat(owner, nullValue());
     }
 }
