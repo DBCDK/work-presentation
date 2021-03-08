@@ -22,7 +22,7 @@
         <pgqueue.version>1.5-SNAPSHOT</pgqueue.version>
         <jslib.version>1.3-SNAPSHOT</jslib.version>
         <jscommon.version>2012.1-SNAPSHOT</jscommon.version>
-        <solr.version>8.7.0</solr.version>
+        <solr.version>8.8.1</solr.version>
         <test-plugin.version>3.0.0-M5</test-plugin.version>
     </properties>
 
