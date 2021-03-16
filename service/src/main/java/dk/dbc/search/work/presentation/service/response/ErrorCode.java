@@ -23,7 +23,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Types of error responses
- *
+ * <p>
  * No description due to: https://github.com/payara/Payara/issues/4955
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
@@ -31,15 +31,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
 //@Schema(name = ErrorCode.NAME)
 public enum ErrorCode {
-
-//    @Schema(description = "Profile name supplied was invalid for that agency")
     PROFILE_ERROR,
-
-//    @Schema(description = "A required request parameter is missing or empty")
     MISSING_PARAMETERS,
-
-//    @Schema(description = "Requested work doesn't match a known work")
     NOT_FOUND_ERROR;
 
-    public static final String NAME = "errorcode";
+//    public static final String NAME = "errorcode";
 }

@@ -36,6 +36,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
@@ -115,10 +116,25 @@ public class WorkPresentationBean {
                      )),
         @APIResponse(name = "Content Moved",
                      responseCode = "301",
-                     description = "If a workId has been updated this will redirect to the correct workId"),
+                     description = "If a workId has been updated this will redirect to the correct workId",
+                     content = @Content(
+                             mediaType = MediaType.APPLICATION_JSON,
+                             schema = @Schema(ref = ErrorResponse.NAME)
+                     )),
+        @APIResponse(name = "Forbidden",
+                     responseCode = "403",
+                     description = "Your profile doesn't have access to this workId",
+                     content = @Content(
+                             mediaType = MediaType.APPLICATION_JSON,
+                             schema = @Schema(ref = ErrorResponse.NAME)
+                     )),
         @APIResponse(name = "Not Found",
                      responseCode = "404",
-                     description = "If a workId never existed")
+                     description = "If a workId never existed",
+                     content = @Content(
+                             mediaType = MediaType.APPLICATION_JSON,
+                             schema = @Schema(ref = ErrorResponse.NAME)
+                     ))
     })
     @Parameters({
         @Parameter(name = "workId",
@@ -183,6 +199,10 @@ public class WorkPresentationBean {
             });
             return Response.status(Response.Status.MOVED_PERMANENTLY)
                     .location(ub.build()).build();
+        } catch (ForbiddenException ex) {
+            return Response.status(Response.Status.FORBIDDEN)
+                    .entity(new ErrorResponse(ErrorCode.PROFILE_ERROR, ex.getMessage(), trackingId))
+                    .build();
         } catch (NotFoundException ex) {
             log.info("Not found: {}", workId);
             return Response.status(Response.Status.NOT_FOUND)
