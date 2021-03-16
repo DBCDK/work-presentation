@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.ForbiddenException;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,6 +91,10 @@ public class FilterResult {
                                         .collect(toSet())))
                         .filter(e -> !e.getValue().isEmpty())
                         .collect(toMap(Map.Entry::getKey, e -> GroupInformationResponse.with(e.getValue())));
+
+        if(groupInformation.isEmpty()) {
+            throw new ForbiddenException("No manifestations visible to profile");
+        }
 
         if (includeRelations) {
             Set<String> possibleRelations = work.dbRelUnitInformation.values()
