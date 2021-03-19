@@ -92,7 +92,7 @@ public class FilterResult {
                         .filter(e -> !e.getValue().isEmpty())
                         .collect(toMap(Map.Entry::getKey, e -> GroupInformationResponse.with(e.getValue())));
 
-        if(groupInformation.isEmpty()) {
+        if (groupInformation.isEmpty()) {
             throw new ForbiddenException("No manifestations visible to profile");
         }
 
@@ -114,8 +114,13 @@ public class FilterResult {
             wir.relations = relationIndexes.getRelationList();
         }
 
+        Stream<String> ownerStream = Stream.empty();
+        if (work.ownerUnitId != null && groupInformation.containsKey(work.ownerUnitId)) {
+            ownerStream = Stream.of(work.ownerUnitId);
+        }
+
         List<GroupInformationResponse> groups = Stream.concat(
-                work.ownerUnitId == null ? Stream.empty() : Stream.of(work.ownerUnitId),
+                ownerStream,
                 groupInformation.keySet().stream()
                         .filter(unit -> !unit.equals(work.ownerUnitId))
                         .sorted(new NaturalSort()))
