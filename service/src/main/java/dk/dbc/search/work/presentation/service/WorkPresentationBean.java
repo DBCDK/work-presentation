@@ -18,19 +18,30 @@
  */
 package dk.dbc.search.work.presentation.service;
 
-import dk.dbc.search.work.presentation.service.response.WorkPresentationResponse;
 import dk.dbc.commons.mdc.GenerateTrackingId;
 import dk.dbc.commons.mdc.LogAs;
-import dk.dbc.search.work.presentation.api.jpa.WorkObjectEntity;
 import dk.dbc.search.work.presentation.api.jpa.WorkContainsEntity;
+import dk.dbc.search.work.presentation.api.jpa.WorkObjectEntity;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.service.response.ErrorCode;
 import dk.dbc.search.work.presentation.service.response.ErrorResponse;
 import dk.dbc.search.work.presentation.service.response.WorkInformationResponse;
+import dk.dbc.search.work.presentation.service.response.WorkPresentationResponse;
 import dk.dbc.search.work.presentation.service.vipcore.NoSuchProfileException;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Locale;
+import org.eclipse.microprofile.metrics.annotation.Timed;
+import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.info.Contact;
+import org.eclipse.microprofile.openapi.annotations.info.Info;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameters;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -48,19 +59,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
-import org.eclipse.microprofile.metrics.annotation.Timed;
-import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
-import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.info.Contact;
-import org.eclipse.microprofile.openapi.annotations.info.Info;
-import org.eclipse.microprofile.openapi.annotations.media.Content;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
-import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
-import org.eclipse.microprofile.openapi.annotations.parameters.Parameters;
-import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
-import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.Locale;
 
 /**
  * The endpoint for /api/work-presentation
@@ -89,6 +90,67 @@ public class WorkPresentationBean {
 
     @Inject
     public FilterResult filterResult;
+
+    @GET
+    @Path("getPersistentWorkId")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Timed(reusable = true)
+    @Operation(
+            summary = "Retrieve a persistent work id",
+            description = "This operation produces a persistent work-id, given a " +
+                    "corepo work-id."
+    )
+    @APIResponses({
+            //        https://github.com/payara/Payara/issues/4955
+            @APIResponse(name = "Success",
+                    responseCode = "200",
+                    description = "A persistent work id",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON,
+                            schema = @Schema(implementation = String.class)
+                    )),
+            @APIResponse(name = "Bad Request",
+                    responseCode = "400",
+                    description = "If a request has parameters that are somehow invalid",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON,
+                            schema = @Schema(ref = ErrorResponse.NAME)
+                    )),
+            @APIResponse(name = "Not Found",
+                    responseCode = "404",
+                    description = "If a corepo work id does not exist",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON,
+                            schema = @Schema(ref = ErrorResponse.NAME)
+                    ))
+    })
+    @Parameters({
+            @Parameter(name = "corepoWorkId",
+                    description = "Id of the work in corepo. Typically 'work:...'",
+                    required = true),
+            @Parameter(name = "trackingId",
+                    description = "Useful for tracking a request in log files")
+    })
+    public Response getPersistentWorkId(
+            @LogAs("corepoWorkId") @QueryParam("corepoWorkId") String corepoWorkId,
+            @LogAs("trackingId") @GenerateTrackingId @QueryParam("trackingId") String trackingId,
+            @Context UriInfo uriInfo) {
+        if (corepoWorkId == null || corepoWorkId.isEmpty()) {
+            final String missingVariables = "Required parameter corepoWorkId is missing";
+            log.info("Bad request: {}", missingVariables);
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new ErrorResponse(ErrorCode.MISSING_PARAMETERS, missingVariables, trackingId))
+                    .build();
+        }
+        final WorkObjectEntity work = WorkObjectEntity.readOnlyFromCorepoWorkId(em, corepoWorkId);
+        if (work == null) {
+            log.warn("corepo work-id not found: {}", corepoWorkId);
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new ErrorResponse(ErrorCode.NOT_FOUND_ERROR, String.format("corepo work-id not found {}", corepoWorkId), trackingId))
+                    .build();
+        }
+        return Response.status(Response.Status.OK).entity(work.getPersistentWorkId()).build();
+    }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
