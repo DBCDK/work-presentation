@@ -39,4 +39,12 @@ public class ServiceApplication extends Application {
     public Set<Class<?>> getClasses() {
         return CLASSES;
     }
+
+    @Override
+    public Set<Object> getSingletons() {
+        HashSet<Object> singletons = new HashSet<>();
+        singletons.addAll(super.getSingletons());
+        singletons.add(new CorsFilter());
+        return singletons;
+    }
 }
