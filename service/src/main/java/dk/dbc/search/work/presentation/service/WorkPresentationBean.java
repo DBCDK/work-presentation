@@ -133,12 +133,11 @@ public class WorkPresentationBean {
     })
     public Response getPersistentWorkId(
             @LogAs("corepoWorkId") @QueryParam("corepoWorkId") String corepoWorkId,
-            @LogAs("trackingId") @GenerateTrackingId @QueryParam("trackingId") String trackingId,
-            @Context UriInfo uriInfo) {
+            @LogAs("trackingId") @GenerateTrackingId @QueryParam("trackingId") String trackingId) {
         if (corepoWorkId == null || corepoWorkId.isEmpty()) {
             final String missingVariables = "Required parameter corepoWorkId is missing";
             log.info("Bad request: {}", missingVariables);
-            return Response.status(Response.Status.NOT_FOUND)
+            return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new ErrorResponse(ErrorCode.MISSING_PARAMETERS, missingVariables, trackingId))
                     .build();
         }
