@@ -97,7 +97,7 @@ public class WorkPresentationBeanIT extends JpaBase {
                 }
                 assertThat(dir.toString(), actual, is(expected));
                 final String pWorkId = (String) (wpb.getPersistentWorkId("work:0", "trackMe")).getEntity();
-                assertEquals(pWorkId, actual.workId);
+                assertEquals(pWorkId, expected.workId);
             } catch (IOException | RuntimeException ex) {
                 System.out.println("  Exception:" + ex.getClass().getName() + ", " + ex.getMessage());
                 log.error("Exception: {}", ex.getMessage());
