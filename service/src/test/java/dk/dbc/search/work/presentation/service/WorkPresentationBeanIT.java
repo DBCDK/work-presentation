@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
@@ -95,6 +96,8 @@ public class WorkPresentationBeanIT extends JpaBase {
                     System.out.println();
                 }
                 assertThat(dir.toString(), actual, is(expected));
+                final String pWorkId = (String) (wpb.getPersistentWorkId("work:0", "trackMe")).getEntity();
+                assertEquals(pWorkId, actual.workId);
             } catch (IOException | RuntimeException ex) {
                 System.out.println("  Exception:" + ex.getClass().getName() + ", " + ex.getMessage());
                 log.error("Exception: {}", ex.getMessage());
