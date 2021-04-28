@@ -107,19 +107,26 @@ public class WorkConsolidator {
      * @param corepoWorkId corepo-work-id of the work
      * @param tree         The structure of the entire work
      * @param content      The record content
+     * @return if a new persistent work-id has been created in the database
      */
     @Timed(reusable = true)
-    public void saveWork(String corepoWorkId, WorkTree tree, WorkInformation content) {
+    public boolean saveWork(String corepoWorkId, WorkTree tree, WorkInformation content) {
+        boolean newPersistentWorkId = false;
 
         setWorkContains(tree);
 
         String persistentWorkId = tree.getPersistentWorkId();
         WorkObjectEntity work = WorkObjectEntity.from(em, persistentWorkId);
+
         WorkObjectEntity workByWorkId = WorkObjectEntity.fromCorepoWorkId(em, corepoWorkId);
         log.debug("record = {}, recordByWorkId = {}", work, workByWorkId);
-        if (workByWorkId != null && !workByWorkId.getPersistentWorkId().equals(persistentWorkId)) {
+        if (workByWorkId == null) {
+            log.info("Created persistent-work-id: {}", persistentWorkId);
+            newPersistentWorkId = true;
+        } else if (!workByWorkId.getPersistentWorkId().equals(persistentWorkId)) {
             log.info("Moved from persistent-work-id: {} to {}", workByWorkId.getPersistentWorkId(), persistentWorkId);
             workByWorkId.delete();
+            newPersistentWorkId = true;
         }
         work.setCorepoWorkId(corepoWorkId);
         Stream.Builder<Instant> builder = Stream.builder();
@@ -135,6 +142,7 @@ public class WorkConsolidator {
         work.setModified(Timestamp.from(modified));
         work.setContent(content);
         work.save();
+        return newPersistentWorkId;
     }
 
     /**

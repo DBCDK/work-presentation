@@ -46,7 +46,7 @@ public class PresentationObjectBuilderIT extends JpaBase {
         withConfigEnv()
                 .jpaWithBeans(beanFactory -> {
                     PresentationObjectBuilder bean = beanFactory.getPresentationObjectBuilder();
-                    bean.process("work:62");
+                    bean.process("work:62", "track-me");
                 });
 
         System.out.println("  Verify that the parts are in the database");
@@ -71,7 +71,7 @@ public class PresentationObjectBuilderIT extends JpaBase {
                         }
                     });
                     PresentationObjectBuilder bean = beanFactory.getPresentationObjectBuilder();
-                    bean.process("work:62");
+                    bean.process("work:62", "track-me");
                 });
 
         System.out.println("  Verify that the parts are purged from the database");
@@ -94,7 +94,7 @@ public class PresentationObjectBuilderIT extends JpaBase {
                         }
                     });
                     PresentationObjectBuilder bean = beanFactory.getPresentationObjectBuilder();
-                    bean.process("work:62");
+                    bean.process("work:62", "track-me");
                 });
 
         System.out.println("  Verify that nothing has appeared in the database");
@@ -155,7 +155,7 @@ public class PresentationObjectBuilderIT extends JpaBase {
                     beanFactory.withCorepoContentServiceConnector(mock);
 
                     PresentationObjectBuilder bean = beanFactory.getPresentationObjectBuilder();
-                    bean.process("work:62");
+                    bean.process("work:62", "track-me");
                 });
 
         jpa(em -> {
@@ -167,7 +167,7 @@ public class PresentationObjectBuilderIT extends JpaBase {
         withConfigEnv()
                 .jpaWithBeans(beanFactory -> {
                     PresentationObjectBuilder bean = beanFactory.getPresentationObjectBuilder();
-                    bean.process("work:62");
+                    bean.process("work:62", "track-me");
                 });
         jpa(em -> {
             assertThat(WorkObjectEntity.readOnlyFrom(em, "work-of:830520-katalog:000025251"), nullValue());

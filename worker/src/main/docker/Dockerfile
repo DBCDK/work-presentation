@@ -14,6 +14,7 @@ LABEL \
       COREPO_POSTGRES_URL="database url (required: user:pass@host:port/database)" \
       QUEUE_DEDUPLICATE="If duplicate queue entries should be collapsed (default: true)" \
       COREPO_CONTENT_SERVICE_URL="Rest service (http) for corepo content (required)" \
+      SOLR_DOC_STORE_URL="Rest service (http) for solr-doc-store (required)" \
       \
       QUEUES="Comma separated list of queue names in order to drain (required)" \
       DATABASE_THROTTLE="Database connect error throttle (default: 1/5s,3/m,5/10m)" \

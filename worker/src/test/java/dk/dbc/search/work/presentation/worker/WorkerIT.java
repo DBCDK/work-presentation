@@ -38,7 +38,7 @@ public class WorkerIT extends JpaBase {
                 .jpaWithBeans(beanFactory -> {
                     beanFactory.withPresentationObjectBuilder(new PresentationObjectBuilder() {
                         @Override
-                        public void process(String pid) {
+                        public void process(String pid, String trackingId) {
                             counter.incrementAndGet();
                         }
                     });
@@ -64,7 +64,7 @@ public class WorkerIT extends JpaBase {
                 .jpaWithBeans(beanFactory -> {
                     beanFactory.withPresentationObjectBuilder(new PresentationObjectBuilder() {
                         @Override
-                        public void process(String pid) {
+                        public void process(String pid, String trackingId) {
                             counter.incrementAndGet();
                         }
                     });
