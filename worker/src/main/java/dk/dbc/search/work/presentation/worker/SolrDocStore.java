@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +50,11 @@ public class SolrDocStore {
     Config config;
 
     public void queue(String workId, String trackingId) {
-        URI uri = config.getSolrDocStoreQueue()
+        UriBuilder ub = config.getSolrDocStoreQueue();
+        if (ub == null) {
+            return;
+        }
+        URI uri = ub
                 .build(workId, trackingId);
         log.info("Requeueing by url: {}", uri);
 
