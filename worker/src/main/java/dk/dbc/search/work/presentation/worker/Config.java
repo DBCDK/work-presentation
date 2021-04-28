@@ -57,6 +57,7 @@ public class Config {
     private int jsPoolSize;
     private String[] queues;
     private boolean queueDeduplicate;
+    private UriBuilder solrDocStoreQueue;
     private int threads;
     private long postponeFrom;
     private long postponeRange;
@@ -88,6 +89,14 @@ public class Config {
         this.corepoContentService = UriBuilder.fromPath(getOrFail("COREPO_CONTENT_SERVICE_URL"));
         this.jsPoolSize = Integer.max(1, Integer.parseInt(getOrFail("JS_POOL_SIZE")));
 
+        String sds = getOrFail("SOLR_DOC_STORE_URL");
+        if (sds.equals("disabled")) {
+            this.solrDocStoreQueue = null;
+        } else {
+            this.solrDocStoreQueue = UriBuilder.fromUri(sds)
+                    .path("api/queue/work/{workId}")
+                    .queryParam("trackingId", "{trackingId}");
+        }
         computePostponeParameters(getOrFail("JPA_POSTPONE"));
     }
 
@@ -117,6 +126,10 @@ public class Config {
     @SuppressFBWarnings("EI_EXPOSE_REP")
     public String[] getQueues() {
         return queues;
+    }
+
+    public UriBuilder getSolrDocStoreQueue() {
+        return solrDocStoreQueue == null ? null : solrDocStoreQueue.clone();
     }
 
     public boolean hasQueueDeduplicate() {

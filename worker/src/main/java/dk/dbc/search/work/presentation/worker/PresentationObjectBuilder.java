@@ -49,6 +49,9 @@ public class PresentationObjectBuilder {
     private static final Logger log = LoggerFactory.getLogger(PresentationObjectBuilder.class);
 
     @Inject
+    SolrDocStore solrDocStore;
+
+    @Inject
     CorepoContentServiceConnector corepoContent;
 
     @Inject
@@ -68,7 +71,7 @@ public class PresentationObjectBuilder {
         try (LogWith logWith = LogWith.track(job.getTrackingId())
                 .pid(corepoWorkId);) {
             if (corepoWorkId.startsWith("work:")) {
-                process(corepoWorkId);
+                process(corepoWorkId, job.getTrackingId());
                 successes.inc();
             }
         } catch (RuntimeException ex) {
@@ -78,7 +81,7 @@ public class PresentationObjectBuilder {
         }
     }
 
-    void process(String corepoWorkId) throws FatalQueueError {
+    void process(String corepoWorkId, String trackingId) throws FatalQueueError {
         log.info("Processing job: {}", corepoWorkId);
 
         try {
@@ -87,9 +90,13 @@ public class PresentationObjectBuilder {
                 tree.prettyPrint(log::trace);
                 if (tree.isEmpty()) {
                     workConsolidator.deleteWork(corepoWorkId);
+                    solrDocStore.queue(corepoWorkId, trackingId); // shouldn't really be needed - all records on the way as deleted, or as members of other work
                 } else {
                     WorkInformation content = workConsolidator.buildWorkInformation(tree, corepoWorkId);
-                    workConsolidator.saveWork(corepoWorkId, tree, content);
+                    boolean newWorkInDatabase = workConsolidator.saveWork(corepoWorkId, tree, content);
+                    if (newWorkInDatabase) {
+                        solrDocStore.queue(corepoWorkId, trackingId);
+                    }
                 }
             } catch (EJBException ex) {
                 if (ex.getCause() instanceof RuntimeException)
