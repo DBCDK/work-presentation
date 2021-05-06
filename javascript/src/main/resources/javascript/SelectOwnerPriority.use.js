@@ -75,6 +75,8 @@ var SelectOwnerPriority = ( function () {
         multiplyValues( values, typeValues );
         var idBonus = getIdBonus( manifestations );
         addValues( values, idBonus );
+        var deletedPenalty = getDeletedPenalty( manifestations );
+        multiplyValues( values, deletedPenalty );
 
         Log.trace( "Leaving: ManifestationInfo.computeValues function" );
 
@@ -302,7 +304,7 @@ var SelectOwnerPriority = ( function () {
      *
      * @type {function}
      * @syntax SelectOwnerPriority.getTypePrioFromList( manifestations )
-     * @param {Array} type names
+     * @param {Array} names type names
      * @return {Number} priority of the type
      * @function
      * @name SelectOwnerPriority.getTypePrioFromList
@@ -487,6 +489,35 @@ var SelectOwnerPriority = ( function () {
         return values;
     }
 
+    /**
+     * Function that looks up if the primary datastream for this pid is deleted
+     *
+     *
+     * @type {function}
+     * @syntax SelectOwnerPriority.getDeletedPenalty( manifestations )
+     * @param {Object} manifestations as a map from id to java-type ManifestationInformation
+     * @return {Object} map of manifestation id to relevance as owner
+     * @function
+     * @name SelectOwnerPriority.getIdBonus
+     */
+
+    function getDeletedPenalty( manifestations ) {
+        Log.trace( "Entering: ManifestationInfo.getIdBonus function" );
+
+        var values = {};
+        for ( var id in manifestations ) {
+            if ( manifestations[id][KEYS].deleted === "true" ) {
+                values[id] = 0.001;
+            } else {
+                values[id] = 1;
+            }
+        }
+
+        Log.trace( "Leaving: ManifestationInfo.getIdBonus function" );
+
+        return values;
+    }
+
 
     return {
         computeValues: computeValues,
@@ -497,6 +528,7 @@ var SelectOwnerPriority = ( function () {
         getAgeValues: getAgeValues,
         getEditionPriorities: getEditionPriorities,
         getTypePriorities: getTypePriorities,
-        getIdBonus: getIdBonus
+        getIdBonus: getIdBonus,
+        getDeletedPenalty: getDeletedPenalty
     };
 } )();
