@@ -284,7 +284,7 @@ public class WorkConsolidator {
                 // Create a dummy object (might be the owner of the work)
                 // This object is not cached in the database - Do not want it to pollute the cache
                 // Make it available to the owner-selection service
-                // Ensure deleted penatly in owner-selection
+                // Ensure deleted penalty in owner-selection
                 mi = jsEnv.cacheBuild(new CacheContentBuilder(objectId, Instant.now(), false));
                 mi.priorityKeys.put("deleted", "true");
                 manifestationCache.put(objectId, mi);
