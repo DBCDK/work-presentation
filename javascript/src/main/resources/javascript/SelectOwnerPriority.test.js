@@ -248,3 +248,42 @@ UnitTest.addFixture( "SelectOwnerPriority.getIdBonus", function () {
     Assert.equalValue( "get id-bonus values", actual, expected );
 } );
 
+UnitTest.addFixture( "SelectOwnerPriority.getDeletedPenalty", function () {
+
+    var values = {
+        a: {
+            priorityKeys: {
+                identifier: "12345678|870970",
+                deleted: "false"
+            }
+        },
+        b: {
+            priorityKeys: {
+                identifier: "12345678__3|777777",
+                deleted: "true"
+            }
+        },
+        c: {
+            priorityKeys: {
+                identifier: "12345678|765432"
+            }
+        },
+        d: {
+            priorityKeys: {
+                identifier: "12345678__1|777777",
+                deleted: "what?"
+            }
+        }
+    };
+
+    var expected = {
+        a: 1,
+        b: 0.001,
+        c: 1,
+        d: 1
+    };
+
+    var actual = SelectOwnerPriority.getDeletedPenalty( values );
+    Assert.equalValue( "get deleted penalty values", actual, expected );
+} );
+
