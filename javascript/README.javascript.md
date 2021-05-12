@@ -17,21 +17,23 @@ This builds the work-presentation jar file with embedded javascript files, but s
 
 
 ## File structure
+```
 ├── javascript
 │   ├── jsshell.sh
 │   ├── js-unittest.log
 │   ├── pom.xml
 │   ├── src
 │   └── target
-
-
+```
 In the javascript folder there is a shell script jsshell.sh with the correct paths set up for a dbc-jsshell. So use that to access a dbc-jsshell or to run single unit tests. 
 
-The relevant javascripts are found in 
+The relevant javascripts are found in
+```
 src/main/resources/javascript/
 ├── BuildCacheObject.js
 ├── ManifestationInfo.test.js
 └── ManifestationInfo.use.js
+```
 
 where BuildCacheObject.js contains the main entry function that is called from the Java code. 
 
@@ -57,7 +59,8 @@ To save a log file from this you can use the normal -l flag, e.g.
 
 ## Acceptance tests
 The acceptance tests are found in 
-
+                                         
+```
 src/test/resources/accept-test/
 ├── example
 │   ├── commonData.xml
@@ -74,6 +77,7 @@ src/test/resources/accept-test/
     ├── DC.xml
     ├── expected.json
     └── localData.xml
+```
 
 More tests may have been added later. 
 
@@ -83,15 +87,18 @@ The folder then contains three input files and the expected json result.
 
 An acceptance can have empty content in a file if needed for the test. This for example is used in test 'koraan-empty-local-data'. 
 But all file names should be present and named as:
+```
     ├── commonData.xml
     ├── DC.xml
     ├── expected.json
     └── localData.xml
+```
 
 The input files correspond to the data streams found in Corepo on a record, the common data stream, the DC stream and the local data stream. 
 
 The expected output looks like this: 
 
+```json
 {
   "title" : "værkstedstekniske beregninger",
   "fullTitle" : "Værkstedstekniske beregninger. M2, Boring",
@@ -101,6 +108,7 @@ The expected output looks like this:
   "subjects" : [ ],
   "types" : [ "Bog" ]
 }
+```
 
 The pid corresponds to the folder name for the acceptance test. 
 
