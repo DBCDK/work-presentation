@@ -46,7 +46,7 @@ public class GroupInformationResponse {
     @Schema(example = "0,2,7", implementation = int.class, description = "indexes (starting with 0) in " + WorkInformationResponse.NAME + "/relations")
     public int[] relations;
 
-    @Schema(implementation = ManifestationInformationResponse.Array.class)
+    @Schema(implementation = ManifestationInformationResponse.Array.class, ref = ManifestationInformationResponse.NAME)
     public Set<ManifestationInformationResponse> records;
 
     public static GroupInformationResponse with(Set<ManifestationInformationResponse> records) {
