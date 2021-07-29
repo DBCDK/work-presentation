@@ -34,6 +34,7 @@ var ManifestationInfo = (function() {
                 "description": null, //from commonData stream dcterms:abstract - string, null if no data
                 "subjects": [], //from common and local stream if subject element present, array, empty array if no data
                 "types": [], //from DC stream, array, must be present
+                "workTypes": [], //from commonData stream adminData workType, array, must be present
                 "priorityKeys": {} //from DC stream for determining owner of the work, must be present
             };
 
@@ -58,6 +59,7 @@ var ManifestationInfo = (function() {
         manifestationObject.description = getAbstract( commonDataXml, localDataXml );
         manifestationObject.subjects = getSubjects( commonDataXml, localDataXml );
         manifestationObject.types = getTypes( dcStreamXml );
+        manifestationObject.workTypes = getWorkTypes( commonDataXml );
         manifestationObject.priorityKeys = getPriorityKeys( commonDataXml, localDataXml );
 
         Log.trace( "Leaving: ManifestationInfo.getManifestationInfoFromXmlObjects function" );
@@ -306,6 +308,33 @@ var ManifestationInfo = (function() {
     }
 
     /**
+     * Function that extracts workTypes from the provided common data stream
+     *
+     * @type {function}
+     * @syntax ManifestationInfo.getWorkTypes( commonData )
+     * @param {Document} commonData the common data stream as xml
+     * @return {Array} the extracted work types
+     * @function
+     * @name ManifestationInfo.getWorkTypes
+     */
+
+    function getWorkTypes( commonData ) {
+
+        Log.trace( "Entering: ManifestationInfo.getWorkTypes function" );
+
+        var workTypes = XPath.selectMultipleText( "/ting:container/adminData/workType", commonData );
+
+        if ( 0 === workTypes.length ) {
+            RecordProcessing.terminateProcessingAndFailRecord(
+                "ManifestationInfo.getWorkTypes no workType was found in adminData in common stream" );
+        }
+
+        Log.trace( "Leaving: ManifestationInfo.getWorkTypes function" );
+
+        return workTypes;
+    }
+
+    /**
      * Function that extracts the abstract from the either the local data stream
      * or if not present there the common data stream
      *
@@ -492,6 +521,7 @@ var ManifestationInfo = (function() {
         getSeries: getSeries,
         getCreators: getCreators,
         getTypes: getTypes,
+        getWorkTypes: getWorkTypes,
         getAbstract: getAbstract,
         getSubjects: getSubjects,
         getPriorityKeys: getPriorityKeys

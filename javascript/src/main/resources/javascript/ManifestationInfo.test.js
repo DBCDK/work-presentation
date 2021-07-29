@@ -118,6 +118,7 @@ UnitTest.addFixture( "ManifestationInfo.getManifestationInfoFromXmlObjects", fun
             "description": null, //from commonData stream dcterms:abstract - string, null if no data
             "subjects": [], //from dc stream if subject element present, array, empty array if no data
             "types": [ "Bog" ], //from DC stream, array, most be present
+            "workTypes": [ "literature" ], //from commonData stream adminData workType, array, must be present
             "priorityKeys": { //from DC stream for determining owner of the work, must be present
                 "identifier": "08021473|870970",
                 "date": "1972",
@@ -144,6 +145,7 @@ UnitTest.addFixture( "ManifestationInfo.getManifestationInfoFromXmlObjects", fun
             "description": null,
             "subjects": [],
             "types": [ "Bog" ],
+            "workTypes": [ "literature" ],
             "priorityKeys": {
                 "identifier": "08021473|870970",
                 "date": "1972",
@@ -1955,5 +1957,131 @@ UnitTest.addFixture( "ManifestationInfo.getPriorityKeys", function() {
     };
 
     Assert.equalValue( "get priority-keys from local before common stream ", ManifestationInfo.getPriorityKeys( commonData, localData ), expected );
+
+} );
+
+
+UnitTest.addFixture( "ManifestationInfo.getWorkTypes", function() {
+
+    var commonDataString =
+        '<ting:container ' +
+        'xmlns:ting="http://www.dbc.dk/ting" ' +
+        'xmlns:ac="http://biblstandard.dk/ac/namespace/" ' +
+        'xmlns:dc="http://purl.org/dc/elements/1.1/" ' +
+        'xmlns:dcterms="http://purl.org/dc/terms/" ' +
+        'xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/" ' +
+        'xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/" ' +
+        'xmlns:docbook="http://docbook.org/ns/docbook" ' +
+        'xmlns:oss="http://oss.dbc.dk/ns/osstypes" ' +
+        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> ' +
+        '<dkabm:record>' +
+        '<ac:identifier>23645564|870970</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Trækopfuglens krønike</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Trækopfuglens krønike</dc:title>' +
+        '</dkabm:record>' +
+        '<adminData>' +
+        '<recordStatus>active</recordStatus>' +
+        '<creationDate>2016-07-09</creationDate>' +
+        '<libraryType>none</libraryType>' +
+        '<genre>fiktion</genre>' +
+        '<indexingAlias>danmarcxchange</indexingAlias>' +
+        '<accessType>physical</accessType>' +
+        '<workType>literature</workType>' +
+        '<collectionIdentifier>870970-basis</collectionIdentifier>' +
+        '<collectionIdentifier>870970-danbib</collectionIdentifier>' +
+        '<collectionIdentifier>870970-bibdk</collectionIdentifier>' +
+        '</adminData>' +
+        '</ting:container>'
+    var commonData = XmlUtil.fromString( commonDataString );
+
+    var expected = [ "literature" ];
+
+    Assert.equalValue( "get workType from adminData", ManifestationInfo.getWorkTypes( commonData ), expected );
+
+    commonDataString =
+        '<ting:container ' +
+        'xmlns:ting="http://www.dbc.dk/ting" ' +
+        'xmlns:ac="http://biblstandard.dk/ac/namespace/" ' +
+        'xmlns:dc="http://purl.org/dc/elements/1.1/" ' +
+        'xmlns:dcterms="http://purl.org/dc/terms/" ' +
+        'xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/" ' +
+        'xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/" ' +
+        'xmlns:docbook="http://docbook.org/ns/docbook" ' +
+        'xmlns:oss="http://oss.dbc.dk/ns/osstypes" ' +
+        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> ' +
+        '<dkabm:record>' +
+        '<ac:identifier>52780128|870970</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Styr på dyr. Sebastians vildeste hits</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Styr på dyr. Sebastians vildeste hits</dc:title>' +
+        '</dkabm:record>' +
+        '<adminData>' +
+        '<recordStatus>active</recordStatus>' +
+        '<creationDate>2016-11-24</creationDate>' +
+        '<libraryType>none</libraryType>' +
+        '<indexingAlias>danmarcxchange</indexingAlias>' +
+        '<accessType>physical</accessType>' +
+        '<workType>literature</workType>' +
+        '<workType>music</workType>' +
+        '<collectionIdentifier>870970-basis</collectionIdentifier>' +
+        '<collectionIdentifier>870970-danbib</collectionIdentifier>' +
+        '<collectionIdentifier>870970-bibdk</collectionIdentifier>' +
+        '</adminData>' +
+        '</ting:container>'
+
+    commonData = XmlUtil.fromString( commonDataString );
+
+    expected = [ "literature", "music" ];
+
+    Assert.equalValue( "get multiple workTypes from adminData ", ManifestationInfo.getWorkTypes( commonData ), expected );
+
+    commonDataString =
+        '<ting:container ' +
+        'xmlns:ting="http://www.dbc.dk/ting" ' +
+        'xmlns:ac="http://biblstandard.dk/ac/namespace/" ' +
+        'xmlns:dc="http://purl.org/dc/elements/1.1/" ' +
+        'xmlns:dcterms="http://purl.org/dc/terms/" ' +
+        'xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/" ' +
+        'xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/" ' +
+        'xmlns:docbook="http://docbook.org/ns/docbook" ' +
+        'xmlns:oss="http://oss.dbc.dk/ns/osstypes" ' +
+        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> ' +
+        '<dkabm:record>' +
+        '<ac:identifier>51349016|870970</ac:identifier>' +
+        '<ac:source>Bibliotekernes podcasts</ac:source>' +
+        '<dc:title>Podcast: "Den danske borgerkrig 2018-24" af Kaspar Colling-Nielsen</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Podcast: "Den danske borgerkrig 2018-24" af Kaspar Colling-Nielsen</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:series">Månedens bog - podcast</dc:title>' +
+        '</dkabm:record>' +
+        '<adminData>' +
+        '<recordStatus>active</recordStatus>' +
+        '<creationDate>2016-07-09</creationDate>' +
+        '<libraryType>none</libraryType>' +
+        '<genre>nonfiktion</genre>' +
+        '<indexingAlias>danmarcxchange</indexingAlias>' +
+        '<accessType>online</accessType>' +
+        '<workType>none</workType>' +
+        '<collectionIdentifier>870970-basis</collectionIdentifier>' +
+        '<collectionIdentifier>870970-danbib</collectionIdentifier>' +
+        '<collectionIdentifier>870970-bibdk</collectionIdentifier>' +
+        '<collectionIdentifier>870970-netbkm</collectionIdentifier>' +
+        '<collectionIdentifier>150080-bibcast</collectionIdentifier>' +
+        '</adminData>' +
+        '</ting:container>'
+
+    commonData = XmlUtil.fromString( commonDataString );
+
+    expected = [ "none" ];
+
+    Assert.equalValue( "get workType none from adminData ", ManifestationInfo.getWorkTypes( commonData ), expected );
+
+    commonDataString = '<empty/>';
+
+    commonData = XmlUtil.fromString( commonDataString );
+
+    Assert.exception( "Stop processing if commonData has no workType", function() {
+        ManifestationInfo.getWorkTypes( commonData );
+    }, Packages.dk.dbc.javascript.recordprocessing.FailRecord );
 
 } );
