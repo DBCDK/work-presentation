@@ -159,27 +159,27 @@ var ManifestationInfo = (function() {
 
         //first check if localData has a full title
         var series = XPath.selectText( '/ting:localData/dkabm:record/dc:title[@xsi:type="dkdcplus:series"]', localData );
-        Log.trace("local title=", series);
+        Log.trace( "local title=", series );
         series = series.trim();
         var split = true;
 
         if ( "" === series ) {
             series = XPath.selectText( '/ting:localData/dkabm:record/dc:description[@xsi:type="dkdcplus:series"]', localData );
-            Log.trace("local desc=", series);
+            Log.trace( "local desc=", series );
             series = series.trim();
             split = false;
         }
 
         if ( "" === series ) {
             series = XPath.selectText( '/ting:container/dkabm:record/dc:title[@xsi:type="dkdcplus:series"]', commonData );
-            Log.trace("common title=", series);
+            Log.trace( "common title=", series );
             series = series.trim();
             split = true;
         }
 
         if ( "" === series ) {
             series = XPath.selectText( '/ting:container/dkabm:record/dc:description[@xsi:type="dkdcplus:series"]', commonData );
-            Log.trace("common desc=", series);
+            Log.trace( "common desc=", series );
             series = series.trim();
             split = false;
         }
@@ -193,11 +193,11 @@ var ManifestationInfo = (function() {
         var seriesTitle = series;
         var seriesInstalment = null;
 
-        if(split) {
+        if ( split ) {
             var instalmentMatch = series.match( '^(.+) ; (.+)$' );
             if ( instalmentMatch !== null ) {
-                seriesTitle = instalmentMatch[1];
-                seriesInstalment = instalmentMatch[2];
+                seriesTitle = instalmentMatch[ 1 ];
+                seriesInstalment = instalmentMatch[ 2 ];
             }
         }
 
@@ -233,8 +233,8 @@ var ManifestationInfo = (function() {
 
         for ( var i in creators ) {
 
-            var type = XmlUtil.getAttribute( creators[i], "type", XmlNamespaces.xsi );
-            var value = XmlUtil.getText( creators[i] ).trim();
+            var type = XmlUtil.getAttribute( creators[ i ], "type", XmlNamespaces.xsi );
+            var value = XmlUtil.getText( creators[ i ] ).trim();
 
             if ( type === undefined ) {
                 type = null;
@@ -250,7 +250,7 @@ var ManifestationInfo = (function() {
                 Log.warn( "ManifestationInfo.getSubjects type is: " + type );
             }
 
-            creators[i] = {
+            creators[ i ] = {
                 "type": type,
                 "value": value
             };
@@ -365,8 +365,8 @@ var ManifestationInfo = (function() {
         }
         for ( var i in subjects ) {
 
-            var type = XmlUtil.getAttribute( subjects[i], "type", XmlNamespaces.xsi );
-            var value = XmlUtil.getText( subjects[i] ).trim();
+            var type = XmlUtil.getAttribute( subjects[ i ], "type", XmlNamespaces.xsi );
+            var value = XmlUtil.getText( subjects[ i ] ).trim();
 
             if ( type === undefined ) {
                 type = null;
@@ -379,7 +379,7 @@ var ManifestationInfo = (function() {
                 Log.warn( "ManifestationInfo.getSubjects type is: " + type );
             }
 
-            subjects[i] = {
+            subjects[ i ] = {
                 "type": type,
                 "value": value
             };

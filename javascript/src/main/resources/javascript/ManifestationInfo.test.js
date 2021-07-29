@@ -169,98 +169,98 @@ UnitTest.addFixture( "ManifestationInfo.getTitle", function() {
 
     var commonDataString = '<empty/>';
     var localDataString =
-            '<ting:localData' +
-            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
-            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
-            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
-            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
-            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
-            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
-            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
-            ' xmlns:ting="http://www.dbc.dk/ting"' +
-            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<dkabm:record>' +
-            '<ac:identifier>22023578|870970</ac:identifier>' +
-            '<ac:source>Bibliotekskatalog</ac:source>' +
-            '<dc:title>Ave Femina!</dc:title>' +
-            '<dc:title xsi:type="dkdcplus:full">Ave Femina! : Digte</dc:title>' +
-            '</dkabm:record>' +
-            '</ting:localData>';
+        '<ting:localData' +
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<ac:identifier>22023578|870970</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Ave Femina!</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Ave Femina! : Digte</dc:title>' +
+        '</dkabm:record>' +
+        '</ting:localData>';
 
-    var localData = XmlUtil.fromString(localDataString);
-    var commonData = XmlUtil.fromString(commonDataString);
+    var localData = XmlUtil.fromString( localDataString );
+    var commonData = XmlUtil.fromString( commonDataString );
 
     var expected = "Ave Femina!";
 
     Assert.equalValue( "get title from localData ", ManifestationInfo.getTitle( commonData, localData ), expected );
 
     commonDataString =
-            '<ting:container' +
-            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
-            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
-            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
-            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
-            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
-            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
-            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
-            ' xmlns:ting="http://www.dbc.dk/ting"' +
-            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<dkabm:record>' +
-            '<ac:identifier>22023578|870970</ac:identifier>' +
-            '<ac:source>Bibliotekskatalog</ac:source>' +
-            '<dc:title>Ave Femina!</dc:title>' +
-            '<dc:title xsi:type="dkdcplus:full">Ave Femina! : Digte</dc:title>' +
-            '</dkabm:record>' +
-            '</ting:container>';
+        '<ting:container' +
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<ac:identifier>22023578|870970</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Ave Femina!</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Ave Femina! : Digte</dc:title>' +
+        '</dkabm:record>' +
+        '</ting:container>';
     localDataString = '<empty/>';
 
-    localData = XmlUtil.fromString(localDataString);
-    commonData = XmlUtil.fromString(commonDataString);
+    localData = XmlUtil.fromString( localDataString );
+    commonData = XmlUtil.fromString( commonDataString );
 
     expected = "Ave Femina!";
 
     Assert.equalValue( "get title from commonData ", ManifestationInfo.getTitle( commonData, localData ), expected );
 
     commonDataString =
-            '<ting:container' +
-            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
-            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
-            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
-            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
-            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
-            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
-            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
-            ' xmlns:ting="http://www.dbc.dk/ting"' +
-            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<dkabm:record>' +
-            '<ac:identifier>22023578|870970</ac:identifier>' +
-            '<ac:source>Bibliotekskatalog</ac:source>' +
-            '<dc:title>Ave Femina! - not this one</dc:title>' +
-            '<dc:title xsi:type="dkdcplus:full">Ave Femina! : Digte</dc:title>' +
-            '</dkabm:record>' +
-            '</ting:container>';
+        '<ting:container' +
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<ac:identifier>22023578|870970</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Ave Femina! - not this one</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Ave Femina! : Digte</dc:title>' +
+        '</dkabm:record>' +
+        '</ting:container>';
 
     localDataString =
-            '<ting:localData' +
-            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
-            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
-            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
-            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
-            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
-            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
-            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
-            ' xmlns:ting="http://www.dbc.dk/ting"' +
-            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<dkabm:record>' +
-            '<ac:identifier>22023578|870970</ac:identifier>' +
-            '<ac:source>Bibliotekskatalog</ac:source>' +
-            '<dc:title>Ave Femina!</dc:title>' +
-            '<dc:title xsi:type="dkdcplus:full">Ave Femina! : Digte</dc:title>' +
-            '</dkabm:record>' +
-            '</ting:localData>';
+        '<ting:localData' +
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<ac:identifier>22023578|870970</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Ave Femina!</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Ave Femina! : Digte</dc:title>' +
+        '</dkabm:record>' +
+        '</ting:localData>';
 
-    localData = XmlUtil.fromString(localDataString);
-    commonData = XmlUtil.fromString(commonDataString);
+    localData = XmlUtil.fromString( localDataString );
+    commonData = XmlUtil.fromString( commonDataString );
 
     expected = "Ave Femina!";
 
@@ -268,26 +268,26 @@ UnitTest.addFixture( "ManifestationInfo.getTitle", function() {
 
     commonDataString = '<empty/>';
     localDataString =
-            '<ting:localData' +
-            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
-            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
-            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
-            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
-            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
-            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
-            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
-            ' xmlns:ting="http://www.dbc.dk/ting"' +
-            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<dkabm:record>' +
-            '<ac:identifier>22023578|870970</ac:identifier>' +
-            '<ac:source>Bibliotekskatalog</ac:source>' +
-/*  TITLE NOT PRESENT '<dc:title>Ave Femina!</dc:title>' + */
-            '<dc:title xsi:type="dkdcplus:full">Ave Femina! : Digte</dc:title>' +
-            '</dkabm:record>' +
-            '</ting:localData>';
+        '<ting:localData' +
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<ac:identifier>22023578|870970</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        /*  TITLE NOT PRESENT '<dc:title>Ave Femina!</dc:title>' + */
+        '<dc:title xsi:type="dkdcplus:full">Ave Femina! : Digte</dc:title>' +
+        '</dkabm:record>' +
+        '</ting:localData>';
 
-    localData = XmlUtil.fromString(localDataString);
-    commonData = XmlUtil.fromString(commonDataString);
+    localData = XmlUtil.fromString( localDataString );
+    commonData = XmlUtil.fromString( commonDataString );
 
     Assert.exception( "Stop processing if dc has no title", function() {
         ManifestationInfo.getTitle( commonData, localData );
@@ -345,7 +345,7 @@ UnitTest.addFixture( "ManifestationInfo.getFullTitle", function() {
 
     Assert.equalValue( "get full title from common data", ManifestationInfo.getFullTitle( commonData, localData ), expected );
 
-    var commonDataString =
+    commonDataString =
         '<ting:container ' +
         'xmlns:ac="http://biblstandard.dk/ac/namespace/" ' +
         'xmlns:dc="http://purl.org/dc/elements/1.1/" ' +
@@ -361,7 +361,7 @@ UnitTest.addFixture( "ManifestationInfo.getFullTitle", function() {
         '</dkabm:record>' +
         '</ting:container>';
 
-    var localDataString =
+    localDataString =
         '<ting:localData ' +
         'xmlns:marcx="info:lc/xmlns/marcxchange-v1" ' +
         'xmlns:ting="http://www.dbc.dk/ting">' +
@@ -372,10 +372,10 @@ UnitTest.addFixture( "ManifestationInfo.getFullTitle", function() {
         '</marcx:record>' +
         '</ting:localData>';
 
-    var commonData = XmlUtil.fromString( commonDataString );
-    var localData = XmlUtil.fromString( localDataString );
+    commonData = XmlUtil.fromString( commonDataString );
+    localData = XmlUtil.fromString( localDataString );
 
-    var expected = "Værkstedstekniske beregninger. M2, Boring";
+    expected = "Værkstedstekniske beregninger. M2, Boring";
 
     Assert.equalValue( "get full title from common data with whitespace ", ManifestationInfo.getFullTitle( commonData, localData ), expected );
 
@@ -645,8 +645,8 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
     Assert.equalValue( "get series title from localData ", ManifestationInfo.getSeries( commonData, localData ), expected );
 
 
-    var commonDataString = '<empty/>';
-    var localDataString =
+    commonDataString = '<empty/>';
+    localDataString =
         '<ting:localData' +
         ' xmlns:ting="http://www.dbc.dk/ting"' +
         ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
@@ -668,10 +668,10 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
         '</ting:localData>';
 
 
-    var commonData = XmlUtil.fromString( commonDataString );
-    var localData = XmlUtil.fromString( localDataString );
+    commonData = XmlUtil.fromString( commonDataString );
+    localData = XmlUtil.fromString( localDataString );
 
-    var expected = {
+    expected = {
         "title": "2. del af: Harry Potter og De Vises Sten ; woot-woot",
         "instalment": null
     };
@@ -679,7 +679,7 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
     Assert.equalValue( "get series description from localData not split by ';' ", ManifestationInfo.getSeries( commonData, localData ), expected );
 
 
-    var commonDataString =
+    commonDataString =
         '<ting:container' +
         ' xmlns:ting="http://www.dbc.dk/ting"' +
         ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
@@ -700,12 +700,12 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
         '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
         '</dkabm:record>' +
         '</ting:container>';
-    var localDataString = '<empty/>';
-        
-    var commonData = XmlUtil.fromString( commonDataString );
-    var localData = XmlUtil.fromString( localDataString );
+    localDataString = '<empty/>';
 
-    var expected = {
+    commonData = XmlUtil.fromString( commonDataString );
+    localData = XmlUtil.fromString( localDataString );
+
+    expected = {
         "title": "Den store djævlekrig",
         "instalment": "1"
     };
@@ -713,7 +713,7 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
     Assert.equalValue( "get series title from commonData ", ManifestationInfo.getSeries( commonData, localData ), expected );
 
 
-    var commonDataString =
+    commonDataString =
         '<ting:container' +
         ' xmlns:ting="http://www.dbc.dk/ting"' +
         ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
@@ -733,13 +733,13 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
         '<dc:description xsi:type="dkdcplus:series">2. del af: Harry Potter og De Vises Sten ; woot-woot</dc:description>' +
         '</dkabm:record>' +
         '</ting:container>';
-    var localDataString = '<empty/>';
+    localDataString = '<empty/>';
 
 
-    var commonData = XmlUtil.fromString( commonDataString );
-    var localData = XmlUtil.fromString( localDataString );
+    commonData = XmlUtil.fromString( commonDataString );
+    localData = XmlUtil.fromString( localDataString );
 
-    var expected = {
+    expected = {
         "title": "2. del af: Harry Potter og De Vises Sten ; woot-woot",
         "instalment": null
     };
@@ -747,7 +747,7 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
     Assert.equalValue( "get series description from commonData not split by ';' ", ManifestationInfo.getSeries( commonData, localData ), expected );
 
 
-    var commonDataString =
+    commonDataString =
         '<ting:container' +
         ' xmlns:ting="http://www.dbc.dk/ting"' +
         ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
@@ -768,7 +768,8 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
         '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
         '</dkabm:record>' +
         '</ting:container>';
-    var localDataString = 
+
+    localDataString =
         '<ting:localData' +
         ' xmlns:ting="http://www.dbc.dk/ting"' +
         ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
@@ -790,10 +791,10 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
         '</dkabm:record>' +
         '</ting:localData>';
 
-    var commonData = XmlUtil.fromString( commonDataString );
-    var localData = XmlUtil.fromString( localDataString );
+    commonData = XmlUtil.fromString( commonDataString );
+    localData = XmlUtil.fromString( localDataString );
 
-    var expected = {
+    expected = {
         "title": "THIS Den store djævlekrig",
         "instalment": "1"
     };
@@ -801,19 +802,19 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
     Assert.equalValue( "get series title from localData when both local and commonData is present ", ManifestationInfo.getSeries( commonData, localData ), expected );
 
 
-    var commonDataString = '<empty/>';
-    var localDataString =  '<empty/>';
+    commonDataString = '<empty/>';
+    localDataString = '<empty/>';
 
-    var commonData = XmlUtil.fromString( commonDataString );
-    var localData = XmlUtil.fromString( localDataString );
+    commonData = XmlUtil.fromString( commonDataString );
+    localData = XmlUtil.fromString( localDataString );
 
-    var expected = null;
+    expected = null;
 
     Assert.equal( "get series title from common or local - none found ", ManifestationInfo.getSeries( commonData, localData ), expected );
 
 
-    var commonDataString = '<empty/>';
-    var localDataString = 
+    commonDataString = '<empty/>';
+    localDataString =
         '<ting:localData' +
         ' xmlns:ting="http://www.dbc.dk/ting"' +
         ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
@@ -835,10 +836,10 @@ UnitTest.addFixture( "ManifestationInfo.getSeries", function() {
         '</dkabm:record>' +
         '</ting:localData>';
 
-    var commonData = XmlUtil.fromString( commonDataString );
-    var localData = XmlUtil.fromString( localDataString );
+    commonData = XmlUtil.fromString( commonDataString );
+    localData = XmlUtil.fromString( localDataString );
 
-    var expected = {
+    expected = {
         "title": "Den store djævlekrig",
         "instalment": null
     };
@@ -852,182 +853,182 @@ UnitTest.addFixture( "ManifestationInfo.getCreators", function() {
 
     var commonDataString = '<empty/>';
     var localDataString =
-            '<ting:localData' +
-            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
-            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
-            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
-            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
-            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
-            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
-            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
-            ' xmlns:ting="http://www.dbc.dk/ting"' +
-            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<dkabm:record>' +
-            '<ac:identifier>54969562|700400</ac:identifier>' +
-            '<ac:source>Bibliotekskatalog</ac:source>' +
-            '<dc:title>Vildheks</dc:title>' +
-            '<dc:title xsi:type="dkdcplus:full">Vildheks</dc:title>' +
-            '<dcterms:alternative>Vildheks</dcterms:alternative>' +
-            '<dc:creator xsi:type="dkdcplus:aus">Kaspar Munk</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
-            '<dc:creator xsi:type="dkdcplus:drt">Kaspar Munk</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
-            '<dc:creator xsi:type="dkdcplus:cng">Adam Wallensten</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Wallensten, Adam</dc:creator>' +
-            '<dc:creator xsi:type="dkdcplus:aus">Poul Berg</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Berg, Poul (f. 1970-08-19)</dc:creator>' +
-            '<dc:creator xsi:type="dkdcplus:aus">Bo hr. Hansen</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Hansen, Bo hr. (f. 1961)</dc:creator>' +
-            '</dkabm:record>' +
-            '</ting:localData>';
+        '<ting:localData' +
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<ac:identifier>54969562|700400</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Vildheks</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Vildheks</dc:title>' +
+        '<dcterms:alternative>Vildheks</dcterms:alternative>' +
+        '<dc:creator xsi:type="dkdcplus:aus">Kaspar Munk</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
+        '<dc:creator xsi:type="dkdcplus:drt">Kaspar Munk</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
+        '<dc:creator xsi:type="dkdcplus:cng">Adam Wallensten</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Wallensten, Adam</dc:creator>' +
+        '<dc:creator xsi:type="dkdcplus:aus">Poul Berg</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Berg, Poul (f. 1970-08-19)</dc:creator>' +
+        '<dc:creator xsi:type="dkdcplus:aus">Bo hr. Hansen</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Hansen, Bo hr. (f. 1961)</dc:creator>' +
+        '</dkabm:record>' +
+        '</ting:localData>';
 
     var localData = XmlUtil.fromString( localDataString );
     var commonData = XmlUtil.fromString( commonDataString );
 
     var expected = [
-        { type : "aus", value : "Kaspar Munk" },
-        { type : "drt", value : "Kaspar Munk" },
-        { type : "cng", value : "Adam Wallensten" },
-        { type : "aus", value : "Poul Berg" },
-        { type : "aus", value : "Bo hr. Hansen" }
+        { type: "aus", value: "Kaspar Munk" },
+        { type: "drt", value: "Kaspar Munk" },
+        { type: "cng", value: "Adam Wallensten" },
+        { type: "aus", value: "Poul Berg" },
+        { type: "aus", value: "Bo hr. Hansen" }
     ];
 
     Assert.equalValue( "get creators from localData ", ManifestationInfo.getCreators( commonData, localData ), expected );
 
     commonDataString =
-            '<ting:container' +
-            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
-            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
-            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
-            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
-            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
-            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
-            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
-            ' xmlns:ting="http://www.dbc.dk/ting"' +
-            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<dkabm:record>' +
-            '<ac:identifier>54969562|700400</ac:identifier>' +
-            '<ac:source>Bibliotekskatalog</ac:source>' +
-            '<dc:title>Vildheks</dc:title>' +
-            '<dc:title xsi:type="dkdcplus:full">Vildheks</dc:title>' +
-            '<dcterms:alternative>Vildheks</dcterms:alternative>' +
-            '<dc:creator xsi:type="dkdcplus:aus">Kaspar Munk</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
-            '<dc:creator xsi:type="dkdcplus:drt">Kaspar Munk</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
-            '<dc:creator xsi:type="dkdcplus:cng">Adam Wallensten</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Wallensten, Adam</dc:creator>' +
-            '<dc:creator xsi:type="dkdcplus:aus">Poul Berg</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Berg, Poul (f. 1970-08-19)</dc:creator>' +
-            '<dc:creator xsi:type="dkdcplus:aus">Bo hr. Hansen</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Hansen, Bo hr. (f. 1961)</dc:creator>' +
-            '</dkabm:record>' +
-            '</ting:container>';
+        '<ting:container' +
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<ac:identifier>54969562|700400</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Vildheks</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Vildheks</dc:title>' +
+        '<dcterms:alternative>Vildheks</dcterms:alternative>' +
+        '<dc:creator xsi:type="dkdcplus:aus">Kaspar Munk</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
+        '<dc:creator xsi:type="dkdcplus:drt">Kaspar Munk</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
+        '<dc:creator xsi:type="dkdcplus:cng">Adam Wallensten</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Wallensten, Adam</dc:creator>' +
+        '<dc:creator xsi:type="dkdcplus:aus">Poul Berg</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Berg, Poul (f. 1970-08-19)</dc:creator>' +
+        '<dc:creator xsi:type="dkdcplus:aus">Bo hr. Hansen</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Hansen, Bo hr. (f. 1961)</dc:creator>' +
+        '</dkabm:record>' +
+        '</ting:container>';
     localDataString = '<empty/>';
 
     localData = XmlUtil.fromString( localDataString );
     commonData = XmlUtil.fromString( commonDataString );
 
     expected = [
-        { type : "aus", value : "Kaspar Munk" },
-        { type : "drt", value : "Kaspar Munk" },
-        { type : "cng", value : "Adam Wallensten" },
-        { type : "aus", value : "Poul Berg" },
-        { type : "aus", value : "Bo hr. Hansen" }
+        { type: "aus", value: "Kaspar Munk" },
+        { type: "drt", value: "Kaspar Munk" },
+        { type: "cng", value: "Adam Wallensten" },
+        { type: "aus", value: "Poul Berg" },
+        { type: "aus", value: "Bo hr. Hansen" }
     ];
 
     Assert.equalValue( "get creators from commonData ", ManifestationInfo.getCreators( commonData, localData ), expected );
 
     commonDataString =
-            '<ting:container' +
-            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
-            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
-            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
-            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
-            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
-            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
-            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
-            ' xmlns:ting="http://www.dbc.dk/ting"' +
-            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<dkabm:record>' +
-            '<ac:identifier>54969562|700400</ac:identifier>' +
-            '<ac:source>Bibliotekskatalog</ac:source>' +
-            '<dc:title>Vildheks</dc:title>' +
-            '<dc:title xsi:type="dkdcplus:full">Vildheks</dc:title>' +
-            '<dcterms:alternative>Vildheks</dcterms:alternative>' +
-            '<dc:creator xsi:type="dkdcplus:cng">Adam Wallensten</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Wallensten, Adam</dc:creator>' +
-            '<dc:creator xsi:type="dkdcplus:aus">Poul Berg</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Berg, Poul (f. 1970-08-19)</dc:creator>' +
-            '<dc:creator xsi:type="dkdcplus:aus">Bo hr. Hansen</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Hansen, Bo hr. (f. 1961)</dc:creator>' +
-            '</dkabm:record>' +
-            '</ting:container>';
+        '<ting:container' +
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<ac:identifier>54969562|700400</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Vildheks</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Vildheks</dc:title>' +
+        '<dcterms:alternative>Vildheks</dcterms:alternative>' +
+        '<dc:creator xsi:type="dkdcplus:cng">Adam Wallensten</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Wallensten, Adam</dc:creator>' +
+        '<dc:creator xsi:type="dkdcplus:aus">Poul Berg</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Berg, Poul (f. 1970-08-19)</dc:creator>' +
+        '<dc:creator xsi:type="dkdcplus:aus">Bo hr. Hansen</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Hansen, Bo hr. (f. 1961)</dc:creator>' +
+        '</dkabm:record>' +
+        '</ting:container>';
     localDataString =
-            '<ting:localData' +
-            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
-            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
-            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
-            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
-            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
-            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
-            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
-            ' xmlns:ting="http://www.dbc.dk/ting"' +
-            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<dkabm:record>' +
-            '<ac:identifier>54969562|700400</ac:identifier>' +
-            '<ac:source>Bibliotekskatalog</ac:source>' +
-            '<dc:title>Vildheks</dc:title>' +
-            '<dc:title xsi:type="dkdcplus:full">Vildheks</dc:title>' +
-            '<dcterms:alternative>Vildheks</dcterms:alternative>' +
-            '<dc:creator xsi:type="dkdcplus:aus">Kaspar Munk</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
-            '<dc:creator xsi:type="dkdcplus:drt">Kaspar Munk</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
-            '</dkabm:record>' +
-            '</ting:localData>';
+        '<ting:localData' +
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<ac:identifier>54969562|700400</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Vildheks</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Vildheks</dc:title>' +
+        '<dcterms:alternative>Vildheks</dcterms:alternative>' +
+        '<dc:creator xsi:type="dkdcplus:aus">Kaspar Munk</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
+        '<dc:creator xsi:type="dkdcplus:drt">Kaspar Munk</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
+        '</dkabm:record>' +
+        '</ting:localData>';
 
     localData = XmlUtil.fromString( localDataString );
     commonData = XmlUtil.fromString( commonDataString );
 
     expected = [
-        { type : "aus", value : "Kaspar Munk" },
-        { type : "drt", value : "Kaspar Munk" }
+        { type: "aus", value: "Kaspar Munk" },
+        { type: "drt", value: "Kaspar Munk" }
     ];
 
     Assert.equalValue( "get creators from localData over commonData ", ManifestationInfo.getCreators( commonData, localData ), expected );
 
-    var commonDataString = '<empty/>';
-    var localDataString =
-            '<ting:localData' +
-            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
-            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
-            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
-            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
-            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
-            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
-            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
-            ' xmlns:ting="http://www.dbc.dk/ting"' +
-            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<dkabm:record>' +
-            '<ac:identifier>54969562|700400</ac:identifier>' +
-            '<ac:source>Bibliotekskatalog</ac:source>' +
-            '<dc:title>Vildheks</dc:title>' +
-            '<dc:title xsi:type="dkdcplus:full">Vildheks</dc:title>' +
-            '<dcterms:alternative>Vildheks</dcterms:alternative>' +
-            '<dc:creator xsi:type="">Kaspar Munk</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
-            '<dc:creator>Kaspar Munk</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
-            '</dkabm:record>' +
-            '</ting:localData>';
+    commonDataString = '<empty/>';
+    localDataString =
+        '<ting:localData' +
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<ac:identifier>54969562|700400</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Vildheks</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Vildheks</dc:title>' +
+        '<dcterms:alternative>Vildheks</dcterms:alternative>' +
+        '<dc:creator xsi:type="">Kaspar Munk</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
+        '<dc:creator>Kaspar Munk</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Munk, Kaspar</dc:creator>' +
+        '</dkabm:record>' +
+        '</ting:localData>';
 
-    var localData = XmlUtil.fromString( localDataString );
-    var commonData = XmlUtil.fromString( commonDataString );
+    localData = XmlUtil.fromString( localDataString );
+    commonData = XmlUtil.fromString( commonDataString );
 
-    var expected = [
-        { type : null, value : "Kaspar Munk" },
-        { type : null, value : "Kaspar Munk" }
+    expected = [
+        { type: null, value: "Kaspar Munk" },
+        { type: null, value: "Kaspar Munk" }
     ];
 
     Assert.equalValue( "get creators with no type ", ManifestationInfo.getCreators( commonData, localData ), expected );
@@ -1058,7 +1059,7 @@ UnitTest.addFixture( "ManifestationInfo.getTypes", function() {
 
     Assert.equalValue( "get one type from dc stream ", ManifestationInfo.getTypes( dcStream ), expected );
 
-    var dcStreamString =
+    dcStreamString =
         '<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
         '<dc:title>værkstedstekniske beregninger</dc:title>' +
         '<dc:language>Dansk</dc:language>' +
@@ -1073,9 +1074,9 @@ UnitTest.addFixture( "ManifestationInfo.getTypes", function() {
         '<dc:relation>50378705</dc:relation>' +
         '</oai_dc:dc>';
 
-    var dcStream = XmlUtil.fromString( dcStreamString );
+    dcStream = XmlUtil.fromString( dcStreamString );
 
-    var expected = [ "Bog" ];
+    expected = [ "Bog" ];
 
     Assert.equalValue( "get one type from dc stream with whitespace ", ManifestationInfo.getTypes( dcStream ), expected );
 
@@ -1173,7 +1174,7 @@ UnitTest.addFixture( "ManifestationInfo.getTypes", function() {
 
     dcStream = XmlUtil.fromString( dcStreamString );
 
-    expected = [ ];
+    expected = [];
 
     Assert.equalValue( "accept no types ", ManifestationInfo.getTypes( dcStream ), expected );
 
@@ -1307,7 +1308,7 @@ UnitTest.addFixture( "ManifestationInfo.getAbstract", function() {
         '<dc:subject xsi:type="dkdcplus:DBCF">mor-datter forholdet</dc:subject>' +
         '<dc:subject xsi:type="dkdcplus:DBCF">socialt udsatte</dc:subject>' +
         '<dc:subject xsi:type="dkdcplus:DBCF">underklassen</dc:subject>' +
-//        '<dcterms:abstract>I en række mails fortæller Karina Pedersen (f. 1976) historien om sin opvækst i Korskærparken i Fredericia. Med sin egen underklasse-familie som eksempel, tager hun et opgør med velfærdsdanmark og de sociale ydelser</dcterms:abstract>' +
+        //        '<dcterms:abstract>I en række mails fortæller Karina Pedersen (f. 1976) historien om sin opvækst i Korskærparken i Fredericia. Med sin egen underklasse-familie som eksempel, tager hun et opgør med velfærdsdanmark og de sociale ydelser</dcterms:abstract>' +
         '<dcterms:audience>alment niveau</dcterms:audience>' +
         '<dcterms:audience>voksenmaterialer</dcterms:audience>' +
         '<dkdcplus:version>1. udgave, 1. oplag (2016)</dkdcplus:version>' +
@@ -1412,7 +1413,7 @@ UnitTest.addFixture( "ManifestationInfo.getAbstract", function() {
         '<dc:subject xsi:type="dkdcplus:DBCF">mor-datter forholdet</dc:subject>' +
         '<dc:subject xsi:type="dkdcplus:DBCF">socialt udsatte</dc:subject>' +
         '<dc:subject xsi:type="dkdcplus:DBCF">underklassen</dc:subject>' +
-//        '<dcterms:abstract>I en række mails fortæller Karina Pedersen (f. 1976) historien om sin opvækst i Korskærparken i Fredericia. Med sin egen underklasse-familie som eksempel, tager hun et opgør med velfærdsdanmark og de sociale ydelser</dcterms:abstract>' +
+        //        '<dcterms:abstract>I en række mails fortæller Karina Pedersen (f. 1976) historien om sin opvækst i Korskærparken i Fredericia. Med sin egen underklasse-familie som eksempel, tager hun et opgør med velfærdsdanmark og de sociale ydelser</dcterms:abstract>' +
         '<dcterms:audience>alment niveau</dcterms:audience>' +
         '<dcterms:audience>voksenmaterialer</dcterms:audience>' +
         '<dkdcplus:version>1. udgave, 1. oplag (2016)</dkdcplus:version>' +
@@ -1527,201 +1528,201 @@ UnitTest.addFixture( "ManifestationInfo.getAbstract", function() {
 UnitTest.addFixture( "ManifestationInfo.getSubjects", function() {
 
     var localDataString = '<ting:localData' +
-            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
-            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
-            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
-            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
-            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
-            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
-            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
-            ' xmlns:ting="http://www.dbc.dk/ting"' +
-            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<dkabm:record>' +
-            '<dc:title>Djævelens lærling</dc:title>' +
-            '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
-            '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">Helvede</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">fantasy</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCN">for 14 år</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
-            '</dkabm:record>' +
-            '</ting:localData>';
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<dc:title>Djævelens lærling</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
+        '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">Helvede</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">fantasy</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCN">for 14 år</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
+        '</dkabm:record>' +
+        '</ting:localData>';
     var commonDataString = '<empty/>';
 
     var localData = XmlUtil.fromString( localDataString );
     var commonData = XmlUtil.fromString( commonDataString );
 
     var expected = [
-        { type : "DBCS", value : "Helvede" },
-        { type : "DK5-Text", value : "Skønlitteratur" },
-        { type : "DBCS", value : "fantasy" },
-        { type : "genre", value : "fantasy" },
-        { type : "DBCN", value : "for 12 år" },
-        { type : "DBCN", value : "for 13 år" },
-        { type : "DBCN", value : "for 14 år" },
-        { type : "DK5", value : "sk" }
+        { type: "DBCS", value: "Helvede" },
+        { type: "DK5-Text", value: "Skønlitteratur" },
+        { type: "DBCS", value: "fantasy" },
+        { type: "genre", value: "fantasy" },
+        { type: "DBCN", value: "for 12 år" },
+        { type: "DBCN", value: "for 13 år" },
+        { type: "DBCN", value: "for 14 år" },
+        { type: "DK5", value: "sk" }
     ];
 
     Assert.equalValue( "get subjects from local stream ", ManifestationInfo.getSubjects( commonData, localData ), expected );
 
     localDataString = '<ting:localData' +
-            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
-            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
-            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
-            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
-            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
-            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
-            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
-            ' xmlns:ting="http://www.dbc.dk/ting"' +
-            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<dkabm:record>' +
-            '<dc:title>Djævelens lærling</dc:title>' +
-            '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
-            '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">Helvede</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">fantasy</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
-            '</dkabm:record>' +
-            '</ting:localData>';
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<dc:title>Djævelens lærling</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
+        '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">Helvede</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">fantasy</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
+        '</dkabm:record>' +
+        '</ting:localData>';
     commonDataString = '<ting:container' +
-            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
-            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
-            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
-            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
-            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
-            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
-            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
-            ' xmlns:ting="http://www.dbc.dk/ting"' +
-            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<dkabm:record>' +
-            '<dc:title>Djævelens lærling</dc:title>' +
-            '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
-            '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
-            '<dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCN">for 14 år</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
-            '</dkabm:record>' +
-            '</ting:container>';
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<dc:title>Djævelens lærling</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
+        '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
+        '<dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCN">for 14 år</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
+        '</dkabm:record>' +
+        '</ting:container>';
 
     localData = XmlUtil.fromString( localDataString );
     commonData = XmlUtil.fromString( commonDataString );
 
     expected = [
-        { type : "DBCS", value : "Helvede" },
-        { type : "DK5-Text", value : "Skønlitteratur" },
-        { type : "DBCS", value : "fantasy" },
-        { type : "genre", value : "fantasy" },
-        { type : "DK5", value : "sk" }
+        { type: "DBCS", value: "Helvede" },
+        { type: "DK5-Text", value: "Skønlitteratur" },
+        { type: "DBCS", value: "fantasy" },
+        { type: "genre", value: "fantasy" },
+        { type: "DK5", value: "sk" }
     ];
 
     Assert.equalValue( "get subjects from local stream over common stream ", ManifestationInfo.getSubjects( commonData, localData ), expected );
 
     localDataString = '<empty/>';
     commonDataString = '<ting:container' +
-            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
-            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
-            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
-            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
-            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
-            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
-            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
-            ' xmlns:ting="http://www.dbc.dk/ting"' +
-            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<dkabm:record>' +
-            '<dc:title>Djævelens lærling</dc:title>' +
-            '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
-            '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">Helvede</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">fantasy</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCN">for 14 år</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
-            '</dkabm:record>' +
-            '</ting:container>';
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<dc:title>Djævelens lærling</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
+        '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">Helvede</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">fantasy</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCN">for 14 år</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
+        '</dkabm:record>' +
+        '</ting:container>';
 
     localData = XmlUtil.fromString( localDataString );
     commonData = XmlUtil.fromString( commonDataString );
 
     expected = [
-        { type : "DBCS", value : "Helvede" },
-        { type : "DK5-Text", value : "Skønlitteratur" },
-        { type : "DBCS", value : "fantasy" },
-        { type : "genre", value : "fantasy" },
-        { type : "DBCN", value : "for 12 år" },
-        { type : "DBCN", value : "for 13 år" },
-        { type : "DBCN", value : "for 14 år" },
-        { type : "DK5", value : "sk" }
+        { type: "DBCS", value: "Helvede" },
+        { type: "DK5-Text", value: "Skønlitteratur" },
+        { type: "DBCS", value: "fantasy" },
+        { type: "genre", value: "fantasy" },
+        { type: "DBCN", value: "for 12 år" },
+        { type: "DBCN", value: "for 13 år" },
+        { type: "DBCN", value: "for 14 år" },
+        { type: "DK5", value: "sk" }
     ];
 
     Assert.equalValue( "get subjects from common stream ", ManifestationInfo.getSubjects( commonData, localData ), expected );
 
     localDataString = '<ting:localData' +
-            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
-            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
-            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
-            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
-            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
-            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
-            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
-            ' xmlns:ting="http://www.dbc.dk/ting"' +
-            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<dkabm:record>' +
-            '<dc:title>Djævelens lærling</dc:title>' +
-            '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
-            '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
-            '</dkabm:record>' +
-            '</ting:localData>';
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<dc:title>Djævelens lærling</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
+        '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
+        '</dkabm:record>' +
+        '</ting:localData>';
     commonDataString = '<empty/>';
 
     localData = XmlUtil.fromString( localDataString );
     commonData = XmlUtil.fromString( commonDataString );
 
-    expected = [ ];
+    expected = [];
 
     Assert.equalValue( "get subjects from  stream with no subjects", ManifestationInfo.getSubjects( commonData, localData ), expected );
 
     localDataString = '<ting:localData' +
-            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
-            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
-            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
-            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
-            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
-            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
-            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
-            ' xmlns:ting="http://www.dbc.dk/ting"' +
-            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<dkabm:record>' +
-            '<dc:title>Djævelens lærling</dc:title>' +
-            '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
-            '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
-            '<dc:subject xsi:type="">Helvede</dc:subject>' +
-            '<dc:subject>Skønlitteratur</dc:subject>' +
-            '</dkabm:record>' +
-            '</ting:localData>';
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<dc:title>Djævelens lærling</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Djævelens lærling</dc:title>' +
+        '<dc:creator xsi:type="dkdcplus:aut">Kenneth Bøgh Andersen</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Bøgh Andersen, Kenneth</dc:creator>' +
+        '<dc:subject xsi:type="">Helvede</dc:subject>' +
+        '<dc:subject>Skønlitteratur</dc:subject>' +
+        '</dkabm:record>' +
+        '</ting:localData>';
     commonDataString = '<empty/>';
 
     localData = XmlUtil.fromString( localDataString );
     commonData = XmlUtil.fromString( commonDataString );
 
     expected = [
-        { "type" : null, "value" : "Helvede" },
-        { "type" : null, "value" : "Skønlitteratur" }
+        { "type": null, "value": "Helvede" },
+        { "type": null, "value": "Skønlitteratur" }
     ];
 
     Assert.equalValue( "get subjects from ting stream with no types", ManifestationInfo.getSubjects( commonData, localData ), expected );
@@ -1732,51 +1733,51 @@ UnitTest.addFixture( "ManifestationInfo.getSubjects", function() {
 UnitTest.addFixture( "ManifestationInfo.getPriorityKeys", function() {
 
     var localDataString = '<ting:localData' +
-            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
-            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
-            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
-            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
-            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
-            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
-            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
-            ' xmlns:ting="http://www.dbc.dk/ting"' +
-            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<dkabm:record>' +
-            '<ac:identifier>21496782|870970</ac:identifier>' +
-            '<ac:source>Bibliotekskatalog</ac:source>' +
-            '<dc:title>Det gyldne kompas</dc:title>' +
-            '<dc:title xsi:type="dkdcplus:full">Det gyldne kompas</dc:title>' +
-            '<dc:creator xsi:type="dkdcplus:aut">Philip Pullman</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Pullman, Philip</dc:creator>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">Arktis</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">England</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">Norge</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">det gode</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">det onde</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCO">fantasy</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCN">for 14 år</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">parallelle verdener</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
-            '<dcterms:abstract>Fantasy. Lyra - 11 år og forældreløs - kommer på sporet af noget mystisk og uhyggeligt, da flere og flere børn forsvinder. Løsningen findes måske højt mod nord, mellem panserbjørne og flyvende hekse</dcterms:abstract>' +
-            '<dc:description xsi:type="dkdcplus:series">Samhørende: Det gyldne kompas ; Skyggernes kniv ; Ravkikkerten</dc:description>' +
-            '<dcterms:audience xsi:type="dkdcplus:age">fra 12 år</dcterms:audience>' +
-            '<dcterms:audience>børnematerialer</dcterms:audience>' +
-            '<dkdcplus:version>2. oplag (2001)</dkdcplus:version>' +
-            '<dc:publisher>Gyldendal</dc:publisher>' +
-            '<dc:date>1996</dc:date>' +
-            '<dc:type xsi:type="dkdcplus:BibDK-Type">Bog</dc:type>' +
-            '<dc:format>illustreret</dc:format>' +
-            '<dcterms:extent>400 sider</dcterms:extent>' +
-            '<dc:identifier xsi:type="dkdcplus:ISBN">87-00-26818-6</dc:identifier>' +
-            '<dc:source>The Golden compass</dc:source>' +
-            '<dc:language xsi:type="dcterms:ISO639-2">dan</dc:language>' +
-            '<dc:language>Dansk</dc:language>' +
-            '</dkabm:record>' +
-            '</ting:localData>';
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<ac:identifier>21496782|870970</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Det gyldne kompas</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Det gyldne kompas</dc:title>' +
+        '<dc:creator xsi:type="dkdcplus:aut">Philip Pullman</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Pullman, Philip</dc:creator>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">Arktis</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">England</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">Norge</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">det gode</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">det onde</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCO">fantasy</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCN">for 14 år</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">parallelle verdener</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
+        '<dcterms:abstract>Fantasy. Lyra - 11 år og forældreløs - kommer på sporet af noget mystisk og uhyggeligt, da flere og flere børn forsvinder. Løsningen findes måske højt mod nord, mellem panserbjørne og flyvende hekse</dcterms:abstract>' +
+        '<dc:description xsi:type="dkdcplus:series">Samhørende: Det gyldne kompas ; Skyggernes kniv ; Ravkikkerten</dc:description>' +
+        '<dcterms:audience xsi:type="dkdcplus:age">fra 12 år</dcterms:audience>' +
+        '<dcterms:audience>børnematerialer</dcterms:audience>' +
+        '<dkdcplus:version>2. oplag (2001)</dkdcplus:version>' +
+        '<dc:publisher>Gyldendal</dc:publisher>' +
+        '<dc:date>1996</dc:date>' +
+        '<dc:type xsi:type="dkdcplus:BibDK-Type">Bog</dc:type>' +
+        '<dc:format>illustreret</dc:format>' +
+        '<dcterms:extent>400 sider</dcterms:extent>' +
+        '<dc:identifier xsi:type="dkdcplus:ISBN">87-00-26818-6</dc:identifier>' +
+        '<dc:source>The Golden compass</dc:source>' +
+        '<dc:language xsi:type="dcterms:ISO639-2">dan</dc:language>' +
+        '<dc:language>Dansk</dc:language>' +
+        '</dkabm:record>' +
+        '</ting:localData>';
     var commonDataString = '<empty/>';
 
     var localData = XmlUtil.fromString( localDataString );
@@ -1793,51 +1794,51 @@ UnitTest.addFixture( "ManifestationInfo.getPriorityKeys", function() {
 
     localDataString = '<empty/>';
     commonDataString = '<ting:container' +
-            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
-            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
-            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
-            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
-            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
-            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
-            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
-            ' xmlns:ting="http://www.dbc.dk/ting"' +
-            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<dkabm:record>' +
-            '<ac:identifier>21496782|870970</ac:identifier>' +
-            '<ac:source>Bibliotekskatalog</ac:source>' +
-            '<dc:title>Det gyldne kompas</dc:title>' +
-            '<dc:title xsi:type="dkdcplus:full">Det gyldne kompas</dc:title>' +
-            '<dc:creator xsi:type="dkdcplus:aut">Philip Pullman</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Pullman, Philip</dc:creator>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">Arktis</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">England</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">Norge</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">det gode</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">det onde</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCO">fantasy</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCN">for 14 år</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">parallelle verdener</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
-            '<dcterms:abstract>Fantasy. Lyra - 11 år og forældreløs - kommer på sporet af noget mystisk og uhyggeligt, da flere og flere børn forsvinder. Løsningen findes måske højt mod nord, mellem panserbjørne og flyvende hekse</dcterms:abstract>' +
-            '<dc:description xsi:type="dkdcplus:series">Samhørende: Det gyldne kompas ; Skyggernes kniv ; Ravkikkerten</dc:description>' +
-            '<dcterms:audience xsi:type="dkdcplus:age">fra 12 år</dcterms:audience>' +
-            '<dcterms:audience>børnematerialer</dcterms:audience>' +
-            '<dkdcplus:version>2. oplag (2001)</dkdcplus:version>' +
-            '<dc:publisher>Gyldendal</dc:publisher>' +
-            '<dc:date>1996</dc:date>' +
-            '<dc:type xsi:type="dkdcplus:BibDK-Type">Bog</dc:type>' +
-            '<dc:format>illustreret</dc:format>' +
-            '<dcterms:extent>400 sider</dcterms:extent>' +
-            '<dc:identifier xsi:type="dkdcplus:ISBN">87-00-26818-6</dc:identifier>' +
-            '<dc:source>The Golden compass</dc:source>' +
-            '<dc:language xsi:type="dcterms:ISO639-2">dan</dc:language>' +
-            '<dc:language>Dansk</dc:language>' +
-            '</dkabm:record>' +
-            '</ting:container>';
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<ac:identifier>21496782|870970</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Det gyldne kompas</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Det gyldne kompas</dc:title>' +
+        '<dc:creator xsi:type="dkdcplus:aut">Philip Pullman</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Pullman, Philip</dc:creator>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">Arktis</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">England</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">Norge</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">det gode</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">det onde</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCO">fantasy</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCN">for 14 år</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">parallelle verdener</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
+        '<dcterms:abstract>Fantasy. Lyra - 11 år og forældreløs - kommer på sporet af noget mystisk og uhyggeligt, da flere og flere børn forsvinder. Løsningen findes måske højt mod nord, mellem panserbjørne og flyvende hekse</dcterms:abstract>' +
+        '<dc:description xsi:type="dkdcplus:series">Samhørende: Det gyldne kompas ; Skyggernes kniv ; Ravkikkerten</dc:description>' +
+        '<dcterms:audience xsi:type="dkdcplus:age">fra 12 år</dcterms:audience>' +
+        '<dcterms:audience>børnematerialer</dcterms:audience>' +
+        '<dkdcplus:version>2. oplag (2001)</dkdcplus:version>' +
+        '<dc:publisher>Gyldendal</dc:publisher>' +
+        '<dc:date>1996</dc:date>' +
+        '<dc:type xsi:type="dkdcplus:BibDK-Type">Bog</dc:type>' +
+        '<dc:format>illustreret</dc:format>' +
+        '<dcterms:extent>400 sider</dcterms:extent>' +
+        '<dc:identifier xsi:type="dkdcplus:ISBN">87-00-26818-6</dc:identifier>' +
+        '<dc:source>The Golden compass</dc:source>' +
+        '<dc:language xsi:type="dcterms:ISO639-2">dan</dc:language>' +
+        '<dc:language>Dansk</dc:language>' +
+        '</dkabm:record>' +
+        '</ting:container>';
 
     localData = XmlUtil.fromString( localDataString );
     commonData = XmlUtil.fromString( commonDataString );
@@ -1851,98 +1852,98 @@ UnitTest.addFixture( "ManifestationInfo.getPriorityKeys", function() {
     Assert.equalValue( "get priority-keys from common stream ", ManifestationInfo.getPriorityKeys( commonData, localData ), expected );
 
 
-    var localDataString = '<ting:localData' +
-            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
-            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
-            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
-            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
-            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
-            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
-            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
-            ' xmlns:ting="http://www.dbc.dk/ting"' +
-            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<dkabm:record>' +
-            '<ac:identifier>21496782|870970</ac:identifier>' +
-            '<ac:source>Bibliotekskatalog</ac:source>' +
-            '<dc:title>Det gyldne kompas</dc:title>' +
-            '<dc:title xsi:type="dkdcplus:full">Det gyldne kompas</dc:title>' +
-            '<dc:creator xsi:type="dkdcplus:aut">Philip Pullman</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Pullman, Philip</dc:creator>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">Arktis</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">England</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">Norge</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">det gode</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">det onde</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCO">fantasy</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCN">for 14 år</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">parallelle verdener</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
-            '<dcterms:abstract>Fantasy. Lyra - 11 år og forældreløs - kommer på sporet af noget mystisk og uhyggeligt, da flere og flere børn forsvinder. Løsningen findes måske højt mod nord, mellem panserbjørne og flyvende hekse</dcterms:abstract>' +
-            '<dc:description xsi:type="dkdcplus:series">Samhørende: Det gyldne kompas ; Skyggernes kniv ; Ravkikkerten</dc:description>' +
-            '<dcterms:audience xsi:type="dkdcplus:age">fra 12 år</dcterms:audience>' +
-            '<dcterms:audience>børnematerialer</dcterms:audience>' +
-            '<dkdcplus:version>2. oplag (2001)</dkdcplus:version>' +
-            '<dc:publisher>Gyldendal</dc:publisher>' +
-            '<dc:date>1996</dc:date>' +
-            '<dc:type xsi:type="dkdcplus:BibDK-Type">Bog</dc:type>' +
-            '<dc:format>illustreret</dc:format>' +
-            '<dcterms:extent>400 sider</dcterms:extent>' +
-            '<dc:identifier xsi:type="dkdcplus:ISBN">87-00-26818-6</dc:identifier>' +
-            '<dc:source>The Golden compass</dc:source>' +
-            '<dc:language xsi:type="dcterms:ISO639-2">dan</dc:language>' +
-            '<dc:language>Dansk</dc:language>' +
-            '</dkabm:record>' +
-            '</ting:localData>';
+    localDataString = '<ting:localData' +
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<ac:identifier>21496782|870970</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Det gyldne kompas</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Det gyldne kompas</dc:title>' +
+        '<dc:creator xsi:type="dkdcplus:aut">Philip Pullman</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Pullman, Philip</dc:creator>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">Arktis</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">England</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">Norge</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">det gode</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">det onde</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCO">fantasy</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCN">for 14 år</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">parallelle verdener</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
+        '<dcterms:abstract>Fantasy. Lyra - 11 år og forældreløs - kommer på sporet af noget mystisk og uhyggeligt, da flere og flere børn forsvinder. Løsningen findes måske højt mod nord, mellem panserbjørne og flyvende hekse</dcterms:abstract>' +
+        '<dc:description xsi:type="dkdcplus:series">Samhørende: Det gyldne kompas ; Skyggernes kniv ; Ravkikkerten</dc:description>' +
+        '<dcterms:audience xsi:type="dkdcplus:age">fra 12 år</dcterms:audience>' +
+        '<dcterms:audience>børnematerialer</dcterms:audience>' +
+        '<dkdcplus:version>2. oplag (2001)</dkdcplus:version>' +
+        '<dc:publisher>Gyldendal</dc:publisher>' +
+        '<dc:date>1996</dc:date>' +
+        '<dc:type xsi:type="dkdcplus:BibDK-Type">Bog</dc:type>' +
+        '<dc:format>illustreret</dc:format>' +
+        '<dcterms:extent>400 sider</dcterms:extent>' +
+        '<dc:identifier xsi:type="dkdcplus:ISBN">87-00-26818-6</dc:identifier>' +
+        '<dc:source>The Golden compass</dc:source>' +
+        '<dc:language xsi:type="dcterms:ISO639-2">dan</dc:language>' +
+        '<dc:language>Dansk</dc:language>' +
+        '</dkabm:record>' +
+        '</ting:localData>';
     commonDataString = '<ting:container' +
-            ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
-            ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
-            ' xmlns:dcterms="http://purl.org/dc/terms/"' +
-            ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
-            ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
-            ' xmlns:docbook="http://docbook.org/ns/docbook"' +
-            ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
-            ' xmlns:ting="http://www.dbc.dk/ting"' +
-            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-            '<dkabm:record>' +
-            '<ac:identifier>not-really-this</ac:identifier>' +
-            '<ac:source>Bibliotekskatalog</ac:source>' +
-            '<dc:title>Det gyldne kompas</dc:title>' +
-            '<dc:title xsi:type="dkdcplus:full">Det gyldne kompas</dc:title>' +
-            '<dc:creator xsi:type="dkdcplus:aut">Philip Pullman</dc:creator>' +
-            '<dc:creator xsi:type="oss:sort">Pullman, Philip</dc:creator>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">Arktis</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">England</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">Norge</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">det gode</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">det onde</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCO">fantasy</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCN">for 14 år</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DBCS">parallelle verdener</dc:subject>' +
-            '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
-            '<dcterms:abstract>Fantasy. Lyra - 11 år og forældreløs - kommer på sporet af noget mystisk og uhyggeligt, da flere og flere børn forsvinder. Løsningen findes måske højt mod nord, mellem panserbjørne og flyvende hekse</dcterms:abstract>' +
-            '<dc:description xsi:type="dkdcplus:series">Samhørende: Det gyldne kompas ; Skyggernes kniv ; Ravkikkerten</dc:description>' +
-            '<dcterms:audience xsi:type="dkdcplus:age">fra 12 år</dcterms:audience>' +
-            '<dcterms:audience>børnematerialer</dcterms:audience>' +
-            '<dkdcplus:version>0. oplag (1811)</dkdcplus:version>' +
-            '<dc:publisher>Gyldendal</dc:publisher>' +
-            '<dc:date>1747</dc:date>' +
-            '<dc:type xsi:type="dkdcplus:BibDK-Type">Bog</dc:type>' +
-            '<dc:format>illustreret</dc:format>' +
-            '<dcterms:extent>400 sider</dcterms:extent>' +
-            '<dc:identifier xsi:type="dkdcplus:ISBN">87-00-26818-6</dc:identifier>' +
-            '<dc:source>The Golden compass</dc:source>' +
-            '<dc:language xsi:type="dcterms:ISO639-2">dan</dc:language>' +
-            '<dc:language>Dansk</dc:language>' +
-            '</dkabm:record>' +
-            '</ting:container>';
+        ' xmlns:ac="http://biblstandard.dk/ac/namespace/"' +
+        ' xmlns:dc="http://purl.org/dc/elements/1.1/"' +
+        ' xmlns:dcterms="http://purl.org/dc/terms/"' +
+        ' xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"' +
+        ' xmlns:dkdcplus="http://biblstandard.dk/abm/namespace/dkdcplus/"' +
+        ' xmlns:docbook="http://docbook.org/ns/docbook"' +
+        ' xmlns:oss="http://oss.dbc.dk/ns/osstypes"' +
+        ' xmlns:ting="http://www.dbc.dk/ting"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+        '<dkabm:record>' +
+        '<ac:identifier>not-really-this</ac:identifier>' +
+        '<ac:source>Bibliotekskatalog</ac:source>' +
+        '<dc:title>Det gyldne kompas</dc:title>' +
+        '<dc:title xsi:type="dkdcplus:full">Det gyldne kompas</dc:title>' +
+        '<dc:creator xsi:type="dkdcplus:aut">Philip Pullman</dc:creator>' +
+        '<dc:creator xsi:type="oss:sort">Pullman, Philip</dc:creator>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">Arktis</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">England</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">Norge</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DK5-Text">Skønlitteratur</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">det gode</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">det onde</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCO">fantasy</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:genre">fantasy</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCN">for 12 år</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCN">for 13 år</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCN">for 14 år</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DBCS">parallelle verdener</dc:subject>' +
+        '<dc:subject xsi:type="dkdcplus:DK5">sk</dc:subject>' +
+        '<dcterms:abstract>Fantasy. Lyra - 11 år og forældreløs - kommer på sporet af noget mystisk og uhyggeligt, da flere og flere børn forsvinder. Løsningen findes måske højt mod nord, mellem panserbjørne og flyvende hekse</dcterms:abstract>' +
+        '<dc:description xsi:type="dkdcplus:series">Samhørende: Det gyldne kompas ; Skyggernes kniv ; Ravkikkerten</dc:description>' +
+        '<dcterms:audience xsi:type="dkdcplus:age">fra 12 år</dcterms:audience>' +
+        '<dcterms:audience>børnematerialer</dcterms:audience>' +
+        '<dkdcplus:version>0. oplag (1811)</dkdcplus:version>' +
+        '<dc:publisher>Gyldendal</dc:publisher>' +
+        '<dc:date>1747</dc:date>' +
+        '<dc:type xsi:type="dkdcplus:BibDK-Type">Bog</dc:type>' +
+        '<dc:format>illustreret</dc:format>' +
+        '<dcterms:extent>400 sider</dcterms:extent>' +
+        '<dc:identifier xsi:type="dkdcplus:ISBN">87-00-26818-6</dc:identifier>' +
+        '<dc:source>The Golden compass</dc:source>' +
+        '<dc:language xsi:type="dcterms:ISO639-2">dan</dc:language>' +
+        '<dc:language>Dansk</dc:language>' +
+        '</dkabm:record>' +
+        '</ting:container>';
 
     localData = XmlUtil.fromString( localDataString );
     commonData = XmlUtil.fromString( commonDataString );
