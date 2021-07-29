@@ -12,5 +12,6 @@
     "version" : null
   },
   "pid" : "koraan-empty-local-data",
-  "types" : [ "Bog" ]
+  "types" : [ "Bog" ],
+  "workTypes" : [ "literature" ]
 }

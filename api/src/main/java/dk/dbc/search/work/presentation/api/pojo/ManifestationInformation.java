@@ -34,6 +34,8 @@ public class ManifestationInformation implements Serializable {
     @JsonProperty("types")
     public List<String> materialTypes;
 
+    public List<String> workTypes;
+
     @JsonProperty()
     public Map<String, String> priorityKeys;
 
@@ -52,12 +54,13 @@ public class ManifestationInformation implements Serializable {
                Objects.equals(description, that.description) &&
                Objects.equals(subjects, that.subjects) &&
                Objects.equals(materialTypes, that.materialTypes) &&
+               Objects.equals(workTypes, that.workTypes) &&
                Objects.equals(priorityKeys, that.priorityKeys);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(manifestationId, title, fullTitle, series, creators, description, subjects, materialTypes, priorityKeys);
+        return Objects.hash(manifestationId, title, fullTitle, series, creators, description, subjects, materialTypes, workTypes, priorityKeys);
     }
 
     @Override
@@ -71,6 +74,7 @@ public class ManifestationInformation implements Serializable {
                ", description='" + description + '\'' +
                ", subjects=" + subjects +
                ", types=" + materialTypes +
+               ", workTypes=" + workTypes +
                ", priorityKeys=" + priorityKeys +
                '}';
     }
@@ -79,6 +83,7 @@ public class ManifestationInformation implements Serializable {
         ManifestationInformation res = new ManifestationInformation();
         res.manifestationId = this.manifestationId;
         res.materialTypes = this.materialTypes;
+        res.workTypes = this.workTypes;
         return res;
     }
 }
