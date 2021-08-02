@@ -20,7 +20,6 @@ package dk.dbc.search.work.presentation.service.response;
 
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.util.Collections;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.util.List;
