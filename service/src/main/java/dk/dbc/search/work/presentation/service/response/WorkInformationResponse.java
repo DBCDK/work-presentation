@@ -20,6 +20,7 @@ package dk.dbc.search.work.presentation.service.response;
 
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.util.Collections;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.util.List;
@@ -60,6 +61,9 @@ public class WorkInformationResponse {
     @Schema(implementation = TypedValueResponse.Array.class)
     public Set<TypedValueResponse> subjects;
 
+    @Schema(example = "literature", implementation = String.class)
+    public Set<String> workTypes;
+
     @Schema(implementation = GroupInformationResponse.Array.class, description = "The first entry in the list is the representative group for this work, the rest are in random order")
     public List<GroupInformationResponse> groups;
 
@@ -81,6 +85,7 @@ public class WorkInformationResponse {
         wir.subjects = wi.subjects.stream()
                 .map(TypedValueResponse::from)
                 .collect(Collectors.toSet());
+        wir.workTypes = wi.workTypes == null ? null : wi.workTypes.stream().collect(Collectors.toSet());
         // wir.records is computed in FilterResult.processWork()
         return wir;
     }
@@ -99,12 +104,13 @@ public class WorkInformationResponse {
                Objects.equals(creators, that.creators) &&
                Objects.equals(description, that.description) &&
                Objects.equals(subjects, that.subjects) &&
+               Objects.equals(workTypes, that.workTypes) &&
                Objects.equals(groups, that.groups);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(workId, title, fullTitle, series, creators, description, subjects, groups);
+        return Objects.hash(workId, title, fullTitle, series, creators, description, subjects, workTypes, groups);
     }
 
     @Override
