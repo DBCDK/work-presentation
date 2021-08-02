@@ -13,7 +13,7 @@ import java.util.Objects;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ManifestationInformation implements Serializable {
 
-    private static final long serialVersionUID = 0x644CAC76C6A06754L;
+    private static final long serialVersionUID = 0x7E0D20E1E0394E01L;
 
     @JsonProperty("pid")
     public String manifestationId;

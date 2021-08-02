@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -11,7 +12,7 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class WorkInformation implements Serializable {
 
-    private static final long serialVersionUID = 0x3B56D3505757B617L;
+    private static final long serialVersionUID = 0x3DBBAFB032227F85L;
 
     public String workId;
 
@@ -26,6 +27,8 @@ public class WorkInformation implements Serializable {
     public String description;
 
     public Set<TypedValue> subjects;
+
+    public List<String> workTypes;
 
     @JsonProperty("dbUnits")
     // Unit -> Manifestations
@@ -51,6 +54,7 @@ public class WorkInformation implements Serializable {
                Objects.equals(creators, that.creators) &&
                Objects.equals(description, that.description) &&
                Objects.equals(subjects, that.subjects) &&
+               Objects.equals(workTypes, that.workTypes) &&
                Objects.equals(dbUnitInformation, that.dbUnitInformation) &&
                Objects.equals(ownerUnitId, that.ownerUnitId) &&
                Objects.equals(dbRelUnitInformation, that.dbRelUnitInformation);
@@ -58,7 +62,7 @@ public class WorkInformation implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(workId, title, fullTitle, series, creators, description, subjects, dbUnitInformation, ownerUnitId, dbRelUnitInformation);
+        return Objects.hash(workId, title, fullTitle, series, creators, description, subjects, workTypes, dbUnitInformation, ownerUnitId, dbRelUnitInformation);
     }
 
     @Override
@@ -72,6 +76,7 @@ public class WorkInformation implements Serializable {
                ", creators='" + creators + '\'' +
                ", description='" + description + '\'' +
                ", subjects='" + subjects + '\'' +
+               ", workTypes='" + workTypes + '\'' +
                ", dbUnitInformation=" + dbUnitInformation +
                ", relUnitTypeInformation=" + dbRelUnitInformation +
                '}';
