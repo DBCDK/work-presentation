@@ -13,9 +13,15 @@
     "type" : "KW",
     "value" : "men"
   } ],
+  "workTypes": [
+    "wa", "wb"
+  ],
   "dbUnits" : {
     "unit:1" : [ {
-      "pid" : "870970-basis:0"
+      "pid" : "870970-basis:0",
+      "workTypes": [
+        "wa", "wb"
+      ]
     } ]
   },
   "dbRelUnits" : {

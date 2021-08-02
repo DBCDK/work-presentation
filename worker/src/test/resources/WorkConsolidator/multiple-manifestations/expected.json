@@ -16,9 +16,13 @@
             "type": "KW",
             "value": "elephants"
         } ],
+    "workTypes": [
+    ],
     "dbUnits": {
         "unit:1": [ {
-                "pid": "870970-basis:0"
+                "pid": "870970-basis:0",
+                "workTypes": [
+                ]
             }, {
                 "pid": "710100-katalog:0"
             } ]

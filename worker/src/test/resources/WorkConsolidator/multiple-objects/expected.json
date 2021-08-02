@@ -16,11 +16,20 @@
             "type": "KW",
             "value": "elephants"
         } ],
+    "workTypes": [
+        "wa"
+    ],
     "dbUnits": {
         "unit:1": [ {
-                "pid": "870970-basis:0"
+                "pid": "870970-basis:0",
+                "workTypes": [
+                    "wa"
+                ]
             }, {
-                "pid": "870970-basis:1"
+                "pid": "870970-basis:1",
+                "workTypes": [
+                    "wb"
+                ]
             } ]
     },
     "dbRelUnits": {

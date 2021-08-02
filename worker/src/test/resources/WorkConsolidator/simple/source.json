@@ -7,6 +7,7 @@
                     "title": "Two Things",
                     "creators": [ { "type": "aut", "value": "Me" } ],
                     "subjects": [ { "type": "KW", "value": "mice"}, { "type": "KW", "value": "men"} ],
+                    "workTypes": [ "wa", "wb" ],
                     "priorityKeys": {
                         "identifier": "xx|000000",
                         "date": "2020"
