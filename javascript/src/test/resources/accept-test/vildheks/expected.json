@@ -33,5 +33,6 @@
         "date": "2010",
         "version": "1. udgave, 11. oplag (2018)"
     },
-    "types": [ "Bog" ]
+    "types": [ "Bog" ],
+    "workTypes": [ "literature" ]
 }

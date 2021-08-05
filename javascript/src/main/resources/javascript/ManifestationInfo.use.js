@@ -34,6 +34,7 @@ var ManifestationInfo = (function() {
                 "description": null, //from commonData stream dcterms:abstract - string, null if no data
                 "subjects": [], //from common and local stream if subject element present, array, empty array if no data
                 "types": [], //from DC stream, array, must be present
+                "workTypes": [], //from commonData stream adminData workType, array, must be present
                 "priorityKeys": {} //from DC stream for determining owner of the work, must be present
             };
 
@@ -58,6 +59,7 @@ var ManifestationInfo = (function() {
         manifestationObject.description = getAbstract( commonDataXml, localDataXml );
         manifestationObject.subjects = getSubjects( commonDataXml, localDataXml );
         manifestationObject.types = getTypes( dcStreamXml );
+        manifestationObject.workTypes = getWorkTypes( commonDataXml );
         manifestationObject.priorityKeys = getPriorityKeys( commonDataXml, localDataXml );
 
         Log.trace( "Leaving: ManifestationInfo.getManifestationInfoFromXmlObjects function" );
@@ -159,27 +161,27 @@ var ManifestationInfo = (function() {
 
         //first check if localData has a full title
         var series = XPath.selectText( '/ting:localData/dkabm:record/dc:title[@xsi:type="dkdcplus:series"]', localData );
-        Log.trace("local title=", series);
+        Log.trace( "local title=", series );
         series = series.trim();
         var split = true;
 
         if ( "" === series ) {
             series = XPath.selectText( '/ting:localData/dkabm:record/dc:description[@xsi:type="dkdcplus:series"]', localData );
-            Log.trace("local desc=", series);
+            Log.trace( "local desc=", series );
             series = series.trim();
             split = false;
         }
 
         if ( "" === series ) {
             series = XPath.selectText( '/ting:container/dkabm:record/dc:title[@xsi:type="dkdcplus:series"]', commonData );
-            Log.trace("common title=", series);
+            Log.trace( "common title=", series );
             series = series.trim();
             split = true;
         }
 
         if ( "" === series ) {
             series = XPath.selectText( '/ting:container/dkabm:record/dc:description[@xsi:type="dkdcplus:series"]', commonData );
-            Log.trace("common desc=", series);
+            Log.trace( "common desc=", series );
             series = series.trim();
             split = false;
         }
@@ -193,11 +195,11 @@ var ManifestationInfo = (function() {
         var seriesTitle = series;
         var seriesInstalment = null;
 
-        if(split) {
+        if ( split ) {
             var instalmentMatch = series.match( '^(.+) ; (.+)$' );
             if ( instalmentMatch !== null ) {
-                seriesTitle = instalmentMatch[1];
-                seriesInstalment = instalmentMatch[2];
+                seriesTitle = instalmentMatch[ 1 ];
+                seriesInstalment = instalmentMatch[ 2 ];
             }
         }
 
@@ -233,8 +235,8 @@ var ManifestationInfo = (function() {
 
         for ( var i in creators ) {
 
-            var type = XmlUtil.getAttribute( creators[i], "type", XmlNamespaces.xsi );
-            var value = XmlUtil.getText( creators[i] ).trim();
+            var type = XmlUtil.getAttribute( creators[ i ], "type", XmlNamespaces.xsi );
+            var value = XmlUtil.getText( creators[ i ] ).trim();
 
             if ( type === undefined ) {
                 type = null;
@@ -250,7 +252,7 @@ var ManifestationInfo = (function() {
                 Log.warn( "ManifestationInfo.getSubjects type is: " + type );
             }
 
-            creators[i] = {
+            creators[ i ] = {
                 "type": type,
                 "value": value
             };
@@ -303,6 +305,33 @@ var ManifestationInfo = (function() {
         Log.trace( "Leaving: ManifestationInfo.getTypes function" );
 
         return types;
+    }
+
+    /**
+     * Function that extracts workTypes from the provided common data stream
+     *
+     * @type {function}
+     * @syntax ManifestationInfo.getWorkTypes( commonData )
+     * @param {Document} commonData the common data stream as xml
+     * @return {Array} the extracted work types
+     * @function
+     * @name ManifestationInfo.getWorkTypes
+     */
+
+    function getWorkTypes( commonData ) {
+
+        Log.trace( "Entering: ManifestationInfo.getWorkTypes function" );
+
+        var workTypes = XPath.selectMultipleText( "/ting:container/adminData/workType", commonData );
+
+        if ( 0 === workTypes.length ) {
+            RecordProcessing.terminateProcessingAndFailRecord(
+                "ManifestationInfo.getWorkTypes no workType was found in adminData in common stream" );
+        }
+
+        Log.trace( "Leaving: ManifestationInfo.getWorkTypes function" );
+
+        return workTypes;
     }
 
     /**
@@ -365,8 +394,8 @@ var ManifestationInfo = (function() {
         }
         for ( var i in subjects ) {
 
-            var type = XmlUtil.getAttribute( subjects[i], "type", XmlNamespaces.xsi );
-            var value = XmlUtil.getText( subjects[i] ).trim();
+            var type = XmlUtil.getAttribute( subjects[ i ], "type", XmlNamespaces.xsi );
+            var value = XmlUtil.getText( subjects[ i ] ).trim();
 
             if ( type === undefined ) {
                 type = null;
@@ -379,7 +408,7 @@ var ManifestationInfo = (function() {
                 Log.warn( "ManifestationInfo.getSubjects type is: " + type );
             }
 
-            subjects[i] = {
+            subjects[ i ] = {
                 "type": type,
                 "value": value
             };
@@ -492,6 +521,7 @@ var ManifestationInfo = (function() {
         getSeries: getSeries,
         getCreators: getCreators,
         getTypes: getTypes,
+        getWorkTypes: getWorkTypes,
         getAbstract: getAbstract,
         getSubjects: getSubjects,
         getPriorityKeys: getPriorityKeys

@@ -19,5 +19,6 @@
         "date": "1972",
         "version": "2. udgave"
     },
-    "types": [ "Bog" ]
+    "types": [ "Bog" ],
+    "workTypes": [ "literature" ]
 }

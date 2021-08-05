@@ -102,7 +102,7 @@ public class WorkConsolidatorTest {
             O.writeValue(dir.resolve("actual.json").toFile(), actual);
         }
 
-        assertThat(actual, is(expected));
+        assertThat("testBuildWorkInformation: " + directory.getName(), actual, is(expected));
     }
 
     Source readSource(File sourceFile) throws IOException {

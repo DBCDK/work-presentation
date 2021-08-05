@@ -190,6 +190,7 @@ public class WorkConsolidator {
         work.fullTitle = primary.fullTitle;
         work.series = null;
         work.title = primary.title;
+        work.workTypes = primary.workTypes;
 
         // Map into unit->manifestations and unit->relationType->relationManifestation
         work.dbUnitInformation = new HashMap<>();
