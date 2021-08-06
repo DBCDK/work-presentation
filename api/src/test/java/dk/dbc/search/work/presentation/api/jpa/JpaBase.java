@@ -18,13 +18,12 @@
  */
 package dk.dbc.search.work.presentation.api.jpa;
 
+import dk.dbc.commons.testcontainers.postgres.DBCPostgreSQLContainer;
 import dk.dbc.search.work.presentation.database.DatabaseMigrator;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -34,14 +33,11 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.Table;
 import org.junit.jupiter.api.BeforeAll;
-import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.eclipse.persistence.config.PersistenceUnitProperties.JDBC_DRIVER;
-import static org.eclipse.persistence.config.PersistenceUnitProperties.JDBC_PASSWORD;
-import static org.eclipse.persistence.config.PersistenceUnitProperties.JDBC_URL;
-import static org.eclipse.persistence.config.PersistenceUnitProperties.JDBC_USER;
 
 /**
  * Transaction oriented helper for integration-tests
@@ -54,7 +50,11 @@ import static org.eclipse.persistence.config.PersistenceUnitProperties.JDBC_USER
  * @param <BF> a beanFactory as produced by
  *             {@link #createBeanFactory(java.util.Map, javax.persistence.EntityManager, javax.persistence.EntityManagerFactory)}
  */
+@Testcontainers
 public abstract class JpaBase<BF extends AutoCloseable> {
+
+    @Container
+    public static DBCPostgreSQLContainer wpPg = new DBCPostgreSQLContainer();
 
     private static final Logger log = LoggerFactory.getLogger(JpaBase.class);
 
@@ -62,8 +62,6 @@ public abstract class JpaBase<BF extends AutoCloseable> {
     public static final String WORK_CONTAINS_TABLE_NAME = WorkContainsEntity.class.getAnnotation(Table.class).name();
     public static final String WORK_OBJECT_TABLE_NAME = WorkObjectEntity.class.getAnnotation(Table.class).name();
 
-    protected static PGSimpleDataSource dataSource;
-    private static HashMap<String, String> entityManagerProperties;
     private static EntityManagerFactory entityManagerFactory;
 
     @FunctionalInterface
@@ -109,11 +107,9 @@ public abstract class JpaBase<BF extends AutoCloseable> {
     public static void setUpEntityManagerAndDataSource() {
         log.info("setUpEntityManagerAndDataSource");
 
-        dataSource = getDataSource(null);
+        DatabaseMigrator.migrate(wpPg.datasource());
 
-        DatabaseMigrator.migrate(dataSource);
-
-        try (Connection connection = dataSource.getConnection() ;
+        try (Connection connection = wpPg.createConnection() ;
              Statement stmt = connection.createStatement()) {
             stmt.executeUpdate("TRUNCATE " + WORK_OBJECT_TABLE_NAME);
             stmt.executeUpdate("TRUNCATE " + WORK_CONTAINS_TABLE_NAME);
@@ -122,17 +118,7 @@ public abstract class JpaBase<BF extends AutoCloseable> {
             log.error("Could not clean database: {}", ex.getMessage());
             log.debug("Could not clean database: ", ex);
         }
-
-        entityManagerProperties = new HashMap<String, String>() {
-            {
-                put(JDBC_USER, dataSource.getUser());
-                put(JDBC_PASSWORD, dataSource.getPassword());
-                put(JDBC_URL, dataSource.getUrl());
-                put(JDBC_DRIVER, "org.postgresql.Driver");
-                put("eclipselink.logging.level", "FINE");
-            }
-        };
-        entityManagerFactory = Persistence.createEntityManagerFactory("workPresentationTest_PU", entityManagerProperties);
+        entityManagerFactory = Persistence.createEntityManagerFactory("workPresentationTest_PU", wpPg.entityManagerProperties());
     }
 
     public WithEnv withConfigEnv(String... envs) {
@@ -184,50 +170,4 @@ public abstract class JpaBase<BF extends AutoCloseable> {
         });
         return i.get();
     }
-
-    protected static PGSimpleDataSource getDataSource(String databaseName) throws NumberFormatException {
-        String testPort = System.getProperty("postgresql.port");
-        PGSimpleDataSource ds = new PGSimpleDataSource() {
-            @Override
-            public Connection getConnection() throws SQLException {
-                return setLogging(super.getConnection());
-            }
-
-            @Override
-            public Connection getConnection(String user, String password) throws SQLException {
-                return setLogging(super.getConnection(user, password));
-            }
-
-            private Connection setLogging(Connection connection) {
-                try (PreparedStatement stmt = connection.prepareStatement("SET log_statement = 'all';")) {
-                    stmt.execute();
-                } catch (SQLException ex) {
-                    log.warn("Cannot set logging: {}", ex.getMessage());
-                    log.debug("Cannot set logging:", ex);
-                }
-                return connection;
-            }
-        };
-
-        String userName = System.getProperty("user.name");
-        if (testPort != null) {
-            ds.setServerNames(new String[] {"localhost"});
-            if (databaseName == null)
-                databaseName = "workpresentation";
-            ds.setUser(userName);
-            ds.setPassword(userName);
-            ds.setPortNumbers(new int[] {Integer.parseUnsignedInt(testPort)});
-        } else {
-            Map<String, String> env = System.getenv();
-            ds.setUser(env.getOrDefault("PGUSER", userName));
-            ds.setPassword(env.getOrDefault("PGPASSWORD", userName));
-            ds.setServerNames(new String[] {env.getOrDefault("PGHOST", "localhost")});
-            ds.setPortNumbers(new int[] {Integer.parseUnsignedInt(env.getOrDefault("PGPORT", "5432"))});
-            if (databaseName == null)
-                databaseName = env.getOrDefault("PGDATABASE", userName);
-        }
-        ds.setDatabaseName(databaseName);
-        return ds;
-    }
-
 }

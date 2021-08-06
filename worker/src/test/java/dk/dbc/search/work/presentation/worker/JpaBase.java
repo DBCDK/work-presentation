@@ -18,9 +18,11 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
+import dk.dbc.commons.testcontainers.postgres.DBCPostgreSQLContainer;
 import dk.dbc.corepo.queue.QueueJob;
-import dk.dbc.pgqueue.PreparedQueueSupplier;
-import dk.dbc.pgqueue.QueueSupplier;
+import dk.dbc.pgqueue.supplier.PreparedQueueSupplier;
+import dk.dbc.pgqueue.supplier.QueueSupplier;
+import dk.dbc.search.work.presentation.database.DatabaseMigrator;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,38 +35,32 @@ import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
+@Testcontainers
 public class JpaBase extends dk.dbc.search.work.presentation.api.jpa.JpaBase<BeanFactory> {
 
     private static final Logger log = LoggerFactory.getLogger(JpaBase.class);
 
-    protected static PGSimpleDataSource corepoDataSource;
+    @Container
+    static DBCPostgreSQLContainer coPg = new DBCPostgreSQLContainer();
 
     @BeforeAll
     public static void setUpEntityCorepoDataSource() throws SQLException {
-        corepoDataSource = getDataSource("corepo");
-        try (Connection connection = dataSource.getConnection() ;
-             Statement stmt = connection.createStatement()) {
-            boolean hasCorepoDb;
-            try (ResultSet resultSet = stmt.executeQuery("SELECT 1 FROM pg_database WHERE datname = 'corepo'")) {
-                hasCorepoDb = resultSet.next();
-            }
-            if (!hasCorepoDb)
-                stmt.executeUpdate("CREATE DATABASE corepo");
-        }
-        dk.dbc.corepo.access.DatabaseMigrator.migrate(getDataSource("corepo"));
+        DatabaseMigrator.migrate(wpPg.datasource());
+        dk.dbc.corepo.access.DatabaseMigrator.migrate(coPg.datasource());
     }
 
     @BeforeEach
     public void corepo() throws SQLException {
-        try (Connection connection = corepoDataSource.getConnection() ;
+        try (Connection connection = coPg.createConnection() ;
              Statement stmt = connection.createStatement()) {
             stmt.executeUpdate("TRUNCATE queue");
         } catch (SQLException ex) {
@@ -74,7 +70,7 @@ public class JpaBase extends dk.dbc.search.work.presentation.api.jpa.JpaBase<Bea
     }
 
     public void queue(String... pids) throws SQLException {
-        try (Connection connection = corepoDataSource.getConnection()) {
+        try (Connection connection = coPg.createConnection()) {
             PreparedQueueSupplier<QueueJob> supplier = new QueueSupplier<>(QueueJob.STORAGE_ABSTRACTION).preparedSupplier(connection);
             for (String pid : pids) {
                 supplier.enqueue("queue", new QueueJob(pid, "track", false));
@@ -84,13 +80,13 @@ public class JpaBase extends dk.dbc.search.work.presentation.api.jpa.JpaBase<Bea
 
     @Override
     public BeanFactory createBeanFactory(Map<String, String> env, EntityManager em, EntityManagerFactory emf) {
-        return new BeanFactory(env, em, emf, corepoDataSource);
+        return new BeanFactory(env, em, emf, coPg.datasource());
     }
 
     public void waitForQueue(int seconds) throws SQLException, InterruptedException {
         Instant timeout = Instant.now().plusSeconds(seconds);
         for (;;) {
-            try (Connection connection = corepoDataSource.getConnection() ;
+            try (Connection connection = coPg.createConnection() ;
                  Statement stmt = connection.createStatement() ;
                  ResultSet resultSet = stmt.executeQuery("SELECT COUNT(*) FROM queue")) {
                 if (resultSet.next()) {

@@ -19,7 +19,6 @@
 package dk.dbc.search.work.presentation.javascript;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import java.util.List;
@@ -27,7 +26,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-
 
 /**
  *
@@ -78,11 +76,9 @@ public class JavascriptCacheObjectBuilder extends AbstractJavascript {
         String oldManifestationId = MDC.get("manifestationId");
         try {
             MDC.put("manifestationId", manifestationId);
-            Object obj = environment.callMethod(methodName, new Object[] {manifestationId, xmlObjects});
-            JsonNode json = javaScriptObjectToJson(obj);
+            Object json = environment.callMethod(methodName, new Object[] {manifestationId, xmlObjects});
             log.trace("json = {}", json);
-            return O.readValue(O.treeAsTokens(json),
-                               ManifestationInformation.class);
+            return O.readValue(String.valueOf(json), ManifestationInformation.class);
         } finally {
             if (oldManifestationId == null) {
                 MDC.remove("manifestationId");

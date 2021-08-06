@@ -82,7 +82,7 @@ public class ProfileService {
      */
     @CacheResult(cacheName = "vip-core",
                  exceptionCacheName = "vip-core-error")
-    @Timed(reusable = true)
+    @Timed
     public String filterQueryFor(@CacheKey ProfileDomain domain,
                                  @CacheKey String agencyId,
                                  @CacheKey String profile,

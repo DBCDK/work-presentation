@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 DBC A/S (http://dbc.dk/)
+ * Copyright (C) 2021 DBC A/S (http://dbc.dk/)
  *
  * This is part of work-presentation-service
  *
@@ -18,18 +18,10 @@
  */
 package dk.dbc.search.work.presentation.service;
 
-import java.util.Map;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-
 /**
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
  */
-public class JpaBase extends dk.dbc.search.work.presentation.api.jpa.JpaBase<BeanFactory> {
+public interface OASOASFilter {
 
-    @Override
-    public BeanFactory createBeanFactory(Map<String, String> env, EntityManager em, EntityManagerFactory emf) {
-        return new BeanFactory(env, em, wpPg.datasource());
-    }
 }

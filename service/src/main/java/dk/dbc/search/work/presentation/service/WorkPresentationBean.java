@@ -94,7 +94,7 @@ public class WorkPresentationBean {
     @GET
     @Path("getPersistentWorkId")
     @Produces(MediaType.APPLICATION_JSON)
-    @Timed(reusable = true)
+    @Timed
     @Operation(
             summary = "Retrieve a persistent work id",
             description = "This operation produces a persistent work-id, given a " +
@@ -153,7 +153,7 @@ public class WorkPresentationBean {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Timed(reusable = true)
+    @Timed
     @Operation(
             summary = "Retrieve a work structure",
             description = "This operation produces a work structure, for a given identifier." +

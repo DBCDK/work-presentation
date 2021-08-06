@@ -83,7 +83,7 @@ public class WorkConsolidator {
      *
      * @param corepoWorkId corepo-work-id of the work
      */
-    @Timed(reusable = true)
+    @Timed
     public void deleteWork(String corepoWorkId) {
         WorkObjectEntity work = WorkObjectEntity.fromCorepoWorkId(em, corepoWorkId);
         if (work != null) {
@@ -109,7 +109,7 @@ public class WorkConsolidator {
      * @param content      The record content
      * @return if a new persistent work-id has been created in the database
      */
-    @Timed(reusable = true)
+    @Timed
     public boolean saveWork(String corepoWorkId, WorkTree tree, WorkInformation content) {
         boolean newPersistentWorkId = false;
 
@@ -155,7 +155,7 @@ public class WorkConsolidator {
      * @param corepoWorkId For logging
      * @return Work record
      */
-    @Timed(reusable = true)
+    @Timed
     public WorkInformation buildWorkInformation(WorkTree tree, String corepoWorkId) {
 
         WorkInformation work = new WorkInformation();

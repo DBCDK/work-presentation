@@ -85,9 +85,16 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.microprofile</groupId>
-            <artifactId>microprofile</artifactId>
-            <type>pom</type>
+            <groupId>org.eclipse.microprofile.health</groupId>
+            <artifactId>microprofile-health-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.microprofile.metrics</groupId>
+            <artifactId>microprofile-metrics-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.microprofile.openapi</groupId>
+            <artifactId>microprofile-openapi-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
@@ -117,6 +124,17 @@
             <artifactId>jersey-hk2</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>dk.dbc</groupId>
+            <artifactId>dbc-commons-testcontainers-postgres</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -134,11 +152,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>dk.dbc</groupId>
-                <artifactId>postgresql-maven-plugin</artifactId>
             </plugin>
 
             <plugin>

@@ -61,7 +61,7 @@ public class AsyncCacheContentBuilder {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    @Timed(reusable = true)
+    @Timed
     public Future<ManifestationInformation> getFromCache(CacheContentBuilder dataBuilder, Map<String, String> mdc, boolean delete) {
         try {
             MDC.setContextMap(mdc == null ? Collections.EMPTY_MAP : mdc);

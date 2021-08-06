@@ -58,11 +58,6 @@
             </plugin>
 
             <plugin>
-                <groupId>dk.dbc</groupId>
-                <artifactId>postgresql-maven-plugin</artifactId>
-            </plugin>
-
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
@@ -93,32 +88,6 @@
                         </manifest>
                     </archive>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <artifactId>exec-maven-plugin</artifactId>
-                <groupId>org.codehaus.mojo</groupId>
-                <executions>
-                    <execution>
-                        <id>create-and-dump-database</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <workingDirectory>${basedir}</workingDirectory>
-                            <executable>bash</executable>
-                            <arguments>
-                                <argument>-cex</argument>
-                                <argument>
-                                    java -jar ${project.build.directory}/${project.artifactId}-jar-with-dependencies.jar ${user.name}:${user.name}@localhost:${postgresql.port}/workpresentation
-                                    read pg _ &lt; ${project.build.directory}/postgresql-cluster/postmaster.opts
-                                    $${pg%/*}/pg_dump --no-owner postgresql://${user.name}:${user.name}@localhost:${postgresql.port}/workpresentation > ${project.build.directory}/workpresentation-${project.version}.sql
-                                </argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
 
         </plugins>
