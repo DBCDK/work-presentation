@@ -85,7 +85,7 @@ public class JavaScriptEnvironment {
      * @param dataBuilder document builder.
      * @return The content to store in the database
      */
-    @Timed(reusable = true)
+    @Timed
     public ManifestationInformation cacheBuild(CacheContentBuilder dataBuilder) {
         try {
             return jsWorkers
@@ -109,7 +109,7 @@ public class JavaScriptEnvironment {
      * @param corepoWorkId            Id for exception
      * @return manifestaionId of most relevant
      */
-    @Timed(reusable = true)
+    @Timed
     public String getOwnerId(HashMap<String, ManifestationInformation> potentialOwners, String corepoWorkId) {
         try {
             return jsOwnerSelectors.exec(js -> js.selectOwner(potentialOwners))

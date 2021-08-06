@@ -75,7 +75,7 @@ public class CorepoContentServiceConnector {
      * @param id the repository-id
      * @return parsed RELS-SYS
      */
-    @Timed(reusable = true)
+    @Timed
     public RelsSys relsSys(String id) {
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{id}/datastreams/RELS-SYS/content")
@@ -90,7 +90,7 @@ public class CorepoContentServiceConnector {
      * @param id the repository-id
      * @return parsed RELS-EXT or null if not found
      */
-    @Timed(reusable = true)
+    @Timed
     public RelsExt relsExt(String id) {
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{id}/datastreams/RELS-EXT/content")
@@ -105,7 +105,7 @@ public class CorepoContentServiceConnector {
      * @param id the repository-id
      * @return alive and well
      */
-    @Timed(reusable = true)
+    @Timed
     public boolean objectIsActive(String id) {
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{id}")
@@ -123,7 +123,7 @@ public class CorepoContentServiceConnector {
      * @param id the repository-id
      * @return parsed Metadata
      */
-    @Timed(reusable = true)
+    @Timed
     public ObjectMetaData objectMetaData(String id) {
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{id}")
@@ -141,7 +141,7 @@ public class CorepoContentServiceConnector {
      * @param stream the stream of the repositoryId
      * @return parsed Metadata
      */
-    @Timed(reusable = true)
+    @Timed
     public DataStreamMetaData datastreamMetaData(String id, String stream) {
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{id}/datastreams/{stream}")
@@ -157,7 +157,7 @@ public class CorepoContentServiceConnector {
      * @param id the repository-id
      * @return list of stream names
      */
-    @Timed(reusable = true)
+    @Timed
     public DataStreams datastreams(String id) {
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{id}/datastreams")
@@ -173,7 +173,7 @@ public class CorepoContentServiceConnector {
      * @param stream the stream of the repositoryId
      * @return XML content as a String
      */
-    @Timed(reusable = true)
+    @Timed
     public String datastreamContent(String id, String stream) {
         URI uri = config.getCorepoContentService()
                 .path("/rest/objects/{id}/datastreams/{stream}/content")

@@ -63,7 +63,7 @@ public class WorkTreeBuilder {
      * @param work "work:*" id (not validated)
      * @return a tree representation of the work
      */
-    @Timed(reusable = true)
+    @Timed
     public WorkTree buildTree(String work) {
         ObjectMetaData workMetaData = contentService.objectMetaData(work);
         log.trace("work = {}", workMetaData);

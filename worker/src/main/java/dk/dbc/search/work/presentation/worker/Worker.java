@@ -98,7 +98,7 @@ public class Worker implements HealthCheck {
     public HealthCheckResponse call() {
         List<String> hungThreads = worker.hungThreads();
         return HealthCheckResponse.named("queue-worker")
-                .state(hungThreads.isEmpty())
+                .status(hungThreads.isEmpty())
                 .withData("hung-threads", String.join(", ", hungThreads))
                 .build();
     }

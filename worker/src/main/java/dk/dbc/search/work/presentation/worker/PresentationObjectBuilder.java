@@ -65,7 +65,7 @@ public class PresentationObjectBuilder {
     Counter successes;
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    @Timed(reusable = true)
+    @Timed
     public void processJob(Connection connection, QueueJob job, JobMetaData metaData) throws FatalQueueError {
         String corepoWorkId = job.getPid();
         try (LogWith logWith = LogWith.track(job.getTrackingId())
