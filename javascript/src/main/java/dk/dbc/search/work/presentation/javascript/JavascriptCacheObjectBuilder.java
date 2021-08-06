@@ -19,7 +19,6 @@
 package dk.dbc.search.work.presentation.javascript;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import java.util.List;
