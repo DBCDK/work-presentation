@@ -10,10 +10,5 @@
             "url": "${COREPO_POSTGRES_URL}",
             "maxSize": "${THREADS}"
         }
-    },
-    "hazelcast": {
-        "clusterName": "${project.artifactId}-${SYSTEM_NAME}",
-        "cacheConfig": {
-        }
     }
 }
