@@ -4,6 +4,6 @@ use( "ManifestationInfo" );
 function buildManifestationInformation( manifestationId, xmlObjects ) {
     Log.debug( "buildManifestationInformation(", manifestationId, ")" );
 
-    return ManifestationInfo.getManifestationInfoFromXmlObjects( manifestationId, xmlObjects );
+    return JSON.stringify(ManifestationInfo.getManifestationInfoFromXmlObjects( manifestationId, xmlObjects ));
 
 }

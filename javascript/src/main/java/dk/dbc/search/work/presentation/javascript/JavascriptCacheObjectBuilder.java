@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-
 /**
  *
  * @author Morten Bøgeskov (mb@dbc.dk)
@@ -78,11 +77,9 @@ public class JavascriptCacheObjectBuilder extends AbstractJavascript {
         String oldManifestationId = MDC.get("manifestationId");
         try {
             MDC.put("manifestationId", manifestationId);
-            Object obj = environment.callMethod(methodName, new Object[] {manifestationId, xmlObjects});
-            JsonNode json = javaScriptObjectToJson(obj);
+            Object json = environment.callMethod(methodName, new Object[] {manifestationId, xmlObjects});
             log.trace("json = {}", json);
-            return O.readValue(O.treeAsTokens(json),
-                               ManifestationInformation.class);
+            return O.readValue(String.valueOf(json), ManifestationInformation.class);
         } finally {
             if (oldManifestationId == null) {
                 MDC.remove("manifestationId");

@@ -19,10 +19,7 @@
 package dk.dbc.search.work.presentation.javascript;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import dk.dbc.jscommon.JsCommonPaths;
 import dk.dbc.jslib.ClasspathSchemeHandler;
 import dk.dbc.jslib.Environment;
@@ -35,8 +32,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
-import javax.script.Bindings;
-import jdk.nashorn.api.scripting.JSObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,82 +72,6 @@ public abstract class AbstractJavascript {
         environment.registerUseFunction(moduleHandler);
         try (InputStreamReader is = new InputStreamReader(findFile(searchPaths, scriptFile, classLoader), UTF_8)) {
             environment.eval(is, scriptFile);
-        }
-    }
-
-    /**
-     * Convert a JSObject result type into JSON.
-     *
-     * @param object Value extracted from JavaScript environment
-     * @return either null, ObjectNOde or ArrayNode
-     */
-    protected JsonNode javaScriptObjectToJson(Object object) {
-        if (object == null) {
-            return null;
-        } else if (object instanceof JSObject && ( (JSObject) object ).isArray()) {
-            JSObject obj = (JSObject) object;
-            ArrayNode array = O.createArrayNode();
-            obj.values().forEach(value -> {
-                if (value == null) {
-                    array.addNull();
-                } else {
-                    switch (value.getClass().getCanonicalName()) {
-                        case "java.lang.String":
-                            array.add((String) value);
-                            break;
-                        case "java.lang.Double":
-                            array.add((double) value);
-                            break;
-                        case "java.lang.Integer":
-                            array.add((int) value);
-                            break;
-                        case "java.lang.Boolean":
-                            array.add((boolean) value);
-                            break;
-                        default:
-                            JsonNode v1 = javaScriptObjectToJson(value);
-                            if (v1 != null) {
-                                array.add(v1);
-                            } else {
-                                throw new IllegalStateException("Cannot convert array value of " + value.getClass().getCanonicalName() + " to json type");
-                            }
-                    }
-                }
-            });
-            return array;
-        } else if (object instanceof Bindings) {
-            Bindings bindings = (Bindings) object;
-            ObjectNode json = O.createObjectNode();
-            bindings.forEach((key, value) -> {
-                if (value == null) {
-                    json.putNull(key);
-                } else {
-                    switch (value.getClass().getCanonicalName()) {
-                        case "java.lang.String":
-                            json.put(key, (String) value);
-                            break;
-                        case "java.lang.Double":
-                            json.put(key, (double) value);
-                            break;
-                        case "java.lang.Integer":
-                            json.put(key, (int) value);
-                            break;
-                        case "java.lang.Boolean":
-                            json.put(key, (boolean) value);
-                            break;
-                        default:
-                            JsonNode v1 = javaScriptObjectToJson(value);
-                            if (v1 != null) {
-                                json.set(key, v1);
-                            } else {
-                                throw new IllegalStateException("Cannot convert map value of " + value.getClass().getCanonicalName() + " for " + key + " to json type");
-                            }
-                    }
-                }
-            });
-            return json;
-        } else {
-            throw new IllegalStateException("Cannot convert JavaScript value of " + object.getClass().getCanonicalName() + " to json type");
         }
     }
 
