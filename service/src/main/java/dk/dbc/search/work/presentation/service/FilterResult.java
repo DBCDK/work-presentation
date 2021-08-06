@@ -68,7 +68,7 @@ public class FilterResult {
      * @param trackingId       The tracking id for the request
      * @return the work as presented to the user
      */
-    @Timed(reusable = true)
+    @Timed
     public WorkInformationResponse processWork(String corepoWorkId, WorkInformation work, String agencyId, String profile, boolean includeRelations, String trackingId) {
         log.debug("work = {}", work);
 

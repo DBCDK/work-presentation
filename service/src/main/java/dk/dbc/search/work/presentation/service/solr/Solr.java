@@ -85,7 +85,7 @@ public class Solr {
      */
     @CacheResult(cacheName = "solr-manifestations",
                  exceptionCacheName = "solr-manifestations-error")
-    @Timed(reusable = true)
+    @Timed
     public Set<String> getAccessibleManifestations(@CacheKey String corepoWorkId, @CacheKey String agencyId, @CacheKey String profile, int maxExpectedManifestations, String trackingId) {
         String filterQuery = profileService.filterQueryFor(SEARCH, agencyId, profile, trackingId);
         String queryString = "{!terms f=\"" + COREPO_WORK_ID_FIELD + "\"}" + corepoWorkId;
@@ -106,7 +106,7 @@ public class Solr {
      */
     @CacheResult(cacheName = "solr-relations",
                  exceptionCacheName = "solr-relations-error")
-    @Timed(reusable = true)
+    @Timed
     public Set<String> getAccessibleRelations(@CacheKey Set<String> relationIds, @CacheKey String agencyId, @CacheKey String profile, String trackingId) {
         log.info("getAccessibleRelations({})", relationIds);
         if (relationIds.isEmpty())
