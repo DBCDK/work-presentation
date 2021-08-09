@@ -59,7 +59,7 @@ public class WorkContainsEntity implements Serializable {
 
     @EmbeddedId
     @SuppressWarnings("PMD.UnusedPrivateField")
-    private final WorkContainsKey pk;
+    private WorkContainsKey pk;
 
     @Column(updatable = false, nullable = false)
     private String corepoWorkId;
