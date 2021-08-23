@@ -30,6 +30,7 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +49,7 @@ public class SolrDocStore {
     @Inject
     Config config;
 
+    @Timed
     public void queue(String workId, String trackingId) {
         UriBuilder ub = config.getSolrDocStoreQueue();
         if (ub == null) {
@@ -70,7 +72,7 @@ public class SolrDocStore {
             log.debug("Error processing requeue response from solr-doc-store for url: {}: ", uri, ex);
             throw new EJBException("Error processing requeue response from solr-doc-store", ex);
         } catch (NotFoundException ex) {
-            log.info("Solr-doc-store doesn't know about {}, probably hasn't reached there yet");
+            log.info("Solr-doc-store doesn't know about {}, probably hasn't reached there yet", workId);
         } catch (WebApplicationException ex) {
             log.error("Error getting requeue response from solr-doc-store for url: {}: {}", uri, ex.getMessage());
             log.debug("Error getting requeue response from solr-doc-store for url: {}: ", uri, ex);
