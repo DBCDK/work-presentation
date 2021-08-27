@@ -2,7 +2,7 @@
 def dockerRepository = 'https://docker-os.dbc.dk'
 def workerNode = 'devel10'
 def teamEmail = 'de-team@dbc.dk'
-def teamSlack = 'data-engineering-team'
+def teamSlack = 'de-team'
 
 properties([
     disableConcurrentBuilds()
