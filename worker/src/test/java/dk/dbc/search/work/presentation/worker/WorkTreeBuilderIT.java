@@ -34,19 +34,6 @@ import static org.hamcrest.Matchers.*;
 public class WorkTreeBuilderIT extends JpaBase {
 
     @Test
-    public void testAWork() throws Exception {
-        System.out.println("testAWork");
-        withConfigEnv()
-                .jpaWithBeans(bf -> {
-                    WorkTreeBuilder workTreeBuilder = bf.getWorkTreeBuilder();
-                    WorkTree tree = workTreeBuilder.buildTree("work:62");
-                    tree.prettyPrint(System.out::println);
-                    tree.setPrimaryManifestationId("870970-basis:00010529");
-                    assertThat(tree.getPersistentWorkId(), is("work-of:870970-basis:00010529"));
-                });
-    }
-
-    @Test
     public void testWorkDoesNotExist() throws Exception {
         System.out.println("testWorkDoesNotExist");
         RuntimeException ex = Assertions.assertThrows(
@@ -70,7 +57,7 @@ public class WorkTreeBuilderIT extends JpaBase {
                     WorkTreeBuilder workTreeBuilder = bf.getWorkTreeBuilder();
                     WorkTree tree = workTreeBuilder.buildTree("work:27827958");
                     tree.prettyPrint(System.out::println);
-                    assertThat(tree.getPersistentWorkId(), nullValue());
+                    assertThat(tree.primaryUnit(), nullValue());
                 });
     }
 

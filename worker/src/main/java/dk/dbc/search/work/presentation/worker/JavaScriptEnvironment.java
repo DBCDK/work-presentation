@@ -20,10 +20,8 @@ package dk.dbc.search.work.presentation.worker;
 
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import dk.dbc.search.work.presentation.javascript.JavascriptCacheObjectBuilder;
-import dk.dbc.search.work.presentation.javascript.JavascriptWorkOwnerSelector;
 import dk.dbc.search.work.presentation.worker.pool.QuickPool;
 import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
-import java.util.HashMap;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJBException;
 import javax.ejb.Lock;
@@ -47,7 +45,6 @@ public class JavaScriptEnvironment {
     private static final Logger log = LoggerFactory.getLogger(JavaScriptEnvironment.class);
 
     QuickPool<JavascriptCacheObjectBuilder> jsWorkers;
-    QuickPool<JavascriptWorkOwnerSelector> jsOwnerSelectors;
 
     @Inject
     Config config;
@@ -65,13 +62,6 @@ public class JavaScriptEnvironment {
             jsWorkers.setMaxTotal(config.getJsPoolSize());
             jsWorkers.addObjects(config.getJsPoolSize());
 
-            int jsOwnerSelectorsCount = 1 + ( config.getThreads() / 5 ); // seldom run in parallel
-            jsOwnerSelectors = new QuickPool<>(JavascriptWorkOwnerSelector.builder()
-                    .build());
-            jsOwnerSelectors.setMinIdle(0);
-            jsOwnerSelectors.setMaxIdle(jsOwnerSelectorsCount);
-            jsOwnerSelectors.setMaxTotal(jsOwnerSelectorsCount);
-            jsOwnerSelectors.addObjects(jsOwnerSelectorsCount);
         } catch (Exception ex) {
             log.error("Error building JavaScript environments: {}", ex.getMessage());
             log.debug("Error building JavaScript environments: ", ex);
@@ -99,27 +89,4 @@ public class JavaScriptEnvironment {
             throw new EJBException("Error building content for: " + dataBuilder.getManifestationId());
         }
     }
-
-    /**
-     * Call the JavaScript to find the owner of a work
-     *
-     * @param potentialOwners map of manifestationId to
-     *                        ManifestationInformation, for the primary in the
-     *                        units
-     * @param corepoWorkId            Id for exception
-     * @return manifestaionId of most relevant
-     */
-    @Timed
-    public String getOwnerId(HashMap<String, ManifestationInformation> potentialOwners, String corepoWorkId) {
-        try {
-            return jsOwnerSelectors.exec(js -> js.selectOwner(potentialOwners))
-                    .raise(Exception.class)
-                    .value();
-        } catch (Exception ex) {
-            log.error("Error computing owner of work: {}", ex.getMessage());
-            log.debug("Error computing owner of work: ", ex);
-            throw new EJBException("Error finding owner for work: " + corepoWorkId);
-        }
-    }
-
 }

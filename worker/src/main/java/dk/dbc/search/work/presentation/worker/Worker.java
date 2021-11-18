@@ -79,7 +79,7 @@ public class Worker implements HealthCheck {
         log.info("Staring worker");
 
         worker = QueueWorker.builder(QueueJob.STORAGE_ABSTRACTION)
-                .skipDuplicateJobs(config.hasQueueDeduplicate() ? QueueJob.DEDUPLICATE_ABSTRACTION : null, true, true)
+                .skipDuplicateJobs(config.hasQueueDeduplicate() ? new QueueJob.DeduplicateAbstraction(250) : null, true, true)
                 .consume(config.getQueues())
                 .dataSource(dataSource)
                 .fromEnvWithDefaults()

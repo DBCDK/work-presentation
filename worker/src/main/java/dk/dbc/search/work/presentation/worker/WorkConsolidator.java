@@ -28,6 +28,7 @@ import dk.dbc.search.work.presentation.api.pojo.TypedValue;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
 import dk.dbc.search.work.presentation.worker.tree.ObjectTree;
+import dk.dbc.search.work.presentation.worker.tree.UnitTree;
 import dk.dbc.search.work.presentation.worker.tree.WorkTree;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
@@ -115,17 +116,17 @@ public class WorkConsolidator {
 
         setWorkContains(tree);
 
-        String persistentWorkId = tree.getPersistentWorkId();
+        String persistentWorkId = content.workId;
         WorkObjectEntity work = WorkObjectEntity.from(em, persistentWorkId);
 
-        WorkObjectEntity workByWorkId = WorkObjectEntity.fromCorepoWorkId(em, corepoWorkId);
-        log.debug("record = {}, recordByWorkId = {}", work, workByWorkId);
-        if (workByWorkId == null) {
+        WorkObjectEntity workByCorepoWorkId = WorkObjectEntity.fromCorepoWorkId(em, corepoWorkId);
+        log.debug("record = {}, recordByCorepoWorkId = {}", work, workByCorepoWorkId);
+        if (workByCorepoWorkId == null) {
             log.info("Created persistent-work-id: {}", persistentWorkId);
             newPersistentWorkId = true;
-        } else if (!workByWorkId.getPersistentWorkId().equals(persistentWorkId)) {
-            log.info("Moved from persistent-work-id: {} to {}", workByWorkId.getPersistentWorkId(), persistentWorkId);
-            workByWorkId.delete();
+        } else if (!workByCorepoWorkId.getPersistentWorkId().equals(persistentWorkId)) {
+            log.info("Moved from persistent-work-id: {} to {}", workByCorepoWorkId.getPersistentWorkId(), persistentWorkId);
+            workByCorepoWorkId.delete();
             newPersistentWorkId = true;
         }
         work.setCorepoWorkId(corepoWorkId);
@@ -164,22 +165,11 @@ public class WorkConsolidator {
 
         removeDeletedPrimaries(manifestationCache, tree);
 
-        String ownerUnitId = findOwnerOfWork(tree, manifestationCache, corepoWorkId);
-        if (ownerUnitId == null) {
-            log.error("Error finding owner, most likely one unit, with deleted localData stream owning agency");
-            throw new IllegalStateException("Cannot find an owner for: " + tree.getCorepoWorkId());
-        }
-        String ownerId = tree.get(ownerUnitId).entrySet().stream() // Stream over manifestationId -> manifestationInformatio for owner unit
-                .filter(e -> e.getValue().isPrimary())
-                .map(Map.Entry::getKey)
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("This cannot happen since same rule applied tor getting the Id in the first place"));
-
-        tree.setPrimaryManifestationId(ownerId);
-
-        work.workId = tree.getPersistentWorkId();
+        String ownerUnitId = tree.primaryUnit();
+        String ownerId = tree.get(ownerUnitId).primaryObject(ownerUnitId);
         work.ownerUnitId = ownerUnitId;
-
+        work.workId = "work-of:" + ownerId;
+ 
         // Copy from owner
         ManifestationInformation primary = manifestationCache.get(ownerId);
         if (primary == null) {
@@ -244,57 +234,6 @@ public class WorkConsolidator {
         work.subjects = TypedValue.distinctSet(subjects);
 
         return work;
-    }
-
-    /**
-     * find the most relevant manifestation, and use as owner for the work
-     *
-     * @param tree               The work tree, that describes the
-     *                           corepo-work/unit relations
-     * @param manifestationCache all the cached manifestationIds
-     * @param corepoWorkId       the corepoWorkId for logging
-     * @return the owner of the work
-     */
-    protected String findOwnerOfWork(WorkTree tree, Map<String, ManifestationInformation> manifestationCache, String corepoWorkId) {
-        HashMap<String, ManifestationInformation> potentialOwnerUnits = findPotentialOwners(tree, manifestationCache);
-        return jsEnv.getOwnerId(potentialOwnerUnits, corepoWorkId);
-    }
-
-    /**
-     * Extract the potential owners (primary object in each unit), into a map
-     *
-     * @param tree               The work tree, that describes the
-     *                           corepo-work/unit relations
-     * @param manifestationCache all the cached manifestationIds
-     * @return map of inutId to its primary objects ManifestationInformation
-     */
-    protected HashMap<String, ManifestationInformation> findPotentialOwners(WorkTree tree, Map<String, ManifestationInformation> manifestationCache) {
-        HashMap<String, ManifestationInformation> potentialOwners = new HashMap<>();
-        tree.forEach((unitId, unit) -> {
-            Set<Map.Entry<String, ObjectTree>> entrySet = unit.entrySet();
-            String objectId = entrySet.stream()
-                    .filter(e -> e.getValue().isPrimary())
-                    .map(Map.Entry::getKey)
-                    .findAny()
-                    .orElseThrow(() -> new IllegalStateException("Cannot find primary object for unit: " + unitId));
-            ManifestationInformation mi = manifestationCache.get(objectId);
-
-            if (mi == null) {
-                log.warn("Primary {} of unit {}, has deleted localData stream", objectId, unitId);
-
-                // Create a dummy object (might be the owner of the work)
-                // This object is not cached in the database - Do not want it to pollute the cache
-                // Make it available to the owner-selection service
-                // Ensure deleted penalty in owner-selection
-                mi = jsEnv.cacheBuild(new CacheContentBuilder(objectId, Instant.now(), false));
-                mi.priorityKeys.put("deleted", "true");
-                manifestationCache.put(objectId, mi);
-                potentialOwners.put(unitId, mi);
-            } else {
-                potentialOwners.put(unitId, mi);
-            }
-        });
-        return potentialOwners;
     }
 
     /**

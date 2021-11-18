@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import javax.ejb.AsyncResult;
@@ -68,16 +69,7 @@ public class WorkConsolidatorTest {
         WorkTree workTree = workTreeFrom(source);
         workTree.prettyPrint(System.out::println);
 
-        WorkConsolidator workConsolidator = new WorkConsolidator() {
-            @Override
-            void setWorkContains(WorkTree tree) {
-            }
-
-            @Override
-            protected String findOwnerOfWork(WorkTree tree, Map<String, ManifestationInformation> manifestationCache, String corepoWorkId) {
-                return findPotentialOwners(tree, manifestationCache).keySet().stream().sorted().findFirst().orElse("ANY");
-            }
-        };
+        WorkConsolidator workConsolidator = new WorkConsolidator();
         workConsolidator.asyncCacheContentBuilder = new AsyncCacheContentBuilder() {
             @Override
             public Future<ManifestationInformation> getFromCache(CacheContentBuilder dataBuilder, Map<String, String> mdc, boolean delete) {
@@ -137,8 +129,10 @@ public class WorkConsolidatorTest {
     public WorkTree workTreeFrom(Source source) {
         WorkTree workTree = new WorkTree("work:-1", Instant.now());
 
+        AtomicBoolean firstUnit = new AtomicBoolean(true);
+
         source.units.forEach((unitId, unit) -> {
-            UnitTree unitTree = new UnitTree(Instant.now());
+            UnitTree unitTree = new UnitTree(firstUnit.getAndSet(false), Instant.now());
             workTree.put(unitId, unitTree);
             unit.forEach((objId, obj) -> {
                 boolean primaryObj = objId.endsWith("0");
