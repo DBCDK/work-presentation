@@ -28,7 +28,6 @@ import dk.dbc.search.work.presentation.api.pojo.TypedValue;
 import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
 import dk.dbc.search.work.presentation.worker.tree.ObjectTree;
-import dk.dbc.search.work.presentation.worker.tree.UnitTree;
 import dk.dbc.search.work.presentation.worker.tree.WorkTree;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
