@@ -40,7 +40,6 @@ public class WorkTree extends HashMap<String, UnitTree> {
     private static final long serialVersionUID = 0x899E4144D4AA6ABBL;
 
     private final String corepoWorkId;
-    private String primary;
     private final Instant modified;
     private final HashMap<TypedRelation, RelationTree> relations;
 
@@ -78,28 +77,27 @@ public class WorkTree extends HashMap<String, UnitTree> {
         this.relations.put(relationUnitId, relation);
     }
 
+    public String primaryUnit() {
+        if (isEmpty())
+            return null;
+        return entrySet().stream()
+                .filter(e -> e.getValue().isPrimary())
+                .findFirst()
+                .map(Entry::getKey)
+                .orElseThrow(() -> new IllegalStateException("Cannot find primary unit for: " + corepoWorkId));
+    }
+
     /**
      * Find the "owner" of the work
      *
      * @return a manifestation id or null if none exists (deleted work)
      */
-    public String getPrimaryManifestationId() {
+    private String getPrimaryManifestationId() {
         if (isEmpty())
             return null;
-        if (primary == null) {
-            throw new IllegalStateException("No primary set");
-        }
-        return primary;
-    }
-
-    public void setPrimaryManifestationId(String primary) {
-        this.primary = primary;
-    }
-
-    public String getPersistentWorkId() {
-        if (isEmpty())
-            return null;
-        return "work-of:" + getPrimaryManifestationId();
+        String unitId = primaryUnit();
+        String objectId = get(unitId).primaryObject(unitId);
+        return "work-of:" + objectId;
     }
 
     public String getCorepoWorkId() {
@@ -108,7 +106,7 @@ public class WorkTree extends HashMap<String, UnitTree> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), corepoWorkId, primary, modified, relations);
+        return Objects.hash(super.hashCode(), corepoWorkId, modified, relations);
     }
 
     @Override
@@ -117,19 +115,18 @@ public class WorkTree extends HashMap<String, UnitTree> {
             return false;
         final WorkTree other = (WorkTree) obj;
         return Objects.equals(this.corepoWorkId, other.corepoWorkId) &&
-               Objects.equals(this.primary, other.primary) &&
                Objects.equals(this.modified, other.modified) &&
                Objects.equals(this.relations, other.relations);
     }
 
     @Override
     public String toString() {
-        return "WorkTree{" + "corepoWorkId=" + corepoWorkId + ", primary=" + primary + ", modified=" + modified + ", relations=" + relations + ", " + super.toString() + "}";
+        return "WorkTree{" + "corepoWorkId=" + corepoWorkId + ", modified=" + modified + ", relations=" + relations + ", " + super.toString() + "}";
     }
 
     public void prettyPrint(Consumer<String> logger) {
         println(logger, "Work: %s", corepoWorkId);
-        println(logger, " |-- primary: %s", primary);
+        println(logger, " |-- primary: %s", getPrimaryManifestationId());
         println(logger, " %s modified: %s", isEmpty() ? "`--" : "|--", modified);
         boolean hasWorkRelations = !relations.isEmpty();
         for (Iterator<Entry<String, UnitTree>> units = entrySet().iterator() ; units.hasNext() ;) {
