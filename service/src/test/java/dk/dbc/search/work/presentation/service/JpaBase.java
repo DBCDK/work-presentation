@@ -18,9 +18,17 @@
  */
 package dk.dbc.search.work.presentation.service;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
+import java.sql.SQLException;
 import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static dk.dbc.search.work.presentation.api.jpa.JpaBase.wpPg;
 
 /**
  *
@@ -28,8 +36,25 @@ import javax.persistence.EntityManagerFactory;
  */
 public class JpaBase extends dk.dbc.search.work.presentation.api.jpa.JpaBase<BeanFactory> {
 
+    static WireMockServer wms = new WireMockServer(options()
+            .dynamicPort()
+            .stubCorsEnabled(true)
+            .usingFilesUnderClasspath("wiremock")
+            .notifier(new Slf4jNotifier(false))
+            .gzipDisabled(true));
+
+    @BeforeAll
+    public static void setUpEntityCorepoDataSource() throws SQLException {
+        wms.start();
+    }
+
+    @AfterAll
+    public static void shutdownWiremock() {
+        wms.stop();
+    }
+
     @Override
     public BeanFactory createBeanFactory(Map<String, String> env, EntityManager em, EntityManagerFactory emf) {
-        return new BeanFactory(env, em, wpPg.datasource());
+        return new BeanFactory(env, em, wpPg.datasource(), wms);
     }
 }

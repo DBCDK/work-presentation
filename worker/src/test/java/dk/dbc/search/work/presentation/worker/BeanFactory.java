@@ -18,6 +18,7 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
 import java.util.Arrays;
@@ -59,20 +60,20 @@ public class BeanFactory implements AutoCloseable {
     private final Bean<Worker> worker = new Bean<>(new Worker(), this::setupWorker);
     private final Bean<WorkTreeBuilder> workTreeBuilder = new Bean<>(new WorkTreeBuilder(), this::setupWorkTreeBuilder);
 
-    public BeanFactory(Map<String, String> envs, EntityManager em, EntityManagerFactory emf, DataSource corepoDataSource) {
+    public BeanFactory(Map<String, String> envs, EntityManager em, EntityManagerFactory emf, DataSource corepoDataSource, WireMockServer wms) {
         this.entityManager = em;
         this.entityManagerFactory = emf;
         this.corepoDataSource = corepoDataSource;
-        this.config = makeConfig(envs);
+        this.config = makeConfig(envs, wms);
     }
 
     @Override
     public void close() {
     }
 
-    private static Config makeConfig(Map<String, String> envs) {
+    private static Config makeConfig(Map<String, String> envs, WireMockServer wms) {
         Map<String, String> env = new HashMap<>();
-        env.putAll(config("COREPO_CONTENT_SERVICE_URL=" + System.getenv().getOrDefault("COREPO_CONTENT_SERVICE_URL", "http://localhost:8000/corepo-content-service"),
+        env.putAll(config("COREPO_CONTENT_SERVICE_URL=" + wms.url("/corepo-content-service"),
                           "JPA_POSTPONE=5s-10s",
                           "JS_POOL_SIZE=2",
                           "SYSTEM_NAME=test",

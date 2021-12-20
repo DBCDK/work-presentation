@@ -18,6 +18,7 @@
  */
 package dk.dbc.search.work.presentation.service;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
 import dk.dbc.search.work.presentation.service.solr.Solr;
 import dk.dbc.search.work.presentation.service.vipcore.ProfileService;
 import java.util.Arrays;
@@ -45,20 +46,20 @@ public class BeanFactory implements AutoCloseable {
     private final Bean<ProfileService> ps = new Bean<>(new ProfileService(), this::setupProfileService);
     private final Bean<Solr> solr = new Bean<>(new Solr(), this::setupSolr);
 
-    public BeanFactory(Map<String, String> envs, EntityManager em, DataSource dataSource) {
+    public BeanFactory(Map<String, String> envs, EntityManager em, DataSource dataSource, WireMockServer wms) {
         this.em = em;
         this.dataSource = dataSource;
-        this.config = makeConfig(envs);
+        this.config = makeConfig(envs, wms);
     }
 
     @Override
     public void close() throws Exception {
     }
 
-    private static Config makeConfig(Map<String, String> envs) {
+    private static Config makeConfig(Map<String, String> envs, WireMockServer wms) {
         Map<String, String> env = new HashMap<>();
-        env.putAll(config("COREPO_SOLR_URL=" + System.getenv("COREPO_SOLR_URL"),
-                          "VIP_CORE_URL=" + System.getenv("VIP_CORE_URL"),
+        env.putAll(config("COREPO_SOLR_URL=" + wms.url("corepo-solr"),
+                          "VIP_CORE_URL=" + wms.url("vip-core/api"),
                           "SOLR_APPID=" + "WorkPresentationIntegrationTest",
                           "SYSTEM_NAME=test")); // Default settings
         env.putAll(envs);
