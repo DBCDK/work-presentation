@@ -107,12 +107,9 @@ public class WorkConsolidator {
      * @param corepoWorkId corepo-work-id of the work
      * @param tree         The structure of the entire work
      * @param content      The record content
-     * @return if a new persistent work-id has been created in the database
      */
     @Timed
-    public boolean saveWork(String corepoWorkId, WorkTree tree, WorkInformation content) {
-        boolean newPersistentWorkId = false;
-
+    public void saveWork(String corepoWorkId, WorkTree tree, WorkInformation content) {
         setWorkContains(tree);
 
         String persistentWorkId = content.workId;
@@ -122,11 +119,9 @@ public class WorkConsolidator {
         log.debug("record = {}, recordByCorepoWorkId = {}", work, workByCorepoWorkId);
         if (workByCorepoWorkId == null) {
             log.info("Created persistent-work-id: {}", persistentWorkId);
-            newPersistentWorkId = true;
         } else if (!workByCorepoWorkId.getPersistentWorkId().equals(persistentWorkId)) {
             log.info("Moved from persistent-work-id: {} to {}", workByCorepoWorkId.getPersistentWorkId(), persistentWorkId);
             workByCorepoWorkId.delete();
-            newPersistentWorkId = true;
         }
         work.setCorepoWorkId(corepoWorkId);
         Stream.Builder<Instant> builder = Stream.builder();
@@ -142,7 +137,6 @@ public class WorkConsolidator {
         work.setModified(Timestamp.from(modified));
         work.setContent(content);
         work.save();
-        return newPersistentWorkId;
     }
 
     /**
@@ -168,7 +162,7 @@ public class WorkConsolidator {
         String ownerId = tree.get(ownerUnitId).primaryObject(ownerUnitId);
         work.ownerUnitId = ownerUnitId;
         work.workId = "work-of:" + ownerId;
- 
+
         // Copy from owner
         ManifestationInformation primary = manifestationCache.get(ownerId);
         if (primary == null) {

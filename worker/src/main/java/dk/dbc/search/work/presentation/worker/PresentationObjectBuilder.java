@@ -49,9 +49,6 @@ public class PresentationObjectBuilder {
     private static final Logger log = LoggerFactory.getLogger(PresentationObjectBuilder.class);
 
     @Inject
-    SolrDocStore solrDocStore;
-
-    @Inject
     CorepoContentServiceConnector corepoContent;
 
     @Inject
@@ -90,13 +87,9 @@ public class PresentationObjectBuilder {
                 tree.prettyPrint(log::trace);
                 if (tree.isEmpty()) {
                     workConsolidator.deleteWork(corepoWorkId);
-                    solrDocStore.queue(corepoWorkId, trackingId); // shouldn't really be needed - all records on the way as deleted, or as members of other work
                 } else {
                     WorkInformation content = workConsolidator.buildWorkInformation(tree, corepoWorkId);
-                    boolean newWorkInDatabase = workConsolidator.saveWork(corepoWorkId, tree, content);
-                    if (newWorkInDatabase) {
-                        solrDocStore.queue(corepoWorkId, trackingId);
-                    }
+                    workConsolidator.saveWork(corepoWorkId, tree, content);
                 }
             } catch (EJBException ex) {
                 if (ex.getCause() instanceof RuntimeException)
