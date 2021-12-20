@@ -84,6 +84,16 @@ public class WorkContainsEntity implements Serializable {
         return entity;
     }
 
+    public static WorkContainsEntity from(EntityManager em, String manifestationId) {
+        WorkContainsEntity wc = em.createNamedQuery("withManifestationId", WorkContainsEntity.class)
+                .setParameter("manifestationId", manifestationId)
+                .setLockMode(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
+                .getResultStream()
+                .findAny()
+                .orElse(null);
+        return wc;
+    }
+
     public static WorkContainsEntity readOnlyFrom(EntityManager em, String manifestationId) {
         WorkContainsEntity wc = em.createNamedQuery("withManifestationId", WorkContainsEntity.class)
                 .setParameter("manifestationId", manifestationId)

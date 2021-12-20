@@ -318,6 +318,14 @@ public class WorkConsolidator {
                 .filter(m -> !activeManifestationIds.contains(m))
                 .forEach(m -> CacheEntity.from(em, m).delete());
 
+        activeManifestationIds.forEach(manifestationId -> {
+            WorkContainsEntity wc = WorkContainsEntity.from(em, manifestationId);
+            if (wc != null && !wc.getCorepoWorkId().equals(corepoWorkId)) {
+                log.warn("Removing manifestation {} from {}", manifestationId, wc.getCorepoWorkId());
+                em.remove(wc);
+            }
+        });
+
         List<WorkContainsEntity> workContains = activeManifestationIds.stream()
                 .map(m -> WorkContainsEntity.from(em, corepoWorkId, m))
                 .collect(toList());

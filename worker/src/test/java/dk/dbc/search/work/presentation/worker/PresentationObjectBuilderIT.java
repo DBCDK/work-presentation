@@ -175,4 +175,117 @@ public class PresentationObjectBuilderIT extends JpaBase {
         });
     }
 
+    @Test
+    public void testStealManifestation() throws Exception {
+        System.out.println("testStealManifestation");
+
+        withConfigEnv()
+                .jpaWithBeans(beanFactory -> {
+                    PresentationObjectBuilder bean = beanFactory.getPresentationObjectBuilder();
+                    bean.process("work:62", "track-me");
+                });
+
+        // work:1062 has one of work:62's manifestations
+        withConfigEnv()
+                .jpaWithBeans(beanFactory -> {
+                    CorepoContentServiceConnector real = beanFactory.getCorepoContentService();
+                    CorepoContentServiceConnector mock = new CorepoContentServiceConnector() {
+
+                        @Override
+                        public RelsSys relsSys(String id) {
+                            switch (id) {
+                                case "work:1062":
+                                    return new RelsSys(null, Arrays.asList("unit:1062"), true, id);
+                                case "unit:1062":
+                                    return new RelsSys("work:1062", Arrays.asList("830520-katalog:000025251"), true, id);
+                                case "830520-katalog:000025251":
+                                    return new RelsSys("unit:1062", Arrays.asList(), true, id);
+                                default:
+                                    throw new AssertionError();
+                            }
+                        }
+
+                        @Override
+                        public String datastreamContent(String id, String stream) {
+                            switch (id) {
+                                case "work:1062":
+                                    id = "work:62";
+                                    break;
+                                case "unit:1062":
+                                    id = "unit:7892641";
+                                    break;
+                                default:
+                                    break;
+                            }
+                            return real.datastreamContent(id, stream);
+                        }
+
+                        @Override
+                        public DataStreams datastreams(String id) {
+                            switch (id) {
+                                case "work:1062":
+                                    id = "work:62";
+                                    break;
+                                case "unit:1062":
+                                    id = "unit:7892641";
+                                    break;
+                                default:
+                                    break;
+                            }
+                            return real.datastreams(id);
+                        }
+
+                        @Override
+                        public DataStreamMetaData datastreamMetaData(String id, String stream) {
+                            switch (id) {
+                                case "work:1062":
+                                    id = "work:62";
+                                    break;
+                                case "unit:1062":
+                                    id = "unit:7892641";
+                                    break;
+                                default:
+                                    break;
+                            }
+                            return real.datastreamMetaData(id, stream);
+                        }
+
+                        @Override
+                        public ObjectMetaData objectMetaData(String id) {
+                            switch (id) {
+                                case "work:1062":
+                                    id = "work:62";
+                                    break;
+                                case "unit:1062":
+                                    id = "unit:7892641";
+                                    break;
+                                default:
+                                    break;
+                            }
+                            return real.objectMetaData(id);
+                        }
+
+                        @Override
+                        public RelsExt relsExt(String id) {
+                            switch (id) {
+                                case "work:1062":
+                                    id = "work:62";
+                                    break;
+                                case "unit:1062":
+                                    id = "unit:7892641";
+                                    break;
+                                default:
+                                    break;
+                            }
+                            return real.relsExt(id);
+                        }
+                    };
+                    beanFactory.withCorepoContentServiceConnector(mock);
+
+                    PresentationObjectBuilder bean = beanFactory.getPresentationObjectBuilder();
+                    bean.process("work:1062", "track-me");
+                });
+
+    }
+
 }
