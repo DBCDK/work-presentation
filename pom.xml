@@ -22,8 +22,9 @@
         <pgqueue.version>2.0-SNAPSHOT</pgqueue.version>
         <jslib.version>1.3-SNAPSHOT</jslib.version>
         <jscommon.version>2012.1-SNAPSHOT</jscommon.version>
-        <solr.version>8.8.1</solr.version>
+        <solr.version>8.10.1</solr.version>
         <test-plugin.version>3.0.0-M5</test-plugin.version>
+        <wiremock.version>2.32.0</wiremock.version>
     </properties>
 
     <artifactId>work-presentation</artifactId>
@@ -52,7 +53,6 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <version>${junit5.version}</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -130,48 +130,19 @@
                 <scope>test</scope>
             </dependency>
 
+            <dependency>
+                <groupId>com.github.tomakehurst</groupId>
+                <artifactId>wiremock-jre8</artifactId>
+                <version>${wiremock.version}</version>
+                <scope>test</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
     <build>
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.1.0</version>
-                    <executions>
-                        <execution>
-                            <id>reserve-network-port</id>
-                            <goals>
-                                <goal>reserve-network-port</goal>
-                            </goals>
-                            <phase>initialize</phase>
-                            <configuration>
-                                <portNames>
-                                    <portName>wiremock.port</portName>
-                                </portNames>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <plugin>
-                    <groupId>uk.co.automatictester</groupId>
-                    <artifactId>wiremock-maven-plugin</artifactId>
-                    <version>2.14.0</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>run</goal>
-                            </goals>
-                            <configuration>
-                                <dir>src/test/resources/wiremock</dir>
-                                <params>--port=${wiremock.port} --proxy-all=http://localhost:8000/ --record-mappings --disable-banner</params>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -191,9 +162,9 @@
                         <redirectTestOutputToFile>false</redirectTestOutputToFile>
                         <trimStackTrace>false</trimStackTrace>
                         <environmentVariables>
-                            <COREPO_CONTENT_SERVICE_URL>http://localhost:${wiremock.port}/corepo-content-service</COREPO_CONTENT_SERVICE_URL>
+                            <!--                            <COREPO_CONTENT_SERVICE_URL>http://localhost:${wiremock.port}/corepo-content-service</COREPO_CONTENT_SERVICE_URL>
                             <COREPO_SOLR_URL>http://localhost:${wiremock.port}/corepo-solr</COREPO_SOLR_URL>
-                            <VIP_CORE_URL>http://localhost:${wiremock.port}/vip-core/api</VIP_CORE_URL>
+                            <VIP_CORE_URL>http://localhost:${wiremock.port}/vip-core/api</VIP_CORE_URL>-->
                         </environmentVariables>
                     </configuration>
                     <executions>

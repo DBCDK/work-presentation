@@ -18,6 +18,7 @@
  */
 package dk.dbc.search.work.presentation.worker;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
 import dk.dbc.search.work.presentation.api.pojo.ManifestationInformation;
 import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
 import java.util.Arrays;
@@ -55,26 +56,24 @@ public class BeanFactory implements AutoCloseable {
     private final Bean<JavaScriptEnvironment> javaScriptEnvironment = new Bean<>(new JavaScriptEnvironment(), this::setupJavaScriptEnvironment);
     private final Bean<ObjectTimestamp> objectTimestamp = new Bean<>(new ObjectTimestamp(), this::setupObjectTimestamp);
     private final Bean<PresentationObjectBuilder> presentationObjectBuilder = new Bean<>(new PresentationObjectBuilder(), this::setupPresentationObjectBuilder);
-    private final Bean<SolrDocStore> solrDocStore = new Bean<>(new SolrDocStoreMock(), this::setupSolrDocStore);
     private final Bean<WorkConsolidator> workConsolidator = new Bean<>(new WorkConsolidator(), this::setupWorkConsolidator);
     private final Bean<Worker> worker = new Bean<>(new Worker(), this::setupWorker);
     private final Bean<WorkTreeBuilder> workTreeBuilder = new Bean<>(new WorkTreeBuilder(), this::setupWorkTreeBuilder);
 
-    public BeanFactory(Map<String, String> envs, EntityManager em, EntityManagerFactory emf, DataSource corepoDataSource) {
+    public BeanFactory(Map<String, String> envs, EntityManager em, EntityManagerFactory emf, DataSource corepoDataSource, WireMockServer wms) {
         this.entityManager = em;
         this.entityManagerFactory = emf;
         this.corepoDataSource = corepoDataSource;
-        this.config = makeConfig(envs);
+        this.config = makeConfig(envs, wms);
     }
 
     @Override
     public void close() {
     }
 
-    private static Config makeConfig(Map<String, String> envs) {
+    private static Config makeConfig(Map<String, String> envs, WireMockServer wms) {
         Map<String, String> env = new HashMap<>();
-        env.putAll(config("COREPO_CONTENT_SERVICE_URL=" + System.getenv().getOrDefault("COREPO_CONTENT_SERVICE_URL", "http://localhost:8000/corepo-content-service"),
-                          "SOLR_DOC_STORE_URL=" + System.getenv().getOrDefault("SOLR_DOC_STORE_URL", "http://localhost:8080/"),
+        env.putAll(config("COREPO_CONTENT_SERVICE_URL=" + wms.url("/corepo-content-service"),
                           "JPA_POSTPONE=5s-10s",
                           "JS_POOL_SIZE=2",
                           "SYSTEM_NAME=test",
@@ -150,25 +149,11 @@ public class BeanFactory implements AutoCloseable {
         bean.workConsolidator = getWorkConsolidator();
         bean.workTreeBuilder = getWorkTreeBuilder();
         bean.corepoContent = getCorepoContentService();
-        bean.solrDocStore = getSolrDocStore();
         bean.successes = new MockCounter();
     }
 
     public BeanFactory withPresentationObjectBuilder(PresentationObjectBuilder pob) {
         presentationObjectBuilder.set(pob);
-        return this;
-    }
-
-    public SolrDocStore getSolrDocStore() {
-        return solrDocStore.get();
-    }
-
-    private void setupSolrDocStore(SolrDocStore bean) {
-        bean.config = getConfig();
-    }
-
-    public BeanFactory withSolrDocStore(SolrDocStore pob) {
-        solrDocStore.set(pob);
         return this;
     }
 
@@ -275,18 +260,6 @@ public class BeanFactory implements AutoCloseable {
             em.close();
             entityManagerFactory.getCache().evictAll();
         }
-    }
-
-    private static class SolrDocStoreMock extends SolrDocStore {
-
-        public SolrDocStoreMock() {
-        }
-
-        @Override
-        public void queue(String workId, String trackingId) {
-            log.info("Queue work: {}", workId);
-        }
-
     }
 
     class AsyncCacheContentBuilderMock extends AsyncCacheContentBuilder {

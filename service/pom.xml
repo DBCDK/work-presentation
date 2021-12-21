@@ -121,6 +121,11 @@
             <artifactId>jersey-hk2</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock-jre8</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -136,16 +141,6 @@
             </plugin>
 
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>dk.dbc</groupId>
-                <artifactId>postgresql-maven-plugin</artifactId>
-            </plugin>
-
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
@@ -155,11 +150,6 @@
                 <artifactId>maven-war-plugin</artifactId>
             </plugin>
             
-            <plugin>
-                <groupId>uk.co.automatictester</groupId>
-                <artifactId>wiremock-maven-plugin</artifactId>          
-            </plugin>   
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
