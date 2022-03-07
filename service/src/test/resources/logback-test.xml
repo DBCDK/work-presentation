@@ -8,6 +8,7 @@
     </appender>
 
     <logger name="dk.dbc" level="DEBUG" />
+    <logger name="org.eclipse.jetty" level="WARN" /> <!-- If unset "root" doesn't apply... but why? -->
 
     <root level="WARN">
         <appender-ref ref="STDOUT" />

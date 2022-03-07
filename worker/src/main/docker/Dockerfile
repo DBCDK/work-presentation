@@ -1,4 +1,4 @@
-FROM docker.dbc.dk/payara5-micro:payara-ce
+FROM docker.dbc.dk/payara5-micro:latest
 
 ENV \
     QUEUE_DEDUPLICATE=true \
