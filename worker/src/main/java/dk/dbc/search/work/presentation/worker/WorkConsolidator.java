@@ -29,7 +29,6 @@ import dk.dbc.search.work.presentation.api.pojo.WorkInformation;
 import dk.dbc.search.work.presentation.worker.tree.CacheContentBuilder;
 import dk.dbc.search.work.presentation.worker.tree.ObjectTree;
 import dk.dbc.search.work.presentation.worker.tree.WorkTree;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -387,7 +386,7 @@ public class WorkConsolidator {
          *
          * @param future Where to get the manifestation
          */
-        @SuppressFBWarnings(value = "UnusedPrivateMethod", justification = "Doesn't see: <stream>.forEach(manifestationCollection::include)")
+        @SuppressWarnings("PMD.UnusedPrivateMethod")
         private void include(Future<ManifestationInformation> future) {
             try {
                 ManifestationInformation maniInfo = future.get();
