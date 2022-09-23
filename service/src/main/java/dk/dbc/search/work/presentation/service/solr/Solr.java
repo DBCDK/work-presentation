@@ -41,7 +41,7 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.StreamingResponseCallback;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.impl.Http2SolrClient;
 import org.apache.solr.common.SolrDocument;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
@@ -190,7 +190,7 @@ public class Solr {
 
             return solrClient;
         } else {
-            return new HttpSolrClient.Builder(solrUrl)
+            return new Http2SolrClient.Builder(solrUrl)
                     .build();
         }
     }
