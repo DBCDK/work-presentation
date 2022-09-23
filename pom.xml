@@ -22,7 +22,7 @@
         <pgqueue.version>2.0-SNAPSHOT</pgqueue.version>
         <jslib.version>1.3-SNAPSHOT</jslib.version>
         <jscommon.version>2012.1-SNAPSHOT</jscommon.version>
-        <solr.version>8.10.1</solr.version>
+        <solr.version>9.0.0</solr.version>
         <test-plugin.version>3.0.0-M5</test-plugin.version>
         <wiremock.version>2.32.0</wiremock.version>
     </properties>
@@ -161,11 +161,6 @@
                     <configuration>
                         <redirectTestOutputToFile>false</redirectTestOutputToFile>
                         <trimStackTrace>false</trimStackTrace>
-                        <environmentVariables>
-                            <!--                            <COREPO_CONTENT_SERVICE_URL>http://localhost:${wiremock.port}/corepo-content-service</COREPO_CONTENT_SERVICE_URL>
-                            <COREPO_SOLR_URL>http://localhost:${wiremock.port}/corepo-solr</COREPO_SOLR_URL>
-                            <VIP_CORE_URL>http://localhost:${wiremock.port}/vip-core/api</VIP_CORE_URL>-->
-                        </environmentVariables>
                     </configuration>
                     <executions>
                         <execution>

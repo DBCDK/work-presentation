@@ -386,6 +386,7 @@ public class WorkConsolidator {
          *
          * @param future Where to get the manifestation
          */
+        @SuppressWarnings("PMD.UnusedPrivateMethod")
         private void include(Future<ManifestationInformation> future) {
             try {
                 ManifestationInformation maniInfo = future.get();
